@@ -279,6 +279,72 @@ declarations=(
   NewLang.F0.swap_distinct_preserves_domain_carriers
   NewLang.F0.wellFormed_live_domain_has_value_carrier
   NewLang.F0.wellFormed_domain_carrier_implies_live_domain
+  NewLang.F1.parent_increases_depth
+  NewLang.F1.structural_root_has_no_parent
+  NewLang.F1.structural_nonroot_has_parent
+  NewLang.F1.parent_unique
+  NewLang.F1.parent_implies_ancestor
+  NewLang.F1.ancestor_increases_depth
+  NewLang.F1.ancestor_irreflexive
+  NewLang.F1.ancestor_transitive
+  NewLang.F1.below_transitive
+  NewLang.F1.siblings_are_not_ancestors
+  NewLang.F1.known_disjoint_siblings_do_not_overlap
+  NewLang.F1.ancestor_implies_overlap
+  NewLang.F1.same_place_implies_overlap
+  NewLang.F1.root_contains_every_place
+  NewLang.F1.local_deps_subset_subtree_deps
+  NewLang.F1.ancestor_subtree_deps_subset
+  NewLang.F1.child_subtree_deps_subset_parent_subtree_deps
+  NewLang.F1.subtree_dependency_has_local_owner
+  NewLang.F1.disjoint_sibling_dependency_not_owned_by_other_sibling
+  NewLang.F1.live_structural_node_has_current_fact
+  NewLang.F1.structural_current_fact_is_recorded
+  NewLang.F1.distinct_live_nodes_have_distinct_current_fact_ids
+  NewLang.F1.live_structural_node_has_incarnation
+  NewLang.F1.structural_incarnation_is_recorded
+  NewLang.F1.distinct_live_nodes_have_distinct_incarnations
+  NewLang.F1.subtree_dependencies_live
+  NewLang.F1.erase_occupancy_live_iff
+  NewLang.F1.erase_root_fact_matches_f0
+  NewLang.F1.erase_root_incarnation_matches_f0
+  NewLang.F1.erase_preserves_root_governing_domain
+  NewLang.F1.erase_preserves_live_domains
+  NewLang.F1.erase_preserves_domain_carriers
+  NewLang.F1.erase_preserves_histories
+  NewLang.F1.erase_live_fact
+  NewLang.F1.erase_structural_value_fact_to_root
+  NewLang.F1.erase_dependencies_are_conservative
+  NewLang.F1.erase_installed_package_present
+  NewLang.F1.installed_owner_is_unique
+  NewLang.F1.erase_root_package_exact
+  NewLang.F1.erase_local_dependency_obligation
+  NewLang.F1.erase_carrier_unique
+  NewLang.F1.erase_places_unique
+  NewLang.F1.erase_incarnations_unique
+  NewLang.F1.erase_packages_present
+  NewLang.F1.erase_domains_valid
+  NewLang.F1.erase_dependencies_valid
+  NewLang.F1.erase_value_facts_recorded
+  NewLang.F1.erase_incarnations_recorded
+  NewLang.F1.erase_domain_carrier_coherent
+  NewLang.F1.f1_wellFormed_erases_to_f0_wellFormed
+  NewLang.F1.Counterexample.Structural.simple_pair_is_wellFormed
+  NewLang.F1.Counterexample.Structural.simple_pair_erases_to_wellFormed_f0
+  NewLang.F1.Counterexample.Structural.nested_structure_is_wellFormed
+  NewLang.F1.Counterexample.Structural.pair_overlap_and_disjointness
+  NewLang.F1.Counterexample.Structural.nested_ancestor_witness
+  NewLang.F1.Counterexample.Structural.local_dependency_is_visible_from_root_subtree
+  NewLang.F1.Counterexample.Structural.structural_dependency_is_retained_by_erasure
+  NewLang.F1.Counterexample.Structural.child_histories_survive_flat_erasure
+  NewLang.F1.Counterexample.Structural.cyclic_structure_is_rejected
+  NewLang.F1.Counterexample.Structural.duplicate_parent_is_rejected
+  NewLang.F1.Counterexample.Structural.concrete_duplicate_parent_is_rejected
+  NewLang.F1.Counterexample.Structural.duplicate_root_child_fact_is_rejected
+  NewLang.F1.Counterexample.Structural.duplicate_structural_incarnation_is_rejected
+  NewLang.F1.Counterexample.Structural.stale_structural_dependency_is_rejected
+  NewLang.F1.Counterexample.Structural.recorded_stale_fact_is_not_live
+  NewLang.F1.Counterexample.Structural.broken_erasure_loses_child_dependency_obligation
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"

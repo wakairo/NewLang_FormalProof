@@ -1,6 +1,6 @@
-# NewLang F0 Formal Kernel — F0.6
+# NewLang F0 Formal Kernel — F1.0
 
-F0.0–F0.5はreview・merge済みです。F0.6ではLifetimeDomain identityとabstract value carrierを分離しました。transferは同じlive DomainIdを保ったままcarrierを移し、governed rootとdependencyを保持します。明示的finalizationはidentityを終了し、そのcarrier entryを消費します。governed rootやsurviving DomainLive dependencyがあるとtransferは可能ですがfinalizationは拒否されます。F0.6は実装済みで、PR reviewとF0 closure reviewを待つ状態です。
+F0.0–F0.6はreview・merge済みで、main `92c9ed7610fb3f1c419788194f83979a63172731`にて**F0 flat semantic kernelはCLOSED**です。F1.0では有限semantic path、canonical root/child current-state、local dependency ownership、derived subtree dependencyを追加しました。child value dependencyをenclosing F0 root factへ保守的にwidenするerasureと、F1 WellFormedからF0 WellFormedを導く定理をmachine-checkしました。F1.0は実装済み・PR review待ちです。
 
 ## 仕様の優先順位
 
@@ -43,7 +43,7 @@ bash scripts/check-proofs.sh
 
 bootstrapは公式GitHub releaseのelanとLean archiveを固定SHA-256で検証してから展開し、`elan toolchain link`でrepositoryのtoolchain名へ登録します。TLS検証を無効にしません。Leanのrelease-discovery endpointに依存せず再現できる経路です。checksumは公式GitHub releaseのasset digestから取得しました。
 
-依存解決には既存manifestを使い、`lake update`は実行しません。今回importするmathlibの591-module closureのcacheだけを取得し、プロジェクトをbuildします。cacheが取得できない場合も、同じsourceを`lake build`でcompileできますが時間がかかります。新しいimportを追加したら、そのmoduleに対して`lake exe cache get Module.Name`を実行できます。mathlib全体のrebuildは通常不要です。
+依存解決には既存manifestを使い、`lake update`は実行しません。F0のcache closureは591 modulesでした。F1.0ではFinset.Unionを追加し、同じpinの655-module closureのcacheを取得して、プロジェクトをbuildします。cacheが取得できない場合も、同じsourceを`lake build`でcompileできますが時間がかかります。新しいimportを追加したら、そのmoduleに対して`lake exe cache get Module.Name`を実行できます。mathlib全体のrebuildは通常不要です。
 
 設定を将来変更するときはtoolchain、mathlib revision、bootstrap checksum、manifestをまとめて更新・検証してください。通常のセットアップでlockfileを更新しないでください。
 
@@ -57,7 +57,7 @@ bootstrapは公式GitHub releaseのelanとLean archiveを固定SHA-256で検証�
 
 ```bash
 elan toolchain install leanprover/lean4:v4.34.1
-lake exe cache get Mathlib.Data.Finset.Basic Mathlib.Data.Set.Basic
+lake exe cache get Mathlib.Data.Finset.Union Mathlib.Data.Set.Basic
 lake build
 bash scripts/check-proofs.sh
 ```
@@ -175,7 +175,7 @@ F0.3の45定理（production/helper/fixture）の一覧と、same-caseのidentit
 
 F0.4で78定理を追加auditします（既存operationのincarnation history保存4、lifetime production/helper 54、具体的fixture 20）。初期化・occupancy conservation・fresh reinitialize・take/destroy対比・domain lifecycle・authorization/discardability拒否・3種類の破壊試験の全一覧は[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)を参照してください。既存theorem statementとsemantic claimは変更せず、ghost historyをseedして従来の102 auditもすべて通っています。
 
-`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、266 theoremのaxiom report（旧208件をすべて保持）を検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
+`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、332 theoremのaxiom report（closed F0の266件を保持し、F1.0で66件を追加）を検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
 
 ## F0.5 ptr / ref acquisition
 
@@ -201,22 +201,40 @@ take/reinitializeとdestroy/reinitializeで同じ固定RootSiteLayoutとlocation
 
 LifetimeDomainのnon-Discardable境界は明示的finalizationで表現し、ValuePackage.discardableと統合しません。implicit domain discard、domain creation、usedDomainIds、general authority algebra、F1 geometryは追加しません。fresh domain creation/recreationはDraft 17.4 §13.1に基づく将来の義務です。58追加auditの一覧、M8 feedback、限定的F0 closure assessmentは[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)に記録します。
 
+## F1.0 structural refinement scaffold
+
+構造nodeにはF0 PlaceIdを再利用し、有限StructuralLayoutがroot-relative `List Nat` semantic pathを対応させます。labelはabstract coordinateで、field syntax・byte offset・ABI layoutではありません。TreeWellFormedはtrackedなempty-path root、path injectivity、immediate-prefix parent closureを要求します。parent/ancestor/descendantとoverlapはderivedです。path lengthでcycleを排除し、distinct siblingsはknown-disjointです。duplicate pathを持つmalformed layoutと具体的duplicate parentも拒否します。
+
+StructuredRootはlayoutと一つの`PlaceId → StructuralNodeState`を保持します。nodeにはincarnation、current ValueFactId、LocalDepsがあります。package ID・governing domain・discardabilityはrootだけに保存し、childのstabilityはenclosing rootからderiveします。embedded F0 rootとの二重管理はありません。SubtreeDepsはlocal fragmentのfiltered finite unionで、parent summaryをmutable stateへコピーしません。同じdependency atomが別subtreeで独立に所有されることは許容しますが、siblingから自動継承はしません。
+
+F1 Stateは有限live root support、canonical roots、flat loose values/carriers、domains/carriers、既存両historyを持ちます。WellFormedは13個のF1-side fieldでtree、place/incarnation/fact uniqueness、installed carrier uniqueness/looseとの非重複、loose presence、domain、local/loose dependency validity、両history、domain carrier coherenceを検査します。F0 WellFormedを定義のpremiseへ埋め込んでいません。
+
+eraseToF0はcanonical root nodeからroot occupancyをderiveし、loose carrier・domain/carrier・child IDを含む全historyを保存します。root subtree dependency unionからinstalled packageをderiveし、**exact currently live**なchild factをenclosing root factへwidenします（strategy A）。domain factはidentityを保持し、unknown/stale value factはそのまま残します。loose valueにも同じabstractionを適用し、root discardabilityは保存します。中心定理は9個のF0 invariantを個別に証明して結合し、erase_local_dependency_obligationはlocal obligationが実際のerased root packageへ残ることを示します。state abstractionであり、Stepの一対一対応ではありません。
+
+Pair/Holder・nested witness、overlap/locality/history、cycle・duplicate parent・fact/incarnation collision・stale dependency拒否を検証しました。private broken erasureはchild obligationを落としてもF0 WellFormedが成立するため、dependency conservationの独立した証明が必要です。F1 operation、Occurrence、physical backing、source API syntaxは追加していません。[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)に追加66定理とhandoffを記録します。
+
 ## GitHub Actions
 
 [`.github/workflows/lean.yml`](.github/workflows/lean.yml)はpush / pull_requestで実行します。read-only repository permission、Ubuntu 24.04、commit-pinned checkout v6.1.0を使用し、bootstrap prerequisitesを導入します。空のrunner temporary toolchain/cache pathで`bash scripts/bootstrap.sh`を実行し、固定toolchain / manifestによる`lake build`とproof checkerを実行します。latest Leanへのupgradeやmanifest更新は行いません。追加secretやserviceは不要です。開発は専用branchからmain向けPRを作成し、pull_request-triggered Lean proofsの成功を確認します。PRはsemantic reviewまでopenのまま残し、CI成功だけでmergeしません。
 
-## Canonical milestone sequenceとF0 closure review
+## MilestonesとF1.1へのhandoff
 
 | Milestone | Scope |
 | --- | --- |
-| F0.0 | State / WellFormed — 完了 |
-| F0.1 | replace — 完了 |
-| F0.2 | store — 完了 |
-| F0.3 | swap — 完了 |
-| F0.4 | initialize / take / destroy — review・merge済み |
-| F0.5 | ptr / ref acquisition — review・merge済み |
-| F0.6 | LifetimeDomain transfer / finalization — 実装済み、PR review待ち |
+| F0.0 | State / WellFormed — CLOSED |
+| F0.1 | replace — CLOSED |
+| F0.2 | store — CLOSED |
+| F0.3 | swap — CLOSED |
+| F0.4 | initialize / take / destroy — CLOSED |
+| F0.5 | ptr / ref acquisition — CLOSED |
+| F0.6 | LifetimeDomain transfer / finalization — CLOSED |
+| F1.0 | Structural Refinement Scaffold — 実装済み、PR review待ち |
+| F1.1 | Fixed subobject semantics — F1.0 review後 |
+| F1.2 | Conditional occurrence / sum — 後続 |
+| F1.3 | BackingRegion / placement — 後続 |
+| F1.4 | Raw occupancy / Storage / slot — 後続 |
+| F1.5 | Opaque lifetime-root relocation — 後続 |
 
-F0.6 semantic review後は**F0 closure review**へ進み、F1 scopeを別途判断します。今回F1実装へは進みません。ref scope/non-escape、backing geometry、structural subobjectsは未実装です。NewLang全体のmemory/type safetyやcompiler correctnessは主張しません。
+F0 closureはreview済みflat kernelに限定します。F1.0はstate/invariant refinementまでで、review後にF1.1へ進めます。fixed-field operation、occurrence、backing/Storage、relocation、lexical ref scopeは未実装で、今回F1.1へは進みません。NewLang全体のmemory/type safetyやcompiler correctnessは主張しません。
 
-[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)も参照してください。
+[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)も参照してください。

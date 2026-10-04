@@ -1,8 +1,8 @@
-# NewLang F0 Formal Kernel — F0.6
+# NewLang F0 Formal Kernel — F1.0
 
 [日本語](README.ja.md)
 
-F0.0–F0.5 are reviewed and merged. F0.6 separates LifetimeDomain identity from its abstract value carrier: transfer moves the carrier while keeping the same live DomainId, governed roots and dependencies; explicit finalization ends the identity and consumes its carrier entry. Governed roots and surviving DomainLive dependencies permit transfer but block finalization. F0.6 is implemented; PR review and F0 closure review are pending.
+F0.0–F0.6 are reviewed and merged; the **F0 flat semantic kernel is CLOSED** at main `92c9ed7610fb3f1c419788194f83979a63172731`. F1.0 adds a structural refinement scaffold: finite semantic paths, one canonical root/child current state, local dependency ownership and derived subtree dependencies. Its machine-checked erasure conservatively widens child value dependencies to enclosing F0 root facts and proves F1 WellFormed implies F0 WellFormed. F1.0 is implemented; PR review is pending.
 
 ## Specification boundary
 
@@ -45,7 +45,7 @@ bash scripts/check-proofs.sh
 
 The x86_64 Linux bootstrap downloads fixed official GitHub release archives, verifies their pinned SHA-256 digests, and registers Lean under the repository's toolchain name with `elan toolchain link`. Digests come from the official release asset metadata. TLS verification remains enabled. This route works without elan's release-discovery endpoint.
 
-The script resolves the existing manifest without `lake update`, fetches the cache for the imported mathlib modules, and builds the project. The initial import closure contains 591 modules. A source build with `lake build` is also possible if the cache is unavailable, but takes longer. After adding imports, fetch their closure with `lake exe cache get Module.Name`.
+The script resolves the existing manifest without `lake update`, fetches the cache for the imported mathlib modules, and builds the project. The F0 import closure contained 591 modules. F1.0 adds Finset.Union, bringing the cache closure to 655 modules at the same pin. A source build with `lake build` is also possible if the cache is unavailable, but takes longer. After adding imports, fetch their closure with `lake exe cache get Module.Name`.
 
 For deliberate upgrades, update the Lean pin, mathlib revision, bootstrap checksums, and manifest together and validate the result. Routine setup must not update the lockfile.
 
@@ -59,7 +59,7 @@ With elan installed for your platform, run these commands from the repository ro
 
 ```bash
 elan toolchain install leanprover/lean4:v4.34.1
-lake exe cache get Mathlib.Data.Finset.Basic Mathlib.Data.Set.Basic
+lake exe cache get Mathlib.Data.Finset.Union Mathlib.Data.Set.Basic
 lake build
 bash scripts/check-proofs.sh
 ```
@@ -185,6 +185,18 @@ Concrete controls prove transfer remains legal with a governed root or domain-de
 
 LifetimeDomain's non-Discardable boundary is represented by explicit finalization, separate from `ValuePackage.discardable`; no implicit domain-discard operation exists. F0.6 adds no domain creation, usedDomainIds, general authority algebra or F1 geometry. Fresh domain creation/recreation remains a future obligation under Draft 17.4 §13.1. See the [F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md) for all 58 added audits, M8 feedback and the limited F0 closure assessment.
 
+## F1.0 structural refinement scaffold
+
+PlaceId is reused for structural nodes; a finite StructuralLayout maps each tracked place to a root-relative `List Nat` semantic path. The labels are abstract coordinates, not field syntax, byte offsets or ABI layout. TreeWellFormed requires one tracked empty-path root, path injectivity and immediate-prefix parent closure. Parent/ancestor/descendant and structural overlap are derived. Strict path length excludes cycles; distinct siblings are known-disjoint. Duplicate paths in malformed layouts are rejected, including a concrete duplicate-parent case.
+
+Each StructuredRoot stores its layout and one `PlaceId → StructuralNodeState` mapping. A node has incarnation, current ValueFactId and LocalDeps. Root-only package ID, governing domain and discardability occur once; child stability derives from the enclosing root. Root data is not duplicated in an embedded F0 state. `SubtreeDeps` is a filtered finite union of local fragments, with no mutable parent summary. A dependency visible at a sibling must have a local owner in that sibling's own subtree; the same atom may independently be owned in both subtrees.
+
+F1 State has finite live root support, canonical roots, flat loose values/carriers, live domains/carriers and the existing identity histories. WellFormed checks 13 F1-side fields: tree validity, global place/incarnation/current-fact uniqueness, installed carrier uniqueness/no loose overlap, loose presence, governing-domain validity, local/loose dependency validity, both history recording conditions and domain carrier coherence. There is no F0 WellFormed premise hidden in this definition.
+
+`eraseToF0` derives root occupancy from the canonical root node and retains loose carriers, domains/carriers and all history—including erased child IDs. It derives the installed package from the root subtree union, widening each **exact currently live** child value fact to its enclosing root's current fact (strategy A). Domain facts retain identity; unknown/stale value facts are retained rather than silently remapped. Loose-value dependencies use the same abstraction. Root discardability is preserved. The central `f1_wellFormed_erases_to_f0_wellFormed` assembles nine separately proved F0 invariants; `erase_local_dependency_obligation` proves every local obligation reaches the actual erased root package. This is state abstraction, not one-to-one Step correspondence.
+
+Concrete Pair/Holder and nested witnesses prove non-vacuous refinement, overlap, dependency locality and history retention. Private controls reject cycles, duplicate parents, fact/incarnation collisions and stale dependencies. A deliberately broken erasure still has F0 WellFormed endpoints while dropping a child obligation, demonstrating why conservative dependency preservation needs its own proof. No F1 operation, occurrence, physical backing or source API syntax is introduced. See the [F1.0 report and 66-theorem inventory](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md).
+
 ## Machine-checked theorem inventory
 
 All names below are in `NewLang.F0` unless qualified otherwise.
@@ -213,7 +225,7 @@ F0.3 adds 45 audited production/helper/fixture theorems: same-case identity/hist
 
 F0.4 audits 78 additional declarations: four incarnation-history preservation lemmas for prior operations, 54 lifetime production/helper theorems and 20 concrete fixtures. The [complete F0.4 inventory/report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md) covers initialization, vacancy/carrier conservation, fresh reinitialization, take/destroy survivor contrast, governing relation end versus domain survival, authorization/domain/discardability rejection and three omitted-check tests. Existing theorem statements and semantic claims remain unchanged; all 102 earlier audits still pass with correctly seeded ghost state.
 
-`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 266 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. All previous 208 audits remain. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
+`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 332 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. All 266 closed-F0 audits remain; F1.0 adds 66. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
 
 ## GitHub Actions
 
@@ -223,14 +235,20 @@ F0.4 audits 78 additional declarations: four incarnation-history preservation le
 
 | Milestone | Scope |
 | --- | --- |
-| F0.0 | State / WellFormed — complete |
-| F0.1 | replace — complete |
-| F0.2 | store — complete |
-| F0.3 | swap — complete |
-| F0.4 | initialize / take / destroy — reviewed and merged |
-| F0.5 | ptr / ref acquisition — reviewed and merged |
-| F0.6 | LifetimeDomain transfer / finalization — implemented; PR review pending |
+| F0.0 | State / WellFormed — CLOSED |
+| F0.1 | replace — CLOSED |
+| F0.2 | store — CLOSED |
+| F0.3 | swap — CLOSED |
+| F0.4 | initialize / take / destroy — CLOSED |
+| F0.5 | ptr / ref acquisition — CLOSED |
+| F0.6 | LifetimeDomain transfer / finalization — CLOSED |
+| F1.0 | Structural Refinement Scaffold — implemented; PR review pending |
+| F1.1 | Fixed subobject semantics — after F1.0 review |
+| F1.2 | Conditional occurrence / sum — later |
+| F1.3 | BackingRegion / placement — later |
+| F1.4 | Raw occupancy / Storage / slot — later |
+| F1.5 | Opaque lifetime-root relocation — later |
 
-After F0.6 semantic review, the next step is **F0 closure review**, followed by a separately decided F1 scope. Ref scope/non-escape, backing geometry and structural subobjects remain unimplemented. The checked flat kernel does not establish whole-language memory/type safety or compiler correctness. This milestone stops before F1 implementation.
+F0 closure is limited to the reviewed flat kernel. F1.0 now supplies state/invariant refinement; F1.1 may begin after this PR's review. Fixed-field operations, occurrences, backing/Storage, relocation and lexical ref scope remain unimplemented. Whole-language memory/type safety and compiler correctness are not claimed. This task stops before F1.1.
 
-See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md).
+See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md), [F1.0](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md).

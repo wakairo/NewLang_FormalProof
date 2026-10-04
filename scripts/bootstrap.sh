@@ -54,7 +54,7 @@ lean --version
 elan show
 # lake-manifest.json pins mathlib and every transitive dependency. Do not run lake update.
 manifest_before=$(sha256sum lake-manifest.json)
-lake exe cache get Mathlib.Data.Finset.Basic Mathlib.Data.Set.Basic
+lake exe cache get Mathlib.Data.Finset.Union Mathlib.Data.Set.Basic
 scripts/check-proofs.sh
 if [ "$(sha256sum lake-manifest.json)" != "$manifest_before" ]; then
   echo 'Unexpected dependency manifest change during setup.' >&2
