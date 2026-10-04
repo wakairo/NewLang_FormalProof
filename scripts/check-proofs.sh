@@ -193,6 +193,34 @@ declarations=(
   NewLang.F0.Counterexample.Lifetime.historical_value_fact_reuse_is_rejected
   NewLang.F0.Counterexample.Lifetime.wrong_domain_and_missing_authority_are_rejected
   NewLang.F0.Counterexample.Lifetime.dead_domain_and_missing_initialize_authority_are_rejected
+  NewLang.F0.acquire_ref_targets_exact_location_incarnation
+  NewLang.F0.acquire_ref_implies_live_incarnation
+  NewLang.F0.acquire_ref_matches_governing_domain
+  NewLang.F0.acquire_ref_implies_governing_relation
+  NewLang.F0.acquire_ref_implies_live_domain
+  NewLang.F0.acquire_ref_rejects_missing_stability_evidence
+  NewLang.F0.acquire_ref_rejects_missing_access_or_provenance_premise
+  NewLang.F0.acquire_ref_rejects_wrong_domain
+  NewLang.F0.acquire_ref_rejects_incarnation_mismatch
+  NewLang.F0.ended_incarnation_cannot_acquire_ref
+  NewLang.F0.initialize_yields_current_ptr
+  NewLang.F0.initialize_ptr_can_acquire_ref
+  NewLang.F0.reinitialize_does_not_revive_old_ptr
+  NewLang.F0.stale_ptr_after_take_cannot_acquire_ref
+  NewLang.F0.stale_ptr_after_destroy_cannot_acquire_ref
+  NewLang.F0.take_then_reinitialize_does_not_revive_old_ptr
+  NewLang.F0.destroy_then_reinitialize_does_not_revive_old_ptr
+  NewLang.F0.ptr_remains_live_across_current_value_replace
+  NewLang.F0.Counterexample.Reference.initialized_ptr_is_safely_issued_and_acquires_ref
+  NewLang.F0.Counterexample.Reference.take_stale_ptr_contrast
+  NewLang.F0.Counterexample.Reference.destroy_stale_ptr_contrast
+  NewLang.F0.Counterexample.Reference.same_site_reinitialize_old_ptr_rejected_new_ptr_accepted
+  NewLang.F0.Counterexample.Reference.same_site_destroy_reinitialize_old_ptr_rejected_new_ptr_accepted
+  NewLang.F0.Counterexample.Reference.missing_stability_wrong_domain_and_missing_access_are_rejected
+  NewLang.F0.Counterexample.Reference.replace_changes_current_fact_but_same_ptr_acquires_ref
+  NewLang.F0.Counterexample.Reference.omitting_only_incarnation_freshness_revives_stale_ptr
+  NewLang.F0.Counterexample.Reference.omitting_incarnation_match_accepts_old_ptr_after_fresh_reinitialize
+  NewLang.F0.Counterexample.Reference.omitting_domain_match_accepts_wrong_live_domain
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"

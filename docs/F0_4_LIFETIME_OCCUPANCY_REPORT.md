@@ -160,7 +160,7 @@ bash scripts/check-proofs.sh
 
 The proof checker scans all project-owned Lean source for placeholders/custom declarations and audits the 180 theorem dependency reports. Only standard propext, Classical.choice and Quot.sound are allowed. No semantic shortcuts or custom semantic assumptions are introduced.
 
-The existing Lean proofs workflow bootstraps pinned tools/manifest in fresh temporary paths. Work uses branch `f0.4-lifetime-occupancy`, an open main-targeting PR, and confirmation of the pull_request-event run for its current head. The PR records the final current-head CI URL/result; green CI does not merge the PR.
+The existing Lean proofs workflow bootstraps pinned tools/manifest in fresh temporary paths. F0.4 used branch `f0.4-lifetime-occupancy` and PR #3; its current-head pull_request-event run passed. Review and merge are now complete at main `941c1df9ae53a3536a9e7315deb1b1d70fea7e54`. The original PR retains its CI evidence. F0.5 proceeds from that merged baseline.
 
 - **FORMAL-ENCODING:** Incarnation ghost history, derived LiveIncarnation/Governs, Vacant occupancy abstraction and fixed site/place association.
 - **FORMAL-LEMMA:** Survivor distinction, unique carrier round-trip, fresh same-site reinitialization, and root relation end versus domain survival.
