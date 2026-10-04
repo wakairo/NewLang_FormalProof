@@ -12,6 +12,7 @@ def replaceCandidate (s : State) (location : RootLocationId) (root : LiveRoot)
   loosePackages := insert root.package (s.loosePackages.erase incoming)
   liveDomains := s.liveDomains
   usedValueFacts := insert newFact s.usedValueFacts
+  usedIncarnations := s.usedIncarnations
 
 /-- Replace-only raw relation. The two Prop parameters are caller-supplied static obligations,
 not universally valid capabilities. No lifetime-ending/exclusive authority is required.
@@ -180,6 +181,10 @@ theorem replace_rejects_previously_used_fact (used : newFact ∈ s.usedValueFact
     ¬ RawReplace canWrite typeCompatible s location root incoming newFact s' := by
   intro raw
   exact raw.fresh used
+
+theorem replace_preserves_incarnation_history
+    (h : RawReplace canWrite typeCompatible s location root incoming newFact s') : s'.usedIncarnations = s.usedIncarnations := by
+  rw [h.post_eq]; rfl
 
 end
 end NewLang.F0

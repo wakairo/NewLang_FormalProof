@@ -4,3 +4,5 @@ import NewLang.F0.Store
 import NewLang.F0.Counterexample.Store
 import NewLang.F0.Swap
 import NewLang.F0.Counterexample.Swap
+import NewLang.F0.Lifetime
+import NewLang.F0.Counterexample.Lifetime

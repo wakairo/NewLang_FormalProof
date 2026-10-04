@@ -25,6 +25,7 @@ private def before (da db dq : Finset Fact) : State where
   loosePackages := {pkgQ}
   liveDomains := {rootA.governing, rootB.governing}
   usedValueFacts := {rootA.currentFact, rootB.currentFact, retired}
+  usedIncarnations := {rootA.incarnation, rootB.incarnation}
 
 private def after (da db dq : Finset Fact) : State :=
   swapCandidate (before da db dq) left right rootA rootB freshA freshB
@@ -92,6 +93,9 @@ theorem before_wellFormed (da db dq : Finset Fact)
       subst value; exact dependency_live hb dep
     · have same : package dq = value := by simpa [before, pkgA, pkgB, pkgQ] using present
       subst value; exact dependency_live hq dep
+  · intro l r live
+    rcases before_live_iff.mp live with ⟨_, rfl⟩ | ⟨_, rfl⟩ <;> simp [before]
+
   · intro l r live
     rcases before_live_iff.mp live with ⟨_, rfl⟩ | ⟨_, rfl⟩ <;> simp [before]
 
@@ -164,15 +168,17 @@ theorem independent_distinct_swap_is_legal :
       freshA freshB (after ∅ ∅ ∅) := by
   refine ⟨before_wellFormed _ _ _ (by simp) (by simp) (by simp), raw _ _ _, ?_⟩
   rcases after_structure ∅ ∅ ∅ with ⟨carriers, places, incarnations, present, domains, history⟩
-  refine ⟨carriers, places, incarnations, present, domains, ?_, history⟩
-  intro p value survivor defined fact dep
-  rcases after_survives_iff.mp survivor with rfl | rfl | rfl
-  · have same : package ∅ = value := by simpa [after, swapCandidate, before, pkgA, pkgB] using defined
-    subst value; simp [package] at dep
-  · have same : package ∅ = value := by simpa [after, swapCandidate, before] using defined
-    subst value; simp [package] at dep
-  · have same : package ∅ = value := by simpa [after, swapCandidate, before, pkgA, pkgB, pkgQ] using defined
-    subst value; simp [package] at dep
+  refine ⟨carriers, places, incarnations, present, domains, ?_, history, ?_⟩
+  · intro p value survivor defined fact dep
+    rcases after_survives_iff.mp survivor with rfl | rfl | rfl
+    · have same : package ∅ = value := by simpa [after, swapCandidate, before, pkgA, pkgB] using defined
+      subst value; simp [package] at dep
+    · have same : package ∅ = value := by simpa [after, swapCandidate, before] using defined
+      subst value; simp [package] at dep
+    · have same : package ∅ = value := by simpa [after, swapCandidate, before, pkgA, pkgB, pkgQ] using defined
+      subst value; simp [package] at dep
+  · intro l r live
+    rcases after_live_iff.mp live with ⟨_, rfl⟩ | ⟨_, rfl⟩ <;> simp [after, swapCandidate, before]
 
 theorem swap_does_not_require_discardable :
     (before ∅ ∅ ∅).packages pkgA = some (package ∅) ∧

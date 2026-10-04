@@ -26,6 +26,7 @@ private def before (oldDependent incomingDependent : Bool) : State where
   loosePackages := {incomingPackage}
   liveDomains := {initialRoot.governing}
   usedValueFacts := {initialRoot.currentFact, retiredFact}
+  usedIncarnations := {initialRoot.incarnation}
 
 private def after (oldDependent incomingDependent : Bool) : State :=
   replaceCandidate (before oldDependent incomingDependent) location initialRoot incomingPackage freshFact
@@ -98,6 +99,10 @@ theorem before_wellFormed (oldDependent incomingDependent : Bool) :
     rcases before_live_iff.mp live with ⟨_, rfl⟩
     simp [before]
 
+  · intro l r live
+    rcases before_live_iff.mp live with ⟨_, rfl⟩
+    simp [before]
+
 private theorem raw (oldDependent incomingDependent : Bool) :
     RawReplace True True (before oldDependent incomingDependent) location initialRoot
       incomingPackage freshFact (after oldDependent incomingDependent) where
@@ -160,19 +165,22 @@ theorem independent_replace_is_legal :
       incomingPackage freshFact (after false false) := by
   refine ⟨before_wellFormed _ _, raw _ _, ?_⟩
   rcases after_structure false false with ⟨carriers, places, incarnations, present, domains, history⟩
-  refine ⟨carriers, places, incarnations, present, domains, ?_, history⟩
-  intro pkg value survivor defined fact dependency
-  rcases after_survives_iff.mp survivor with incoming | old
-  · subst pkg
-    have value_eq : package false = value := by
-      simpa [after, replaceCandidate, before, oldPackage, incomingPackage] using defined
-    subst value
-    simp [package] at dependency
-  · subst pkg
-    have value_eq : package false = value := by
-      simpa [after, replaceCandidate, before] using defined
-    subst value
-    simp [package] at dependency
+  refine ⟨carriers, places, incarnations, present, domains, ?_, history, ?_⟩
+  · intro pkg value survivor defined fact dependency
+    rcases after_survives_iff.mp survivor with incoming | old
+    · subst pkg
+      have value_eq : package false = value := by
+        simpa [after, replaceCandidate, before, oldPackage, incomingPackage] using defined
+      subst value
+      simp [package] at dependency
+    · subst pkg
+      have value_eq : package false = value := by
+        simpa [after, replaceCandidate, before] using defined
+      subst value
+      simp [package] at dependency
+  · intro l r live
+    rcases after_live_iff.mp live with ⟨_, rfl⟩
+    simp [after, replaceCandidate, before]
 
 /-- Dropping the candidate dependency check admits an actual malformed raw post-state.
 Every other WellFormed field holds, so the failure is specifically dependency validity. -/

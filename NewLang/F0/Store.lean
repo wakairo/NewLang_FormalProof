@@ -13,6 +13,7 @@ def storeCandidate (s : State) (location : RootLocationId) (root : LiveRoot)
   loosePackages := (s.loosePackages.erase incoming).erase root.package
   liveDomains := s.liveDomains
   usedValueFacts := insert newFact s.usedValueFacts
+  usedIncarnations := s.usedIncarnations
 
 /-- Store-only raw relation. Discardability applies to the old package, not the incoming one.
 Write/type obligations are caller-supplied propositions; no lifetime-ending authority is used. -/
@@ -229,6 +230,10 @@ theorem store_rejects_previously_used_fact (used : newFact ∈ s.usedValueFacts)
     ¬ RawStore canWrite typeCompatible s location root incoming newFact s' := by
   intro raw
   exact raw.fresh used
+
+theorem store_preserves_incarnation_history
+    (h : RawStore canWrite typeCompatible s location root incoming newFact s') : s'.usedIncarnations = s.usedIncarnations := by
+  rw [h.post_eq]; rfl
 
 end
 end NewLang.F0

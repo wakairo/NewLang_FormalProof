@@ -26,10 +26,20 @@ structure State where
   liveDomains : Finset DomainId
   /-- Proof-only allocation history; never shrink it when a fact stops being live. -/
   usedValueFacts : Finset ValueFactId
+  /-- Proof-only history: ended incarnations remain unavailable for reuse. -/
+  usedIncarnations : Finset IncarnationId
 
 /-- Fresh means never allocated in the recorded history, not merely currently dead. -/
 def FreshValueFact (s : State) (fact : ValueFactId) : Prop :=
   fact ∉ s.usedValueFacts
+
+/-- Fresh incarnation means never allocated in the modeled history. -/
+def FreshIncarnation (s : State) (incarnation : IncarnationId) : Prop :=
+  incarnation ∉ s.usedIncarnations
+
+/-- Derived incarnation liveness; not a second mutable source of truth. -/
+def LiveIncarnation (s : State) (incarnation : IncarnationId) : Prop :=
+  ∃ location root, s.occupancy location = .live root ∧ root.incarnation = incarnation
 
 /-- Installed carriers use locations to distinguish even malformed duplicate roots. -/
 inductive Carrier where
@@ -65,5 +75,6 @@ def State.empty : State where
   loosePackages := ∅
   liveDomains := ∅
   usedValueFacts := ∅
+  usedIncarnations := ∅
 
 end NewLang.F0

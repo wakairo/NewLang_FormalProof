@@ -1100,6 +1100,27 @@ old packageは post-stateに surviveしない。
 
 ---
 
+### F0.4 implementation trace (non-normative)
+
+`NewLang/F0/Lifetime.lean` implements separate atomic initialize/take/destroy
+candidates and raw/legal relations. State adds proof-only `usedIncarnations`, and
+WellFormed records every live incarnation. Earlier operations preserve that history.
+A fixed injective `RootSiteLayout` associates nominally distinct locations/places;
+initialize consults it without fresh PlaceId minting. Vacant abstracts the site's
+empty occupancy responsibility; source-level slot/ptr/ref and backing geometry
+remain outside F0.4. Initialize creates fresh incarnation/current-fact identities
+and a governing relation to the supplied live domain. Take/destroy end that root
+relation while preserving DomainId itself and both identity histories.
+
+Take returns the old package as a loose survivor; destroy consumes its carrier
+and validates the combined post-state without first requiring legal take.
+The isolated lifetime module checks their same-prestate dependency contrast,
+wrong-domain/authority/discardability rejection, occupancy round-trip, and fresh
+same-site reinitialization. See `docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md`.
+No normative rule is changed by this trace note.
+
+---
+
 # 20. LifetimeDomain
 
 F0 Draft 0 では `LifetimeDomain` を semantic identity `DomainId` として扱う。
