@@ -1,11 +1,11 @@
-# NewLang F0 Formal Kernel — F0.0
+# NewLang F0 Formal Kernel — F0.1
 
-NewLang v0 semantic kernelのLean 4形式化の最小基盤です。今回の対象はidentity、Fact、ValuePackage、flat State、LiveFacts、WellFormedのみです。operationとtransition preservationはまだ実装していません。
+F0.0のflat State / WellFormed基盤に、F0.1としてproof-only historical freshnessと`replace`を追加しました。preservationとdependency non-launderingをmachine-checkしています。今回実装したoperationは`replace`のみです。
 
 ## 仕様の優先順位
 
 1. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): normative specification / source of truth。
-2. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。添付資料を変更せず保存しています。
+2. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号のみを修正し、FORMAL-EXTRACTIONの解決履歴として記録しています。Draft 17.4は変更していません。
 3. Lean model: proofのためのencoding。
 
 **Formal representation choices are non-normative.**
@@ -93,18 +93,62 @@ WF-2/3/8はdatatypeとderived carrierにより構造的に表現します。carr
 
 `occupancy`はtotal function、`packages`はOptionを返すpartial mapです。package tableにcarrierを持たない記録が残ってもsurvivorではありません。loose carrierだけの場合もmissing packageを許しません。すべてのsurviving packageを状態に明示するF0 abstractionであり、source syntaxのbindingを直接モデル化していません。
 
-LiveFactsは現在のoccupancyにあるfactだけを含み、履歴のfactを別途liveにしません。mapsのfinite supportと歴史全体に対するfreshnessは今回のstate invariant theoremでは証明しません。transitionを追加する際に必要なhistory/freshness premiseを明示し、現在使われていないIDであればfreshだと短絡しないでください。
+## Historical freshness: proof-only ghost state
 
-## Kernelによるsmoke確認
+`State.usedValueFacts : Finset ValueFactId`にexecution historyで割り当てたIDを記録します。`FreshValueFact s vf`は`vf ∉ s.usedValueFacts`です。`WellFormed.valueFactsRecorded`により、liveなcurrent factは必ず履歴へ含まれます。`State.empty`の履歴は空で、既存smoke theoremは再証明済みです。
 
-`wellFormed_surviving_dependencies_live`は、WellFormedからsurviving packageの各dependencyがliveであることを導きます。`empty_wellFormed`は空状態が実際にinvariantを満たすことを証明します。
+Raw replaceは新IDをinsertし、以前の履歴全体を保持します。`replace_history_monotone`と`replace_old_fact_remains_used`を証明しました。現在deadでも使用済みのIDはfreshではありません。countermodelではID 2がその具体例です。初期状態には過去の割当てをすべて記録し、将来のallocating transitionも履歴を保持・拡張する必要があります。live factsだけから履歴を再構成してはいけません。
 
-`lake build`で全プロジェクトsourceとproofをチェックします。`scripts/check-proofs.sh`はprojectの`.lean` sourceをscanし、proof placeholder / added axiomがないことと、2つのtheoremの`#print axioms`結果を確認します。両theoremが依存するのはLean標準logicの`propext`、`Classical.choice`、`Quot.sound`のみです。semantic invariantを公理として追加していません。
+この履歴は**proof-only ghost state**であり、NewLang compiler/runtimeにhistory setを要求しません。F0.4では同じ方式で`usedIncarnations : Finset IncarnationId`へ自然に拡張できますが、今回は未実装です。finite-support、payload、authority algebra、borrow checker、structural places、scope/backing facts、他operationも未検証です。
 
-docsにある概念コードやaxiom policyの説明、mathlib自身はproject sourceのscan対象ではありません。
+## replace semantics
 
-## 次のF0.1
+`replaceCandidate`はtarget locationのcurrent factとpackageだけを更新し、PlaceId・IncarnationId・governing DomainId・root location・live-root statusを保持します。他location、package data、live domainsも変えません。incomingをloose集合から除去し、old packageをloose resultとして追加し、used historyへ新factを追加します。
 
-次はF0 bridge §28に沿って`replace`のrelational RawStep/Step、fresh current fact、old packageのloose resultへのtransferを追加できます。old packageがold current factへ依存すると合法なreplaceが存在しないnegative lemmaも対象です。今回、これらのtransitionやpreservation theoremは先行実装していません。NewLang全体のtype safety/compiler correctnessも主張しません。
+`RawReplace canWrite typeCompatible s location root incoming newFact s'`はpre-stateのlive root、incoming loose、historical freshness、callerが証明するwrite/type compatibility premise、candidateとの等式を保持します。resultは`root.package`です。production側ではauthorization premiseを常にTrueと定義しません。countermodelのみTrueを与えてstate/dependency ruleを独立に検証します。exclusive refやlifetime-ending authorityは要求しません。
 
-資料上の注意とencoding境界は[formalization notes](docs/FORMALIZATION_NOTES.ja.md)を参照してください。
+`ReplaceStep`は`WellFormed s ∧ RawReplace ... ∧ WellFormed s'`です。preservation theorem自体はpost-state条件のprojectionですが、raw transitionがすべて合法になるという主張ではありません。candidateの具体的更新、carrier transfer、freshness、old factのinvalidation、surviving dependencyからのrejectを別々に証明しています。依存のないlegal replaceの具体例も証明済みです。
+
+## Machine-checked theorem一覧
+
+以下は`NewLang.F0` namespaceです。
+
+| Theorem | 性質 |
+| --- | --- |
+| `wellFormed_surviving_dependencies_live`, `empty_wellFormed` | 既存F0.0 smoke proof |
+| `replace_preserves_wellFormed` | Legal replaceのinvariant保存 |
+| `replace_preserves_incarnation`, `replace_preserves_governingDomain` | Lifetime stateの保存 |
+| `replace_preserves_place_and_location`, `replace_preserves_other_locations` | Target identity/statusとframe |
+| `replace_preserves_package_data_and_domains` | Dependency dataとdomain集合の保存 |
+| `replace_creates_fresh_current_fact` | Pre-historyに未使用、post-current、post-historyに記録 |
+| `replace_history_monotone`, `replace_old_fact_remains_used` | 使用履歴の保持 |
+| `replace_old_package_survives_as_loose` | Old packageがresultとしてsurvive |
+| `replace_new_package_installed` | Incomingがinstalledになりlooseから消える |
+| `rawReplace_old_current_fact_not_live` | Raw replace後にold current factがdead |
+| `replace_rejects_surviving_old_current_dependency` | Old package側のnon-laundering |
+| `replace_rejects_incoming_old_current_dependency` | Incoming側のold-current dependencyもreject |
+| `replace_rejects_previously_used_fact` | Retired IDを含めhistorical reuseをreject |
+
+`NewLang.F0.Counterexample.Replace`には`before_wellFormed`、`independent_replace_is_legal`、`unchecked_replace_launders_old_dependency`、`old_dependency_is_rejected`、`incoming_dependency_is_rejected`、`currently_dead_is_not_historically_fresh`があります。dependency checkを外したraw candidateは他のWellFormed fieldをすべて満たし、`DependenciesValid`だけが失敗します。broken Stepをproduction namespaceへ追加していません。
+
+`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、23 theoremのaxiom reportを検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
+
+## GitHub Actions
+
+[`.github/workflows/lean.yml`](.github/workflows/lean.yml)はpush / pull_requestで実行します。read-only repository permission、Ubuntu 24.04、commit-pinned checkout v4.2.2を使用し、bootstrap prerequisitesを導入します。空のrunner temporary toolchain/cache pathで`bash scripts/bootstrap.sh`を実行し、固定toolchain / manifestによる`lake build`とproof checkerを実行します。latest Leanへのupgradeやmanifest更新は行いません。追加secretやserviceは不要です。
+
+## Canonical milestone sequenceと次のF0.2
+
+| Milestone | Scope |
+| --- | --- |
+| F0.0 | State / WellFormed — 完了 |
+| F0.1 | replace — 完了 |
+| F0.2 | store — 次 |
+| F0.3 | swap |
+| F0.4 | initialize / take / destroy |
+| F0.5 | ptr / ref acquisition |
+| F0.6 | LifetimeDomain transfer / finalization |
+
+次は`store`です。historyとcandidate/dependency machineryを再利用できますが、old packageはresultとしてsurviveさせずconsumeする必要があります。store以降のoperationは今回は実装していません。NewLang全体のtype safetyやcompiler correctnessも主張しません。
+
+[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)も参照してください。

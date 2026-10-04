@@ -31,6 +31,10 @@ def DependenciesValid (s : State) : Prop :=
   ∀ pkg value, Survives s pkg → s.packages pkg = some value →
     ∀ fact ∈ value.dependencies, fact ∈ LiveFacts s
 
+/-- Current identities must already have been allocated in the ghost history. -/
+def ValueFactsRecorded (s : State) : Prop :=
+  ∀ location root, s.occupancy location = .live root → root.currentFact ∈ s.usedValueFacts
+
 /-- WF-2/3/8 are structural: occupancy is exclusive, and its package is its carrier. -/
 structure WellFormed (s : State) : Prop where
   carrierUnique : CarrierUnique s
@@ -39,6 +43,7 @@ structure WellFormed (s : State) : Prop where
   packagesPresent : PackagesPresent s
   domainsValid : DomainsValid s
   dependenciesValid : DependenciesValid s
+  valueFactsRecorded : ValueFactsRecorded s
 
 /-- Machine-checked smoke theorem; covers installed and loose packages alike. -/
 theorem wellFormed_surviving_dependencies_live
@@ -57,5 +62,6 @@ theorem empty_wellFormed : WellFormed State.empty := by
   · simp [PackagesPresent, Survives, IsInstalled, Carries, State.empty]
   · simp [DomainsValid, State.empty]
   · simp [DependenciesValid, Survives, IsInstalled, Carries, State.empty]
+  · simp [ValueFactsRecorded, State.empty]
 
 end NewLang.F0

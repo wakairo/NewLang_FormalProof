@@ -1,0 +1,24 @@
+name: Lean proofs
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  proofs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install bootstrap prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends zstd ripgrep
+      - name: Bootstrap pinned Lean and check proofs
+        shell: bash
+        run: |
+          export ELAN_HOME="$RUNNER_TEMP/newlang-elan"
+          export NEWLANG_TOOLCHAIN_ROOT="$RUNNER_TEMP/newlang-lean"
+          export MATHLIB_CACHE_DIR="$RUNNER_TEMP/mathlib-cache"
+          bash scripts/bootstrap.sh

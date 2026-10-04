@@ -24,6 +24,12 @@ structure State where
   packages : PackageId → Option ValuePackage
   loosePackages : Finset PackageId
   liveDomains : Finset DomainId
+  /-- Proof-only allocation history; never shrink it when a fact stops being live. -/
+  usedValueFacts : Finset ValueFactId
+
+/-- Fresh means never allocated in the recorded history, not merely currently dead. -/
+def FreshValueFact (s : State) (fact : ValueFactId) : Prop :=
+  fact ∉ s.usedValueFacts
 
 /-- Installed carriers use locations to distinguish even malformed duplicate roots. -/
 inductive Carrier where
@@ -58,5 +64,6 @@ def State.empty : State where
   packages := fun _ => none
   loosePackages := ∅
   liveDomains := ∅
+  usedValueFacts := ∅
 
 end NewLang.F0

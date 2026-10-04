@@ -1112,7 +1112,7 @@ place holding LifetimeDomain value
 
 F0.0では domain value transferを operationとして定義しない。
 
-F0.2で追加する。
+F0.6で追加する。
 
 追加時の requirement:
 
@@ -1124,7 +1124,7 @@ value carrier may move
 
 ## 20.3 Domain finalization
 
-F0.2候補:
+F0.6候補:
 
 ```text
 finalizeDomain(D)
@@ -1301,7 +1301,7 @@ AuthorityMultiplicity(S, a) <= 1
 | `take` | §14.2 | primitive Step |
 | `destroy` | §14.3 | primitive Step |
 | fixed subobject restriction | §14.4 | flat F0では自動的に満たす |
-| domain transfer/finalize | §14.5–§14.6 | F0.2 extension |
+| domain transfer/finalize | §14.5–§14.6 | F0.6 extension |
 | `replace/store/swap` | §17.4 | primitive Step |
 
 この表は formalization の coverage map であり、Draft 17.4の節を置換しない。
@@ -1481,6 +1481,17 @@ persistent ptr incarnation identityを追加。
 ended incarnation ptr cannot acquire safe ref
 reinitialize same location does not revive old ptr
 ```
+
+---
+
+## F0.6 — LifetimeDomain transfer / finalization
+
+`DomainId`のsurvival、governed rootsの維持、domain value carrierのtransferを扱う。
+
+finalizationではlive governed rootとsurviving `DomainLive(D)` dependencyが残らないことを要求する。
+
+§20.2 / §20.3の旧F0.2表記はF0.1開始前にこのcanonical sequenceへ修正した。
+これはnon-normative bridgeのmilestone番号の編集修正であり、semantic ruleは変更しない。
 
 ---
 

@@ -1,1 +1,2 @@
-import NewLang.F0.WellFormed
+import NewLang.F0.Replace
+import NewLang.F0.Counterexample.Replace
