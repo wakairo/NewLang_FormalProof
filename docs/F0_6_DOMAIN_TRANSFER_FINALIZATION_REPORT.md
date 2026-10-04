@@ -5,10 +5,10 @@
 F0.0–F0.5 were reviewed and merged in main
 `47baa1885dc17263cacb6bf6623568644589101f` (F0.5 PR #4).
 Before any change, `lake build` and `bash scripts/check-proofs.sh` passed:
-623 build jobs, all 208 audited declarations. F0.6 is implemented on
-`f0.6-domain-transfer-finalization` for an open PR targeting main. This task does
-not merge the PR or begin F1; semantic/formalization and F0 closure review remain
-human decisions.
+623 build jobs, all 208 audited declarations. F0.6 was submitted on `f0.6-domain-transfer-finalization` and subsequently
+reviewed/merged in PR #5 at main `92c9ed7610fb3f1c419788194f83979a63172731`.
+The human review closed the limited F0 flat semantic kernel. This report retains
+the F0.6-stage claims and audit history.
 
 Draft 17.4 §13.1–3 / §14.5–6 are the normative inputs. The F0 bridge §20.2–3 is
 non-normative. Lean is proof encoding. **Formal representation choices are
@@ -316,7 +316,8 @@ this feedback fixes no source syntax or ABI.
 | BackingRegion/Storage/Allocation authority | Outside F0 | Alignment/range/provenance and allocation geometry unproved |
 | Aggregates/subobjects/sums/spans, opaque relocation, FFI, concurrency | Outside F0 | No implementation or theorem claim |
 
-The implemented F0.0–F0.6 **flat semantic kernel** is ready for closure review once
-this PR's proof and semantic review is accepted. This is not a declaration of
-whole-NewLang safety or compiler correctness. F0 closure/adjudication is a human
-review step; stop here rather than implementing F1 or merging the PR.
+The implemented F0.0–F0.6 **flat semantic kernel** was reviewed and CLOSED at
+main `92c9ed7610fb3f1c419788194f83979a63172731`. Closure is limited to this
+abstract flat subset and does not establish whole-NewLang or compiler correctness.
+The next reviewed track is F1; [F1.0's report](F1_0_STRUCTURAL_REFINEMENT_REPORT.md)
+records its structural state/invariant scaffold while retaining the closed F0 semantics.

@@ -10,3 +10,6 @@ import NewLang.F0.Reference
 import NewLang.F0.Counterexample.Reference
 import NewLang.F0.Domain
 import NewLang.F0.Counterexample.Domain
+
+import NewLang.F1.Erasure
+import NewLang.F1.Counterexample.Structural
