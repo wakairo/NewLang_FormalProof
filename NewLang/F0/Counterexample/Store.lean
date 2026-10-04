@@ -26,6 +26,7 @@ private def before (oldDependent incomingDependent otherDependent oldDiscardable
     else if p = thirdPackage then some (package otherDependent true) else none
   loosePackages := {incomingPackage, thirdPackage}
   liveDomains := {initialRoot.governing}
+  domainValueCarrier := fun d => if d ∈ ({initialRoot.governing} : Finset DomainId) then some ⟨d.index⟩ else none
   usedValueFacts := {initialRoot.currentFact, retiredFact}
   usedIncarnations := {initialRoot.incarnation}
 
@@ -107,6 +108,10 @@ theorem before_wellFormed (a b c d : Bool) : WellFormed (before a b c d) := by
     rcases before_live_iff.mp live with ⟨_, rfl⟩
     simp [before]
 
+  · intro dom
+    simp only [before]
+    split <;> simp_all
+
 private theorem raw (a b c : Bool) :
     RawStore True True (before a b c true) location initialRoot
       incomingPackage freshFact (after a b c true) where
@@ -161,7 +166,8 @@ private theorem after_structure (a b c d : Bool) :
 
 private theorem after_wellFormed (a d : Bool) : WellFormed (after a false false d) := by
   rcases after_structure a false false d with ⟨carriers, places, incarnations, present, domains, history⟩
-  refine ⟨carriers, places, incarnations, present, domains, ?_, history, ?_⟩
+  refine ⟨carriers, places, incarnations, present, domains, ?_, history, ?_,
+    (before_wellFormed a false false d).domainCarrierCoherent⟩
   · intro pkg value survivor defined fact dependency
     rcases after_survives_iff.mp survivor with incoming | other
     · subst pkg

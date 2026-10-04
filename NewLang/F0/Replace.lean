@@ -11,6 +11,7 @@ def replaceCandidate (s : State) (location : RootLocationId) (root : LiveRoot)
   packages := s.packages
   loosePackages := insert root.package (s.loosePackages.erase incoming)
   liveDomains := s.liveDomains
+  domainValueCarrier := s.domainValueCarrier
   usedValueFacts := insert newFact s.usedValueFacts
   usedIncarnations := s.usedIncarnations
 
@@ -185,6 +186,10 @@ theorem replace_rejects_previously_used_fact (used : newFact ∈ s.usedValueFact
 theorem replace_preserves_incarnation_history
     (h : RawReplace canWrite typeCompatible s location root incoming newFact s') : s'.usedIncarnations = s.usedIncarnations := by
   rw [h.post_eq]; rfl
+
+theorem replace_preserves_domain_carriers
+    (h : RawReplace canWrite typeCompatible s location root incoming newFact s') :
+    s'.domainValueCarrier = s.domainValueCarrier := by rw [h.post_eq]; rfl
 
 end
 end NewLang.F0

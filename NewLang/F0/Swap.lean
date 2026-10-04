@@ -16,6 +16,7 @@ def swapCandidate (s : State) (left right : RootLocationId) (a b : LiveRoot)
   packages := s.packages
   loosePackages := s.loosePackages
   liveDomains := s.liveDomains
+  domainValueCarrier := s.domainValueCarrier
   usedValueFacts := insert freshA (insert freshB s.usedValueFacts)
   usedIncarnations := s.usedIncarnations
 
@@ -291,6 +292,13 @@ theorem swap_same_preserves_incarnation_history (h : SwapSameStep wl wr tc s lef
 theorem swap_distinct_preserves_incarnation_history
     (h : RawSwapDistinct wl wr tc s left right a b fa fb s') : s'.usedIncarnations = s.usedIncarnations := by
   rw [h.post_eq]; rfl
+
+theorem swap_same_preserves_domain_carriers (h : SwapSameStep wl wr tc s left a s') :
+    s'.domainValueCarrier = s.domainValueCarrier := by rw [swap_same_is_identity h]
+
+theorem swap_distinct_preserves_domain_carriers
+    (h : RawSwapDistinct wl wr tc s left right a b fa fb s') :
+    s'.domainValueCarrier = s.domainValueCarrier := by rw [h.post_eq]; rfl
 
 end
 end NewLang.F0

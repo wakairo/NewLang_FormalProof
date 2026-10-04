@@ -12,6 +12,7 @@ def storeCandidate (s : State) (location : RootLocationId) (root : LiveRoot)
   packages := s.packages
   loosePackages := (s.loosePackages.erase incoming).erase root.package
   liveDomains := s.liveDomains
+  domainValueCarrier := s.domainValueCarrier
   usedValueFacts := insert newFact s.usedValueFacts
   usedIncarnations := s.usedIncarnations
 
@@ -234,6 +235,10 @@ theorem store_rejects_previously_used_fact (used : newFact ∈ s.usedValueFacts)
 theorem store_preserves_incarnation_history
     (h : RawStore canWrite typeCompatible s location root incoming newFact s') : s'.usedIncarnations = s.usedIncarnations := by
   rw [h.post_eq]; rfl
+
+theorem store_preserves_domain_carriers
+    (h : RawStore canWrite typeCompatible s location root incoming newFact s') :
+    s'.domainValueCarrier = s.domainValueCarrier := by rw [h.post_eq]; rfl
 
 end
 end NewLang.F0

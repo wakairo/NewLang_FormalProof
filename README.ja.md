@@ -1,16 +1,16 @@
-# NewLang F0 Formal Kernel — F0.5
+# NewLang F0 Formal Kernel — F0.6
 
-F0.0–F0.4はreview・merge済みです。F0.5ではpersistent ptr tokenと取得時点のref legalityを追加しました。exact live incarnation、同じgoverning domain、明示的stability evidenceと省略したaccess条件を要求します。旧tokenはlifetime終了後も残りますが、同じsiteでfresh再initializeしてもrefを取得できません。incarnation freshnessだけを省くとstale tokenが復活する反例もmachine-checkしました。F0.5は実装済み・PR review待ちです。
+F0.0–F0.5はreview・merge済みです。F0.6ではLifetimeDomain identityとabstract value carrierを分離しました。transferは同じlive DomainIdを保ったままcarrierを移し、governed rootとdependencyを保持します。明示的finalizationはidentityを終了し、そのcarrier entryを消費します。governed rootやsurviving DomainLive dependencyがあるとtransferは可能ですがfinalizationは拒否されます。F0.6は実装済みで、PR reviewとF0 closure reviewを待つ状態です。
 
 ## 仕様の優先順位
 
 1. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): normative specification / source of truth。
-2. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号のみを修正し、FORMAL-EXTRACTIONの解決履歴として記録しています。Draft 17.4は変更していません。
+2. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。Draft 17.4は変更していません。
 3. Lean model: proofのためのencoding。
 
 **Formal representation choices are non-normative.**
 
-Natで包んだID、Finset、関数によるmap、Boolのdiscardability、PackageIdは、NewLang compiler/runtime representationの要求ではありません。証明しやすさを理由にnormative semanticsを変更しません。
+6種類のcore IDと追加のnominal `DomainValueCarrierId`を区別します。domain carrierはmachine address・PlaceId・RootLocationId・PackageId・incarnationではありません。Natで包んだID、Finset、関数によるmap、Boolのdiscardability、PackageIdは、NewLang compiler/runtime representationの要求ではありません。証明しやすさを理由にnormative semanticsを変更しません。
 
 ## 固定した環境
 
@@ -77,10 +77,10 @@ bash scripts/bootstrap.sh
 
 | File / definition | Scope / source |
 | --- | --- |
-| `Id.lean` | nominally distinctな6種類のID (F0 §4) |
+| `Id.lean` | 6種類のcore nominal ID (F0 §4) とabstract DomainValueCarrierId |
 | `Fact.lean` | `valueFact(PlaceId, ValueFactId)` / `domainLive(DomainId)` (F0 §5) |
 | `Package.lean` | 有限dependency集合とdiscardability。payload/authorityは省略 (F0 §6) |
-| `State.lean` | vacant/live occupancy、package table、loose packages、live domains (F0 §7–9) |
+| `State.lean` | vacant/live occupancy、package table、loose packages、live domains、両history、domain carrier map (F0 §7–9 / §20) |
 | `LiveFacts` | occupancyとlive domainsから導出するview (F0 §5; Draft 17.4 §13.5a) |
 | `CarrierUnique` | installed/looseの同時存在と二重installationを排除 (F0 WF-1) |
 | `PlacesUnique` | 一つのplaceには一つのlive root/current fact (F0 WF-4; Draft 17.4 §13.5a) |
@@ -88,6 +88,8 @@ bash scripts/bootstrap.sh
 | `PackagesPresent` | installed/loose carrierは存在するpackageのみを参照 (F0 WF-7) |
 | `DomainsValid` | governing domainのliveness (F0 WF-5; Draft 17.4 §13.2) |
 | `DependenciesValid` | surviving packageのdependencyがLiveFactsに含まれる (F0 WF-6; Draft 17.4 §13.5a) |
+| `DomainCarrierCoherent` | live domain iff current carrier exists。逆方向のcarrier injectivityは要求しない |
+| `Domain.lean`, `Counterexample/Domain.lean` | domain lifecycleのproduction proofと分離した具体例・3種類のbreak-test |
 
 WF-2/3/8はdatatypeとderived carrierにより構造的に表現します。carrierはlocationで区別し、`PlacesUnique`によりWellFormedなstateでplaceと対応させます。同じplaceを持つ異なるrootが不正に二重installationされてもcarrier uniqueness checkから漏れません。
 
@@ -173,7 +175,7 @@ F0.3の45定理（production/helper/fixture）の一覧と、same-caseのidentit
 
 F0.4で78定理を追加auditします（既存operationのincarnation history保存4、lifetime production/helper 54、具体的fixture 20）。初期化・occupancy conservation・fresh reinitialize・take/destroy対比・domain lifecycle・authorization/discardability拒否・3種類の破壊試験の全一覧は[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)を参照してください。既存theorem statementとsemantic claimは変更せず、ghost historyをseedして従来の102 auditもすべて通っています。
 
-`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、208 theoremのaxiom reportを検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
+`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、266 theoremのaxiom report（旧208件をすべて保持）を検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
 
 ## F0.5 ptr / ref acquisition
 
@@ -185,13 +187,25 @@ F0.4で78定理を追加auditします（既存operationのincarnation history�
 
 take/reinitializeとdestroy/reinitializeで同じ固定RootSiteLayoutとlocationを維持します。同じfinal live stateでold ptrは拒否・fresh新ptrは受理です。replaceでcurrent factが変わっても同じptrは使えます。private break-testでincarnation freshness・取得時incarnation照合・domain照合の省略を分離しました。freshnessだけを省いた例は他のraw initialize条件とpre/postの全8 WellFormed fieldを満たします。
 
-[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)に新しい28定理（production 18、具体例・反例10）を列挙しています。既存180 audit、State、WellFormed、F0.0–F0.4 declaration、version pin、normative Draft 17.4は変更しません。
+[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)に新しい28定理（production 18、具体例・反例10）を列挙しています。F0.5時点では既存180 audit、State、WellFormed、F0.0–F0.4 declarationを保持しました。F0.6でState/WellFormedを以下のとおり拡張しますが、既存public theorem statement、version pin、normative Draft 17.4は変更しません。
+
+## F0.6 domain transfer / finalization
+
+`State.domainValueCarrier : DomainId → Option DomainValueCarrierId`はroot/package carrierと独立したabstract ownershipです。`DomainCarrierCoherent s`は`D ∈ s.liveDomains ↔ ∃ c, s.domainValueCarrier D = some c`を要求します。各Dのcurrent carrierは一つですが、複数Dが同じcarrierを共有できます。実際のLifetimeDomain-typed objectのplace/incarnationはモデル化しません。empty stateは全entryがnone、旧fixtureはlive domainをseedし、以前のoperationはmapを完全保存します。
+
+`domainTransferCandidate s D newCarrier`はDのcarrier entryだけを変更します。`RawDomainTransfer transferAllowed s D oldCarrier newCarrier post`はDのliveness、old carrier一致、callerの`transferAllowed`証明、candidate equalityを要求します。premiseは省略したsource-current-value capability conflictやtransfer applicabilityを抽象化し、productionで常にTrueにはしません。governed rootとDomainLive-dependent survivorはtransferを妨げません。同じDomainId、liveDomains、occupancy/Governs、package/dependency data、loose carriers、LiveFacts、両historyを保存し、WellFormed preからraw transferのWellFormed postも証明します。legal `DomainTransferStep`はpre/raw/postを明示します。
+
+`finalizeDomainCandidate s D`はliveDomainsからDを除き、Dのcarrier entryをnoneにします。`RawFinalizeDomain canFinalize s D carrier post`にはlive D、carrier一致、省略したscoped-capability/applicability条件のcaller証明、candidate equalityが必要です。legal `FinalizeDomainStep`はWellFormed pre/postも要求します。root・package・dependency・historyは変更せず、rootを自動destroy/retargetしません。postのDomainsValidからgoverned root不在、DependenciesValidからsurviving DomainLive dependency不在を導き、raw guardへ二重実装しません。同じcarrierを共有する別domainのownership entryは残ります。
+
+具体例でroot／DomainLive-dependent survivorがtransferを許しfinalizationを拒否する対比、独立した合法finalization、destroy後のfinalizationを証明しました。transfer後も同じptr・DomainIdによる取得が可能ですが、**postのcaller stability/access証明を別途要求**します。将来scope全体のref使用安全性の主張ではありません。dead domain、carrier不一致、permission欠如は拒否します。privateなidentity renameはpre/postがWellFormedでも正常transferではありません。unchecked finalizationの2例は他8 invariantを満たし、それぞれDomainsValidだけ／DependenciesValidだけに失敗します。
+
+LifetimeDomainのnon-Discardable境界は明示的finalizationで表現し、ValuePackage.discardableと統合しません。implicit domain discard、domain creation、usedDomainIds、general authority algebra、F1 geometryは追加しません。fresh domain creation/recreationはDraft 17.4 §13.1に基づく将来の義務です。58追加auditの一覧、M8 feedback、限定的F0 closure assessmentは[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)に記録します。
 
 ## GitHub Actions
 
 [`.github/workflows/lean.yml`](.github/workflows/lean.yml)はpush / pull_requestで実行します。read-only repository permission、Ubuntu 24.04、commit-pinned checkout v6.1.0を使用し、bootstrap prerequisitesを導入します。空のrunner temporary toolchain/cache pathで`bash scripts/bootstrap.sh`を実行し、固定toolchain / manifestによる`lake build`とproof checkerを実行します。latest Leanへのupgradeやmanifest更新は行いません。追加secretやserviceは不要です。開発は専用branchからmain向けPRを作成し、pull_request-triggered Lean proofsの成功を確認します。PRはsemantic reviewまでopenのまま残し、CI成功だけでmergeしません。
 
-## Canonical milestone sequenceと次のF0.6
+## Canonical milestone sequenceとF0 closure review
 
 | Milestone | Scope |
 | --- | --- |
@@ -200,9 +214,9 @@ take/reinitializeとdestroy/reinitializeで同じ固定RootSiteLayoutとlocation
 | F0.2 | store — 完了 |
 | F0.3 | swap — 完了 |
 | F0.4 | initialize / take / destroy — review・merge済み |
-| F0.5 | ptr / ref acquisition — 実装済み、PR review待ち |
-| F0.6 | LifetimeDomain transfer / finalization — F0.5 review後の次milestone |
+| F0.5 | ptr / ref acquisition — review・merge済み |
+| F0.6 | LifetimeDomain transfer / finalization — 実装済み、PR review待ち |
 
-F0.5のreview・merge後はF0.6のLifetimeDomain transfer/finalizationへ進めます。ref scope/non-escape、backing geometry、structural subobjectsは未実装です。NewLang全体のmemory/type safetyやcompiler correctnessは主張しません。
+F0.6 semantic review後は**F0 closure review**へ進み、F1 scopeを別途判断します。今回F1実装へは進みません。ref scope/non-escape、backing geometry、structural subobjectsは未実装です。NewLang全体のmemory/type safetyやcompiler correctnessは主張しません。
 
-[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)も参照してください。
+[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)も参照してください。

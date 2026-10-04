@@ -24,6 +24,7 @@ private def fixture (occupant : Option LiveRoot) (loose : Finset PackageId)
   packages := fun _ => some package
   loosePackages := loose
   liveDomains := {domain, wrongDomain}
+  domainValueCarrier := fun d => if d ∈ ({domain, wrongDomain} : Finset DomainId) then some ⟨d.index⟩ else none
   usedIncarnations := incarnations
   usedValueFacts := facts
 
@@ -51,6 +52,9 @@ private theorem vacant_wellFormed (loose : Finset PackageId) (incs : Finset Inca
   · exact fixture_dependencies_valid _ _ _ _
   · simp [ValueFactsRecorded, fixture]
   · simp [IncarnationsRecorded, fixture]
+  · intro dom
+    simp only [fixture]
+    split <;> simp_all
 
 private theorem live_wellFormed (pkg : PackageId) (inc fact : Nat) (loose : Finset PackageId)
     (incs : Finset IncarnationId) (facts : Finset ValueFactId)
@@ -69,6 +73,9 @@ private theorem live_wellFormed (pkg : PackageId) (inc fact : Nat) (loose : Fins
   · exact fixture_dependencies_valid _ _ _ _
   · intro l r live; rcases fixture_live_iff.mp live with ⟨_, rfl⟩; exact fact_recorded
   · intro l r live; rcases fixture_live_iff.mp live with ⟨_, rfl⟩; exact inc_recorded
+  · intro dom
+    simp only [fixture]
+    split <;> simp_all
 
 private def start : State := fixture none {pkgA, pkgB} ∅ ∅
 private def first : State := initializeCandidate sites start location pkgA domain ⟨1⟩ ⟨1⟩

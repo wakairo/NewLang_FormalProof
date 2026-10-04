@@ -221,6 +221,64 @@ declarations=(
   NewLang.F0.Counterexample.Reference.omitting_only_incarnation_freshness_revives_stale_ptr
   NewLang.F0.Counterexample.Reference.omitting_incarnation_match_accepts_old_ptr_after_fresh_reinitialize
   NewLang.F0.Counterexample.Reference.omitting_domain_match_accepts_wrong_live_domain
+  NewLang.F0.Counterexample.Domain.simple_domain_transfer_is_legal
+  NewLang.F0.Counterexample.Domain.governed_root_allows_transfer_but_rejects_finalization
+  NewLang.F0.Counterexample.Domain.DomainLive_dependency_allows_transfer_but_rejects_finalization
+  NewLang.F0.Counterexample.Domain.independent_domain_finalization_is_legal
+  NewLang.F0.Counterexample.Domain.one_carrier_may_hold_multiple_domain_identities
+  NewLang.F0.Counterexample.Domain.transfer_with_root_and_dependency_preserves_acquisition
+  NewLang.F0.Counterexample.Domain.unchecked_finalization_strands_governed_root_only
+  NewLang.F0.Counterexample.Domain.unchecked_finalization_strands_domain_dependency_only
+  NewLang.F0.Counterexample.Domain.ending_root_allows_later_domain_finalization
+  NewLang.F0.Counterexample.Domain.broken_identity_rename_can_preserve_wellFormed
+  NewLang.F0.Counterexample.Domain.missing_permissions_and_wrong_carriers_are_rejected
+  NewLang.F0.Counterexample.Domain.dead_domain_cannot_transfer_or_be_finalized_again
+  NewLang.F0.domain_transfer_preserves_wellFormed
+  NewLang.F0.domain_transfer_preserves_identity
+  NewLang.F0.domain_transfer_preserves_liveness
+  NewLang.F0.domain_transfer_moves_value_carrier
+  NewLang.F0.domain_transfer_preserves_other_carriers
+  NewLang.F0.domain_transfer_preserves_roots
+  NewLang.F0.domain_transfer_preserves_governing_relations
+  NewLang.F0.domain_transfer_preserves_packages
+  NewLang.F0.domain_transfer_preserves_histories
+  NewLang.F0.domain_transfer_preserves_liveFacts
+  NewLang.F0.domain_transfer_preserves_survivors
+  NewLang.F0.domain_transfer_preserves_DomainLive_dependencies
+  NewLang.F0.raw_domain_transfer_preserves_wellFormed
+  NewLang.F0.domain_transfer_step_of_raw
+  NewLang.F0.domain_transfer_preserves_acquire_ref
+  NewLang.F0.domain_transfer_rejects_missing_permission
+  NewLang.F0.domain_transfer_rejects_dead_domain
+  NewLang.F0.domain_transfer_rejects_wrong_carrier
+  NewLang.F0.finalize_domain_preserves_wellFormed
+  NewLang.F0.finalize_domain_ends_identity
+  NewLang.F0.finalize_domain_consumes_value_carrier
+  NewLang.F0.finalize_domain_preserves_other_domains
+  NewLang.F0.finalize_domain_liveDomains_subset
+  NewLang.F0.finalize_domain_preserves_other_carriers
+  NewLang.F0.finalize_domain_preserves_occupancy
+  NewLang.F0.finalize_domain_preserves_packages
+  NewLang.F0.finalize_domain_preserves_histories
+  NewLang.F0.finalize_domain_preserves_survivors
+  NewLang.F0.finalize_domain_preserves_carrier_coherence
+  NewLang.F0.finalize_domain_requires_no_governed_roots
+  NewLang.F0.finalize_domain_rejects_live_governed_root
+  NewLang.F0.finalize_domain_requires_no_surviving_domain_dependency
+  NewLang.F0.finalize_domain_rejects_surviving_domain_dependency
+  NewLang.F0.finalize_domain_rejects_dead_domain
+  NewLang.F0.finalize_domain_rejects_missing_permission
+  NewLang.F0.finalize_domain_rejects_wrong_carrier
+  NewLang.F0.finalized_domain_cannot_acquire_ref
+  NewLang.F0.initialize_preserves_domain_carriers
+  NewLang.F0.take_preserves_domain_carriers
+  NewLang.F0.destroy_preserves_domain_carriers
+  NewLang.F0.replace_preserves_domain_carriers
+  NewLang.F0.store_preserves_domain_carriers
+  NewLang.F0.swap_same_preserves_domain_carriers
+  NewLang.F0.swap_distinct_preserves_domain_carriers
+  NewLang.F0.wellFormed_live_domain_has_value_carrier
+  NewLang.F0.wellFormed_domain_carrier_implies_live_domain
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"

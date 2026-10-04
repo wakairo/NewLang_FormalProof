@@ -39,6 +39,11 @@ def ValueFactsRecorded (s : State) : Prop :=
 def IncarnationsRecorded (s : State) : Prop :=
   ∀ location root, s.occupancy location = .live root → root.incarnation ∈ s.usedIncarnations
 
+/-- Exactly one carrier for every live domain, no carrier for a dead domain.
+Different domain identities may share an abstract carrier; no reverse injectivity. -/
+def DomainCarrierCoherent (s : State) : Prop :=
+  ∀ domain, domain ∈ s.liveDomains ↔ ∃ carrier, s.domainValueCarrier domain = some carrier
+
 /-- WF-2/3/8 are structural: occupancy is exclusive, and its package is its carrier. -/
 structure WellFormed (s : State) : Prop where
   carrierUnique : CarrierUnique s
@@ -49,6 +54,17 @@ structure WellFormed (s : State) : Prop where
   dependenciesValid : DependenciesValid s
   valueFactsRecorded : ValueFactsRecorded s
   incarnationsRecorded : IncarnationsRecorded s
+  domainCarrierCoherent : DomainCarrierCoherent s
+
+theorem wellFormed_live_domain_has_value_carrier {s : State} (wf : WellFormed s)
+    {domain : DomainId} (live : domain ∈ s.liveDomains) :
+    ∃ carrier, s.domainValueCarrier domain = some carrier :=
+  (wf.domainCarrierCoherent domain).mp live
+
+theorem wellFormed_domain_carrier_implies_live_domain {s : State} (wf : WellFormed s)
+    {domain : DomainId} {carrier : DomainValueCarrierId}
+    (present : s.domainValueCarrier domain = some carrier) : domain ∈ s.liveDomains :=
+  (wf.domainCarrierCoherent domain).mpr ⟨carrier, present⟩
 
 /-- Machine-checked smoke theorem; covers installed and loose packages alike. -/
 theorem wellFormed_surviving_dependencies_live
@@ -69,5 +85,6 @@ theorem empty_wellFormed : WellFormed State.empty := by
   · simp [DependenciesValid, Survives, IsInstalled, Carries, State.empty]
   · simp [ValueFactsRecorded, State.empty]
   · simp [IncarnationsRecorded, State.empty]
+  · simp [DomainCarrierCoherent, State.empty]
 
 end NewLang.F0

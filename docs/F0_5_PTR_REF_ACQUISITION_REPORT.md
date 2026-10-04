@@ -189,10 +189,11 @@ The local clean build succeeds (623 jobs), and all 208 reports pass. Lean 4.34.1
 elan 4.2.4, mathlib `d13f23b723b8a846827a245b89c10fc7d3f11612`, all toolchain/
 manifest/bootstrap pins and the existing CI workflow are unchanged.
 
-Branch `f0.5-ptr-ref-acquisition` targets main through an open, unmerged PR. The
+Branch `f0.5-ptr-ref-acquisition` was reviewed and merged in PR #4. The
 existing `Lean proofs` workflow checks the committed pin/manifest in fresh runner
-paths. The PR records its final **pull_request-event current-head** CI URL/status;
-green CI does not merge the PR. No direct commit/push to main is performed.
+paths. The historical PR records its final **pull_request-event current-head** CI
+URL/status. F0.6 retains that workflow and follows the dedicated-branch/open-PR
+flow; CI success does not authorize automatic merge.
 
 - **FORMAL-ENCODING:** External location/incarnation token, source issuance versus
   arbitrary Lean construction, evidence domain versus evidence possession, omitted
@@ -214,7 +215,9 @@ compiler correctness. No ref shortening, NLL, read/write mutation semantics,
 pointer arithmetic/conversion/addr operation, general reference/ownership framework,
 or F0.6 transition is introduced.
 
-F0.5 is implemented and awaits semantic/formalization review. F0.4 is merged.
-After review and merge, the next milestone is **F0.6 — LifetimeDomain transfer /
-finalization**. This change supplies an acquisition observation kernel for that work,
-without extending the current scope into domain lifecycle transitions.
+F0.5 was reviewed and merged in PR #4 at main
+`47baa1885dc17263cacb6bf6623568644589101f`. This report records the F0.5-stage
+model and its 208 audits. F0.6 now extends State/WellFormed with domain carrier
+coherence while retaining those theorem statements and audits; see the
+[F0.6 report](F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md). The acquisition
+observation kernel is reused without adding future-use ref scope semantics.

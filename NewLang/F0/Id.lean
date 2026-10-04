@@ -25,4 +25,9 @@ structure RootLocationId where
   index : Nat
   deriving DecidableEq, Repr
 
+/-- Abstract owner of a domain value; not a machine address or a package/location ID. -/
+structure DomainValueCarrierId where
+  index : Nat
+  deriving DecidableEq, Repr
+
 end NewLang.F0

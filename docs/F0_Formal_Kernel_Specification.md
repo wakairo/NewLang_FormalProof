@@ -1199,6 +1199,33 @@ D ∉ liveDomains
 finalizeDomain cannot strand a governed live root
 ```
 
+
+### F0.6 implementation trace (non-normative)
+
+`NewLang/F0/Domain.lean` implements §20.2–3. A nominal `DomainValueCarrierId`
+and `State.domainValueCarrier : DomainId → Option DomainValueCarrierId`
+encode abstract ownership, independently of the actual place/incarnation holding
+an object whose type is LifetimeDomain. `DomainCarrierCoherent` requires live
+identity iff a current carrier exists; reverse carrier injectivity is not required.
+This is a proof representation, not source/runtime layout.
+
+Raw transfer changes only D's carrier and keeps the same live DomainId, roots,
+governing relations, package/dependency data and histories. Its explicit caller
+premise covers unmodeled source-current-value capability conflicts. DomainLive
+survivor dependencies and governed roots do not block transfer.
+
+Raw finalization removes D and its carrier entry, preserving roots/packages/data.
+Legal pre/raw/post WellFormed derives the two modeled §20.3 no-stranding conditions
+from DomainsValid and DependenciesValid, rather than duplicating them as raw guards.
+An explicit caller premise covers omitted scoped-capability/applicability conditions.
+There is no implicit discard, root destruction, retargeting or domain creation.
+Fresh creation identity and actual source-object geometry remain outside this subset.
+
+All 208 prior audits are retained; 58 additional audits cover coherence/frame,
+transfer/end properties, acquisition observation, concrete contrasts and three
+private break-tests. See [F0.6 report](F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)
+for M8 feedback and the limited F0 closure assessment. No Draft 17.4 rule changed.
+
 ---
 
 # 21. Authorization abstraction
