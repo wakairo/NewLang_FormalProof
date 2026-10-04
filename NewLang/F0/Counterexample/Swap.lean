@@ -24,6 +24,7 @@ private def before (da db dq : Finset Fact) : State where
     else if p = pkgB then some (package db) else if p = pkgQ then some (package dq) else none
   loosePackages := {pkgQ}
   liveDomains := {rootA.governing, rootB.governing}
+  domainValueCarrier := fun d => if d ∈ ({rootA.governing, rootB.governing} : Finset DomainId) then some ⟨d.index⟩ else none
   usedValueFacts := {rootA.currentFact, rootB.currentFact, retired}
   usedIncarnations := {rootA.incarnation, rootB.incarnation}
 
@@ -99,6 +100,10 @@ theorem before_wellFormed (da db dq : Finset Fact)
   · intro l r live
     rcases before_live_iff.mp live with ⟨_, rfl⟩ | ⟨_, rfl⟩ <;> simp [before]
 
+  · intro dom
+    simp only [before]
+    split <;> simp_all
+
 private theorem raw (da db dq : Finset Fact) :
     RawSwapDistinct True True True (before da db dq) left right rootA rootB
       freshA freshB (after da db dq) where
@@ -168,7 +173,8 @@ theorem independent_distinct_swap_is_legal :
       freshA freshB (after ∅ ∅ ∅) := by
   refine ⟨before_wellFormed _ _ _ (by simp) (by simp) (by simp), raw _ _ _, ?_⟩
   rcases after_structure ∅ ∅ ∅ with ⟨carriers, places, incarnations, present, domains, history⟩
-  refine ⟨carriers, places, incarnations, present, domains, ?_, history, ?_⟩
+  refine ⟨carriers, places, incarnations, present, domains, ?_, history, ?_,
+    (before_wellFormed ∅ ∅ ∅ (by simp) (by simp) (by simp)).domainCarrierCoherent⟩
   · intro p value survivor defined fact dep
     rcases after_survives_iff.mp survivor with rfl | rfl | rfl
     · have same : package ∅ = value := by simpa [after, swapCandidate, before, pkgA, pkgB] using defined

@@ -24,6 +24,8 @@ structure State where
   packages : PackageId → Option ValuePackage
   loosePackages : Finset PackageId
   liveDomains : Finset DomainId
+  /-- One current abstract value carrier per domain identity; not backing geometry. -/
+  domainValueCarrier : DomainId → Option DomainValueCarrierId
   /-- Proof-only allocation history; never shrink it when a fact stops being live. -/
   usedValueFacts : Finset ValueFactId
   /-- Proof-only history: ended incarnations remain unavailable for reuse. -/
@@ -74,6 +76,7 @@ def State.empty : State where
   packages := fun _ => none
   loosePackages := ∅
   liveDomains := ∅
+  domainValueCarrier := fun _ => none
   usedValueFacts := ∅
   usedIncarnations := ∅
 

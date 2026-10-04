@@ -24,6 +24,7 @@ private def before (self third discard domainDep : Bool) (generation : Nat) : St
     else if p = otherPkg then some (value third false true generation) else none
   loosePackages := {otherPkg}
   liveDomains := {domain, otherDomain}
+  domainValueCarrier := fun d => if d ∈ ({domain, otherDomain} : Finset DomainId) then some ⟨d.index⟩ else none
   usedValueFacts := {⟨generation⟩, ⟨9⟩}
   usedIncarnations := {⟨generation⟩, ⟨9⟩}
 
@@ -74,6 +75,9 @@ theorem before_wellFormed (a b c d : Bool) (g : Nat) : WellFormed (before a b c 
     simp [before, root, initializeRoot]
   · intro l r live; rcases before_live_iff.mp live with ⟨_, rfl⟩
     simp [before, root, initializeRoot]
+  · intro dom
+    simp only [before]
+    split <;> simp_all
 
 private theorem rawTake (a b c d : Bool) (g : Nat) :
     RawTake True (before a b c d g) location (root g) domain (taken a b c d g) :=
@@ -152,7 +156,8 @@ private theorem domain_only_dependencies {s : State} {dep disc : Bool} {g : Nat}
 private theorem taken_wellFormed (discard domainDep : Bool) (g : Nat) :
     WellFormed (taken false false discard domainDep g) := by
   rcases taken_structure false false discard domainDep g with ⟨cu, pu, iu, pp, dv, vf, inc⟩
-  refine ⟨cu, pu, iu, pp, dv, ?_, vf, inc⟩
+  refine ⟨cu, pu, iu, pp, dv, ?_, vf, inc,
+    (before_wellFormed false false discard domainDep g).domainCarrierCoherent⟩
   intro p v survivor defined fact dependency
   rcases taken_survives_iff.mp survivor with rfl | rfl
   · have same : value false domainDep discard g = v := by simpa [taken, takeCandidate, before] using defined
@@ -164,7 +169,8 @@ private theorem taken_wellFormed (discard domainDep : Bool) (g : Nat) :
 private theorem destroyed_wellFormed (self discard domainDep : Bool) (g : Nat) :
     WellFormed (destroyed self false discard domainDep g) := by
   rcases destroyed_structure self false discard domainDep g with ⟨cu, pu, iu, pp, dv, vf, inc⟩
-  refine ⟨cu, pu, iu, pp, dv, ?_, vf, inc⟩
+  refine ⟨cu, pu, iu, pp, dv, ?_, vf, inc,
+    (before_wellFormed self false discard domainDep g).domainCarrierCoherent⟩
   intro p v survivor defined fact dependency
   have samePkg := destroyed_survives_iff.mp survivor
   subst p
@@ -282,6 +288,7 @@ private def start : State where
   packages := (before false false false true 1).packages
   loosePackages := {oldPkg, otherPkg}
   liveDomains := {domain, otherDomain}
+  domainValueCarrier := fun d => if d ∈ ({domain, otherDomain} : Finset DomainId) then some ⟨d.index⟩ else none
   usedValueFacts := {⟨9⟩}
   usedIncarnations := {⟨9⟩}
 private def first : State := initializeCandidate sites start location oldPkg domain ⟨1⟩ ⟨1⟩
@@ -301,7 +308,8 @@ private theorem start_wellFormed : WellFormed start := by
     · exact ⟨value false true false 1, by simp [start, before]⟩
     · exact ⟨value false false true 1, by simp [start, before, oldPkg, otherPkg]⟩)
   rcases struct with ⟨cu, pu, iu, pp, dv, vf, inc⟩
-  refine ⟨cu, pu, iu, pp, dv, ?_, vf, inc⟩
+  refine ⟨cu, pu, iu, pp, dv, ?_, vf, inc,
+    by intro dom; simp only [start]; split <;> simp_all⟩
   intro p v survivor present fact dep
   have loose : p ∈ start.loosePackages := by
     rcases survivor with ⟨l, r, live, _⟩ | loose
@@ -364,7 +372,7 @@ private theorem third_wellFormed : WellFormed third := by
     by_cases same : l = location <;> simp [same]
   rw [equivalent]
   refine ⟨base.carrierUnique, base.placesUnique, base.incarnationsUnique, base.packagesPresent,
-    base.domainsValid, base.dependenciesValid, ?_, ?_⟩
+    base.domainsValid, base.dependenciesValid, ?_, ?_, base.domainCarrierCoherent⟩
   · intro l r live; rcases (before_live_iff (a := false) (b := false) (c := false) (d := true) (g := 2)).mp live with ⟨_, rfl⟩
     simp [root, initializeRoot]
   · intro l r live; rcases (before_live_iff (a := false) (b := false) (c := false) (d := true) (g := 2)).mp live with ⟨_, rfl⟩

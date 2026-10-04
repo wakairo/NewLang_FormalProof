@@ -1,8 +1,8 @@
-# NewLang F0 Formal Kernel — F0.5
+# NewLang F0 Formal Kernel — F0.6
 
 [日本語](README.ja.md)
 
-F0.0–F0.4 are reviewed and merged. F0.5 adds persistent ptr tokens and point-of-acquisition ref legality: exact live incarnation, matching governing domain, explicit stability evidence and omitted-access obligations. Old tokens survive lifetime end but cannot acquire a ref, even after fresh reinitialization at the same site. Omitting incarnation freshness demonstrably revives a stale token. F0.5 is implemented; PR review is pending.
+F0.0–F0.5 are reviewed and merged. F0.6 separates LifetimeDomain identity from its abstract value carrier: transfer moves the carrier while keeping the same live DomainId, governed roots and dependencies; explicit finalization ends the identity and consumes its carrier entry. Governed roots and surviving DomainLive dependencies permit transfer but block finalization. F0.6 is implemented; PR review and F0 closure review are pending.
 
 ## Specification boundary
 
@@ -12,7 +12,7 @@ F0.0–F0.4 are reviewed and merged. F0.5 adds persistent ptr tokens and point-o
 
 **Formal representation choices are non-normative.**
 
-The six nominal ID types wrap natural numbers. Finsets, function-based maps, package IDs, and Boolean discardability do not prescribe NewLang compiler or runtime representations. Proof convenience must not change the normative semantics. Draft 17.4 is preserved verbatim. The non-normative F0 bridge retains its original Japanese text, with the milestone-number correction recorded as resolved FORMAL-EXTRACTION history.
+The six core nominal ID types and the additional abstract `DomainValueCarrierId` wrap natural numbers. Finsets, function-based maps, package IDs, and Boolean discardability do not prescribe NewLang compiler or runtime representations. A domain value carrier is not a machine address, PlaceId, RootLocationId, PackageId or incarnation. Proof convenience must not change the normative semantics. Draft 17.4 is preserved verbatim. The non-normative F0 bridge retains its original Japanese text, with implementation traceability notes and the milestone-number correction recorded as resolved FORMAL-EXTRACTION history.
 
 ## Pinned environment
 
@@ -79,10 +79,10 @@ The cloud bootstrap was tested from empty toolchain directories and a project co
 
 | File / definition | Scope and source |
 | --- | --- |
-| `NewLang/F0/Id.lean` | Six nominally distinct identities; F0 §4 |
+| `NewLang/F0/Id.lean` | Six core nominal identities (F0 §4) and an abstract domain value carrier identity |
 | `NewLang/F0/Fact.lean` | Value facts and domain liveness; F0 §5 |
 | `NewLang/F0/Package.lean` | Finite dependencies and discardability; F0 §6 |
-| `NewLang/F0/State.lean` | Vacant/live occupancy, packages, loose packages, live domains; F0 §7–9 |
+| `NewLang/F0/State.lean` | Vacant/live occupancy, packages, loose packages, live domains, allocation histories and domain carrier map; F0 §7–9 / §20 |
 | `LiveFacts` | Derived from occupancy and live domains; F0 §5, Draft 17.4 §13.5a |
 | `CarrierUnique` | No duplicate installation or installed/loose overlap; F0 WF-1 |
 | `PlacesUnique` | One live root and current fact per place; F0 WF-4 |
@@ -92,6 +92,7 @@ The cloud bootstrap was tested from empty toolchain directories and a project co
 | `DependenciesValid` | Every surviving dependency is live; F0 WF-6, Draft 17.4 §13.5a |
 | `ValueFactsRecorded` | Every current fact belongs to the proof-only allocation history |
 | `IncarnationsRecorded`, `LiveIncarnation` | Recorded live incarnations and a derived liveness view |
+| `DomainCarrierCoherent` | A domain is live iff its current value carrier exists; no reverse carrier injectivity |
 | `NewLang/F0/Replace.lean` | Atomic candidate, raw relation, legal step, and replace-specific proofs |
 | `NewLang/F0/Counterexample/Replace.lean` | Isolated positive examples and dependency/freshness countermodels |
 | `NewLang/F0/Store.lean` | Atomic store candidate, discardability premise, raw/legal relations and proofs; F0 §15, Draft 17.4 §13.5a / §17.4 |
@@ -100,6 +101,9 @@ The cloud bootstrap was tested from empty toolchain directories and a project co
 | `NewLang/F0/Counterexample/Swap.lean` | Legal same/distinct witnesses, self/cross/cyclic/third rejection and freshness break-tests |
 | `NewLang/F0/Lifetime.lean` | Fixed site/place layout, initialize/take/destroy raw/legal relations, governing relation lifecycle; Draft 17.4 §14 / F0 §17–19 |
 | `NewLang/F0/Counterexample/Lifetime.lean` | Lifetime legal witnesses, survivor contrast, occupancy round-trip, fresh reinitialization and omitted-check tests |
+| `NewLang/F0/Reference.lean`, `Counterexample/Reference.lean` | Persistent ptr / point-of-acquisition legality and stale-token controls; F0.5 |
+| `NewLang/F0/Domain.lean` | Domain transfer/finalization candidates, raw/legal relations and no-stranding proofs; Draft 17.4 §13.1–3 / §14.5–6 |
+| `NewLang/F0/Counterexample/Domain.lean` | Transfer/end contrasts, legal lifecycle/acquisition witnesses and three isolated break-tests |
 
 WF-2/3/8 follow structurally from exclusive occupancy and its derived installed carrier. Carriers distinguish locations, and `PlacesUnique` establishes their correspondence with live places. Malformed roots sharing a place cannot hide duplicate package installation.
 
@@ -165,9 +169,21 @@ At the visible value level destroy resembles take followed by discarding the ret
 
 AcquireRef proves point-of-acquisition legality/current liveness. It does not yet prove full future-use scope stability. No lexical scope graph, ref non-escape, general read/write semantics, or ref-to-ptr conversion is introduced.
 
-The same fixed RootSiteLayout and location are used in both take/reinitialize and destroy/reinitialize fixtures. In the final live state, old ptr fails and freshly issued ptr succeeds. Replace changes the current value fact while the same ptr remains usable. Three private break-tests isolate omitted incarnation freshness, omitted acquisition incarnation match, and omitted domain match; the freshness-only example satisfies all other raw initialize conditions and all eight pre/post WellFormed fields.
+The same fixed RootSiteLayout and location are used in both take/reinitialize and destroy/reinitialize fixtures. In the final live state, old ptr fails and freshly issued ptr succeeds. Replace changes the current value fact while the same ptr remains usable. Three private break-tests isolate omitted incarnation freshness, omitted acquisition incarnation match, and omitted domain match; the freshness-only example satisfies all other raw initialize conditions and all pre/post WellFormed fields.
 
-The [F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md) lists all 28 new audited theorems (18 production, 10 concrete controls/countermodels), preserving the existing 180 audits. State, WellFormed, F0.0–F0.4 declarations, pins and normative Draft 17.4 remain unchanged.
+The [F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md) lists its 28 added audits (18 production, 10 concrete controls/countermodels), preserving the prior 180. During F0.5, State and WellFormed were unchanged. F0.6 now extends them as described below; existing public theorem statements, toolchain pins and normative Draft 17.4 remain unchanged.
+
+## F0.6 domain transfer / finalization
+
+`State.domainValueCarrier : DomainId → Option DomainValueCarrierId` tracks abstract ownership independently of root/package carriers. `DomainCarrierCoherent s` requires `D ∈ s.liveDomains ↔ ∃ c, s.domainValueCarrier D = some c`. Option gives one current carrier per domain; several domains may share one carrier. This proof encoding does not model the place/incarnation of an actual LifetimeDomain-typed object. Empty state has no carriers; older fixtures seed live domains and all earlier operation candidates preserve the map exactly.
+
+`domainTransferCandidate s D newCarrier` changes only D's carrier entry. `RawDomainTransfer transferAllowed s D oldCarrier newCarrier post` requires D live, the matching old carrier, a caller proof of `transferAllowed`, and candidate equality. That premise abstracts unmodeled source-current-value capability conflicts and ordinary transfer applicability. It is never universally True in production. Governed roots and DomainLive-dependent survivors are not transfer blockers: identity, live domains, occupancy/Governs, package/dependency data, loose carriers, LiveFacts and both histories are unchanged. A raw transfer from a well-formed state preserves WellFormed, and `DomainTransferStep` explicitly records pre/raw/post legality.
+
+`finalizeDomainCandidate s D` removes D from liveDomains and clears only its carrier entry. `RawFinalizeDomain canFinalize s D carrier post` requires a live domain, matching carrier, a caller proof for omitted scoped-capability/applicability conditions, and candidate equality. `FinalizeDomainStep` also checks WellFormed pre/post. Roots, packages, dependencies and histories are unchanged; there is no automatic root destruction or retargeting. Post-state DomainsValid derives the no-governed-root condition, and DependenciesValid derives the no-surviving-DomainLive-dependency condition. These modeled conditions are not duplicated as raw guards. Finalization consumes D's ownership entry, not every domain sharing that carrier.
+
+Concrete controls prove transfer remains legal with a governed root or domain-dependent survivor while finalization rejects, legal independent finalization exists, and destroy can end a root before later finalization. Transfer preserves acquisition for the same ptr and DomainId **given post-state caller stability/access proofs**; this does not prove an acquired ref remains usable through arbitrary future scopes. Dead domains, wrong carriers and missing caller permission reject. A private identity-renaming transfer has well-formed endpoints but violates the real transfer relation. Two unchecked finalization candidates fail only DomainsValid or only DependenciesValid, respectively, while the other eight fields hold.
+
+LifetimeDomain's non-Discardable boundary is represented by explicit finalization, separate from `ValuePackage.discardable`; no implicit domain-discard operation exists. F0.6 adds no domain creation, usedDomainIds, general authority algebra or F1 geometry. Fresh domain creation/recreation remains a future obligation under Draft 17.4 §13.1. See the [F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md) for all 58 added audits, M8 feedback and the limited F0 closure assessment.
 
 ## Machine-checked theorem inventory
 
@@ -197,7 +213,7 @@ F0.3 adds 45 audited production/helper/fixture theorems: same-case identity/hist
 
 F0.4 audits 78 additional declarations: four incarnation-history preservation lemmas for prior operations, 54 lifetime production/helper theorems and 20 concrete fixtures. The [complete F0.4 inventory/report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md) covers initialization, vacancy/carrier conservation, fresh reinitialization, take/destroy survivor contrast, governing relation end versus domain survival, authorization/domain/discardability rejection and three omitted-check tests. Existing theorem statements and semantic claims remain unchanged; all 102 earlier audits still pass with correctly seeded ghost state.
 
-`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 208 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
+`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 266 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. All previous 208 audits remain. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
 
 ## GitHub Actions
 
@@ -212,9 +228,9 @@ F0.4 audits 78 additional declarations: four incarnation-history preservation le
 | F0.2 | store — complete |
 | F0.3 | swap — complete |
 | F0.4 | initialize / take / destroy — reviewed and merged |
-| F0.5 | ptr / ref acquisition — implemented; PR review pending |
-| F0.6 | LifetimeDomain transfer / finalization — next after F0.5 review |
+| F0.5 | ptr / ref acquisition — reviewed and merged |
+| F0.6 | LifetimeDomain transfer / finalization — implemented; PR review pending |
 
-After F0.5 review and merge, F0.6 can address LifetimeDomain transfer/finalization. Ref scope/non-escape, backing geometry and structural subobjects remain unimplemented. Whole-language memory/type safety and compiler correctness are not claimed.
+After F0.6 semantic review, the next step is **F0 closure review**, followed by a separately decided F1 scope. Ref scope/non-escape, backing geometry and structural subobjects remain unimplemented. The checked flat kernel does not establish whole-language memory/type safety or compiler correctness. This milestone stops before F1 implementation.
 
-See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)), the [F0.1 report](docs/F0_1_REPLACE_REPORT.md), the [F0.2 report](docs/F0_2_STORE_REPORT.md), the [F0.3 report](docs/F0_3_SWAP_REPORT.md), the [F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), and the [F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md).
+See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md).

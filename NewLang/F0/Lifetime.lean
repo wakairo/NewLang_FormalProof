@@ -24,6 +24,7 @@ def initializeCandidate (sites : RootSiteLayout) (s : State) (location : RootLoc
   packages := s.packages
   loosePackages := s.loosePackages.erase pkg
   liveDomains := s.liveDomains
+  domainValueCarrier := s.domainValueCarrier
   usedValueFacts := insert fact s.usedValueFacts
   usedIncarnations := insert incarnation s.usedIncarnations
 
@@ -50,6 +51,7 @@ def takeCandidate (s : State) (location : RootLocationId) (root : LiveRoot) : St
   packages := s.packages
   loosePackages := insert root.package s.loosePackages
   liveDomains := s.liveDomains
+  domainValueCarrier := s.domainValueCarrier
   usedValueFacts := s.usedValueFacts
   usedIncarnations := s.usedIncarnations
 
@@ -59,6 +61,7 @@ def destroyCandidate (s : State) (location : RootLocationId) (root : LiveRoot) :
   packages := s.packages
   loosePackages := s.loosePackages.erase root.package
   liveDomains := s.liveDomains
+  domainValueCarrier := s.domainValueCarrier
   usedValueFacts := s.usedValueFacts
   usedIncarnations := s.usedIncarnations
 
@@ -175,6 +178,10 @@ theorem initialize_rejects_dead_domain (dead : domain ∉ s.liveDomains) :
 theorem initialize_rejects_missing_authority (missing : ¬ ci) :
     ¬ RawInitialize sites ci tc s location pkg domain incarnation fact s' := by
   intro h; exact missing h.initialize_allowed
+
+theorem initialize_preserves_domain_carriers
+    (h : RawInitialize sites ci tc s location pkg domain incarnation fact s') :
+    s'.domainValueCarrier = s.domainValueCarrier := by rw [h.post_eq]; rfl
 
 end Initialize
 
@@ -379,6 +386,12 @@ theorem destroy_rejects_nondiscardable_old_package {value : ValuePackage}
   rcases h.old_discardable with ⟨actual, defined, allowed⟩
   have same := Option.some.inj (present.symm.trans defined)
   simp [← same, nondiscardable] at allowed
+
+theorem take_preserves_domain_carriers (h : RawTake ce s location root domain s') :
+    s'.domainValueCarrier = s.domainValueCarrier := by rw [h.post_eq]; rfl
+
+theorem destroy_preserves_domain_carriers (h : RawDestroy ce s location root domain s') :
+    s'.domainValueCarrier = s.domainValueCarrier := by rw [h.post_eq]; rfl
 
 end EndRoot
 end NewLang.F0
