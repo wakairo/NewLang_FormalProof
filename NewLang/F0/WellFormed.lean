@@ -12,7 +12,7 @@ def PlacesUnique (s : State) : Prop :=
     s.occupancy l₁ = .live r₁ → s.occupancy l₂ = .live r₂ →
     r₁.place = r₂.place → l₁ = l₂
 
-/-- An incarnation identifies one live root; historical freshness is deferred. -/
+/-- An incarnation identifies one live root; allocation history is recorded separately. -/
 def IncarnationsUnique (s : State) : Prop :=
   ∀ l₁ l₂ r₁ r₂,
     s.occupancy l₁ = .live r₁ → s.occupancy l₂ = .live r₂ →
@@ -35,6 +35,10 @@ def DependenciesValid (s : State) : Prop :=
 def ValueFactsRecorded (s : State) : Prop :=
   ∀ location root, s.occupancy location = .live root → root.currentFact ∈ s.usedValueFacts
 
+/-- All live incarnations have been allocated in the ghost history. -/
+def IncarnationsRecorded (s : State) : Prop :=
+  ∀ location root, s.occupancy location = .live root → root.incarnation ∈ s.usedIncarnations
+
 /-- WF-2/3/8 are structural: occupancy is exclusive, and its package is its carrier. -/
 structure WellFormed (s : State) : Prop where
   carrierUnique : CarrierUnique s
@@ -44,6 +48,7 @@ structure WellFormed (s : State) : Prop where
   domainsValid : DomainsValid s
   dependenciesValid : DependenciesValid s
   valueFactsRecorded : ValueFactsRecorded s
+  incarnationsRecorded : IncarnationsRecorded s
 
 /-- Machine-checked smoke theorem; covers installed and loose packages alike. -/
 theorem wellFormed_surviving_dependencies_live
@@ -63,5 +68,6 @@ theorem empty_wellFormed : WellFormed State.empty := by
   · simp [DomainsValid, State.empty]
   · simp [DependenciesValid, Survives, IsInstalled, Carries, State.empty]
   · simp [ValueFactsRecorded, State.empty]
+  · simp [IncarnationsRecorded, State.empty]
 
 end NewLang.F0

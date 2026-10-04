@@ -1,6 +1,6 @@
-# NewLang F0 Formal Kernel — F0.3
+# NewLang F0 Formal Kernel — F0.4
 
-F0.2までのstate / WellFormed / historical freshness / replace / store基盤へ、F0.3のswapを追加しました。same-placeはexact no-op、distinct-placeはdependency dataを保持したatomic package exchangeです。self/cross/cyclic/第三survivorのold-fact dependencyをrejectする具体的proofをmachine-checkしました。実装済みoperationはreplace・store・swapです。
+F0.3までのstate / replace / store / swap基盤へ、F0.4のinitialize / take / destroyとhistorical incarnation freshnessを追加しました。同じ自己依存pre-stateでtakeは拒否・atomic destroyは合法です。initialize → take → 同じsiteでinitializeの経路で、旧IDを履歴に残したまま異なるincarnation/current factを使うことをmachine-checkしました。ptr/ref acquisitionはF0.5です。
 
 ## 仕様の優先順位
 
@@ -99,7 +99,7 @@ WF-2/3/8はdatatypeとderived carrierにより構造的に表現します。carr
 
 Raw replaceとRaw storeは新IDをinsertし、distinct swapは互いに異なる2つのfresh IDをinsertします。same-place swapでは割当てを行いません。すべて以前の履歴全体を保持します。storeも同じ`FreshValueFact` / `ValueFactsRecorded`を再利用し、history monotonicityとold factの履歴保持を証明しました。現在deadでも使用済みのIDはfreshではありません。countermodelではID 2がその具体例です。初期状態には過去の割当てをすべて記録し、将来のallocating transitionも履歴を保持・拡張する必要があります。live factsだけから履歴を再構成してはいけません。
 
-この履歴は**proof-only ghost state**であり、NewLang compiler/runtimeにhistory setを要求しません。F0.4では同じ方式で`usedIncarnations : Finset IncarnationId`へ自然に拡張できますが、今回は未実装です。finite-support、payload、authority algebra、borrow checker、structural places、scope/backing facts、他operationも未検証です。
+この履歴は**proof-only ghost state**であり、NewLang compiler/runtimeにhistory setを要求しません。F0.4で同じ方式の`usedIncarnations : Finset IncarnationId`、`FreshIncarnation`、`IncarnationsRecorded`を実装しました。既存candidateはincarnation historyを完全保存し、fixtureではlive incarnationをseedします。initializeだけが両historyを拡張し、take/destroyはended IDも消しません。これはproof encoding extensionであり、F0.1–F0.3のsemantic revisionではありません。finite-support、payload、authority algebra、borrow checker、structural places、scope/backing facts、他operationも未検証です。
 
 ## replace semantics
 
@@ -131,6 +131,20 @@ preservation自体はpost-state条件のprojectionです。実質的な性質と
 
 両旧packageは相手locationでsurviveし、両旧factはdeadになります。通常のpost-state `DependenciesValid`だけでself/cross/cyclic/第三survivorの依存を拒否します。同じ自己依存pre-stateでsame-placeは合法、distinct-placeは拒否です。cyclic raw candidateは他のWellFormed fieldをすべて満たし、dependency validityだけに失敗します。
 
+## Lifetime / occupancy semantics
+
+F0.4ではsource-level slot/ptr/refとbacking geometryを、root location・Vacant/live occupancy・package carrier・domainで抽象化します。**Root-only requirement is structurally satisfied by F0 scope.** すべてのlive occupancyがlifetime rootで、Vacantは同じsiteのempty occupancy responsibilityです。slot value、PtrToken、subobject、Storage、BackingRegionは導入しません。
+
+`RootSiteLayout`は実行のproof contextで固定するinjectiveな`RootLocationId → PlaceId`対応です。initializeは同じlayout/siteからPlaceIdを得るため、fresh PlaceIdをmintしません。nominal型を分離したまま、既存stateへglobalなlayout-coherence invariantを追加しません。既存operationはplaceを保持します。lifecycle witnessでは同じlayout/locationでplaceが同一、incarnationが異なることを証明します。fixtureの数値対応はruntime formatを意味せず、FORMAL-ENCODINGとして扱います。
+
+`RawInitialize`はvacant target、loose incoming、渡されたlive domain、fresh incarnation/current fact、ordinary initialization authorizationとtype agreementを要求します。incomingをinstallし、**渡されたdomain**へのgoverning relationを作り、両IDをhistoryへ記録します。Discardableやlifetime-ending authorityは不要です。package tableを変更せず、incomingのdata/dependencyからgoverning relationを復元しません。
+
+`RawTake` / `RawDestroy`はlive root、`endingDomain = root.governing`、callerが証明するabstract Prop `CanEndRoot`を要求します。productionで常にTrueとしません。両方ともincarnation/current fact/governing relationを終了してVacantへ戻し、**DomainId自体はliveのまま**です。他location、package data、両historyは保存します。takeは旧値をloose resultへ返し、non-discardableも許します。destroyは旧値のdiscardabilityを追加要求してcarrierを消費し、inactiveなtable recordは残して構いません。
+
+visible value levelではdestroyはtake後のdiscardに相当しますが、dependency legalityは一つのcombined candidateで判定し、legal TakeStepを先に要求しません。old-only self-dependencyはtakeを拒否しdestroyでは消費できます。他survivorが同じ依存を持つ場合は両方rejectします。**destroy uses the existing proof-side abstraction; this is not a runtime package flag requirement.** destructor/Dropは追加しません。
+
+3つのStepはWellFormed pre/raw/postを検査します。preservationのprojectionに加え、carrier/history/frame、identity終了、dependency拒否を個別証明しました。initialize/take/reinitializeの具体例は同じvacancyとunique loose carrierを復元しますが、履歴は元へ戻さず旧incarnationの再利用を拒否します。Governs / LiveIncarnationはderived viewで、別のmutable relation tableではありません。
+
 ## Machine-checked theorem一覧
 
 以下は`NewLang.F0` namespaceです。
@@ -157,24 +171,26 @@ F0.2ではstoreのWellFormed / incarnation / governing domain / place / location
 
 F0.3の45定理（production/helper/fixture）の一覧と、same-caseのidentity・distinct-caseの保存/交換/2-fact freshness・old fact失効・self/cross/cyclic/第三survivor拒否・non-discardable witness・履歴再利用/新ID衝突拒否・broken dependency checkは[F0.3 report](docs/F0_3_SWAP_REPORT.md)を参照してください。既存F0.0/F0.1/F0.2 proofも維持しています。
 
-`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、102 theoremのaxiom reportを検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
+F0.4で78定理を追加auditします（既存operationのincarnation history保存4、lifetime production/helper 54、具体的fixture 20）。初期化・occupancy conservation・fresh reinitialize・take/destroy対比・domain lifecycle・authorization/discardability拒否・3種類の破壊試験の全一覧は[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)を参照してください。既存theorem statementとsemantic claimは変更せず、ghost historyをseedして従来の102 auditもすべて通っています。
+
+`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、180 theoremのaxiom reportを検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
 
 ## GitHub Actions
 
 [`.github/workflows/lean.yml`](.github/workflows/lean.yml)はpush / pull_requestで実行します。read-only repository permission、Ubuntu 24.04、commit-pinned checkout v6.1.0を使用し、bootstrap prerequisitesを導入します。空のrunner temporary toolchain/cache pathで`bash scripts/bootstrap.sh`を実行し、固定toolchain / manifestによる`lake build`とproof checkerを実行します。latest Leanへのupgradeやmanifest更新は行いません。追加secretやserviceは不要です。開発は専用branchからmain向けPRを作成し、pull_request-triggered Lean proofsの成功を確認します。PRはsemantic reviewまでopenのまま残し、CI成功だけでmergeしません。
 
-## Canonical milestone sequenceと次のF0.4
+## Canonical milestone sequenceと次のF0.5
 
 | Milestone | Scope |
 | --- | --- |
 | F0.0 | State / WellFormed — 完了 |
 | F0.1 | replace — 完了 |
 | F0.2 | store — 完了 |
-| F0.3 | swap — 実装済み、PR review待ち |
-| F0.4 | initialize / take / destroy — F0.3 review後の次milestone |
-| F0.5 | ptr / ref acquisition |
+| F0.3 | swap — 完了 |
+| F0.4 | initialize / take / destroy — 実装済み、PR review待ち |
+| F0.5 | ptr / ref acquisition — F0.4 review後の次milestone |
 | F0.6 | LifetimeDomain transfer / finalization |
 
-F0.3のreview・merge後はF0.4へ進める基盤があります。固定環境とhistory / candidate / dependency machineryを再利用できます。initialize/take/destroy以降のoperationとusedIncarnationsは未実装で、NewLang全体のtype safetyやcompiler correctnessも主張しません。
+F0.4のreview・merge後はhistorical incarnation、LiveIncarnation、same-site fresh reinitialization proofを使ってF0.5へ進めます。PtrToken/ref acquisition、domain finalization、backing geometry、structural subobjectsは未実装で、NewLang全体のtype safetyやcompiler correctnessも主張しません。
 
-[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)も参照してください。
+[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)も参照してください。

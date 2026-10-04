@@ -1,8 +1,8 @@
-# NewLang F0 Formal Kernel — F0.3
+# NewLang F0 Formal Kernel — F0.4
 
 [日本語](README.ja.md)
 
-F0.0–F0.2 established state, well-formedness, historical freshness, replace and store. F0.3 adds swap: same-place is an exact no-op; distinct-place atomically exchanges installed packages while preserving their dependency data. Concrete proofs reject self, cross, cyclic and third-survivor dependencies on invalidated old facts. Only replace, store and swap are implemented.
+F0.0–F0.3 established the flat state and lifetime-preserving replace/store/swap. F0.4 adds initialize/take/destroy, historical incarnation freshness, and machine-checked occupancy round-trips. A concrete self-dependent old value rejects take but admits atomic destroy; reinitializing the same site uses a different incarnation and current fact while retaining both old identities. Ptr/ref acquisition remains F0.5.
 
 ## Specification boundary
 
@@ -91,12 +91,15 @@ The cloud bootstrap was tested from empty toolchain directories and a project co
 | `DomainsValid` | A live root's governing domain is live; F0 WF-5, Draft 17.4 §13.2 |
 | `DependenciesValid` | Every surviving dependency is live; F0 WF-6, Draft 17.4 §13.5a |
 | `ValueFactsRecorded` | Every current fact belongs to the proof-only allocation history |
+| `IncarnationsRecorded`, `LiveIncarnation` | Recorded live incarnations and a derived liveness view |
 | `NewLang/F0/Replace.lean` | Atomic candidate, raw relation, legal step, and replace-specific proofs |
 | `NewLang/F0/Counterexample/Replace.lean` | Isolated positive examples and dependency/freshness countermodels |
 | `NewLang/F0/Store.lean` | Atomic store candidate, discardability premise, raw/legal relations and proofs; F0 §15, Draft 17.4 §13.5a / §17.4 |
 | `NewLang/F0/Counterexample/Store.lean` | Same-state replace/store contrast, legal store witness, survivor and discardability break-tests |
 | `NewLang/F0/Swap.lean` | Same/distinct raw relations, atomic candidate, fresh pair, legal step and swap proofs; F0 §16, Draft 17.4 §13.5a / §17.4 |
 | `NewLang/F0/Counterexample/Swap.lean` | Legal same/distinct witnesses, self/cross/cyclic/third rejection and freshness break-tests |
+| `NewLang/F0/Lifetime.lean` | Fixed site/place layout, initialize/take/destroy raw/legal relations, governing relation lifecycle; Draft 17.4 §14 / F0 §17–19 |
+| `NewLang/F0/Counterexample/Lifetime.lean` | Lifetime legal witnesses, survivor contrast, occupancy round-trip, fresh reinitialization and omitted-check tests |
 
 WF-2/3/8 follow structurally from exclusive occupancy and its derived installed carrier. Carriers distinguish locations, and `PlacesUnique` establishes their correspondence with live places. Malformed roots sharing a place cannot hide duplicate package installation.
 
@@ -108,7 +111,7 @@ Occupancy is a total function; the package table is an Option-valued partial map
 
 Each raw replace or store inserts its new identity; distinct swap inserts two mutually distinct fresh identities. Same-place swap allocates nothing. All retain the whole previous history. `replace_history_monotone` / `store_history_monotone` and their old-fact retention theorems prove this retention. Thus an allocated identity cannot become eligible for reuse merely by becoming dead. A concrete countermodel has identity 2 recorded but currently dead and proves it cannot be fresh. Initial states must seed the history with all earlier allocations; future allocating transitions must preserve and extend it, never reconstruct it from live facts.
 
-This history is **proof-only ghost state**, not a normative requirement for compiler/runtime history storage. A separate `usedIncarnations : Finset IncarnationId` can follow the same pattern for F0.4; it is not implemented yet. Payload, authority algebra, finite-support proofs, borrow checking, structural places, scope/backing facts, and other operations remain outside this milestone.
+This history is **proof-only ghost state**, not a normative requirement for compiler/runtime history storage. F0.4 implements `usedIncarnations : Finset IncarnationId`, `FreshIncarnation` and `IncarnationsRecorded` using the same pattern. All existing candidates preserve incarnation history exactly, and their fixtures seed every live incarnation. Initialize extends both histories; take/destroy preserve both without erasing ended IDs. This is a proof encoding extension, not a revision of F0.1–F0.3 semantics. Payload, authority algebra, finite-support proofs, borrow checking, structural places, scope/backing facts, and other operations remain outside this milestone.
 
 ## Replace semantics
 
@@ -140,6 +143,20 @@ The preservation theorem projects post-state legality; substantive lemmas separa
 
 Both old packages survive at the opposite locations, while both old facts die. The ordinary post-state `DependenciesValid` rejects left/right self and cross dependencies, cyclic laundering, and dependencies in any third survivor. Packages move; exact dependencies never retarget. The same self-dependent pre-state permits same-place swap and rejects distinct swap. A cyclic raw candidate satisfies every other WellFormed field and fails only dependency validity.
 
+## Lifetime / occupancy semantics
+
+F0.4 abstracts source-level slot/ptr/ref and backing geometry using a root location, Vacant/live occupancy, package carriers and domains. **Root-only requirement is structurally satisfied by F0 scope:** every live occupancy is a lifetime root. Vacant represents the site's empty occupancy responsibility; no explicit slot value, PtrToken, subobject, Storage or BackingRegion is introduced.
+
+`RootSiteLayout` is an immutable, injective `RootLocationId → PlaceId` association fixed in the proof context of an execution. Initialize obtains the place from that same layout/site, without minting a fresh PlaceId. Nominal types remain distinct, and older states gain no new global layout-coherence invariant. Existing operations preserve their root places. The lifecycle witness uses the same layout/location for both starts and proves identical places with different incarnations. This is non-normative FORMAL-ENCODING; the numeric layout used by fixtures is not a runtime format.
+
+`RawInitialize` requires a vacant target, loose incoming package, supplied live domain, fresh incarnation/current fact, ordinary initialization authorization and type agreement. It installs the incoming package, creates a governing relation to the **supplied domain**, and inserts both identities into ghost history. It requires neither Discardable nor lifetime-ending authority. The incoming package table is unchanged; governing state is not recovered from its dependencies or value data.
+
+`RawTake` / `RawDestroy` require a live root, `endingDomain = root.governing` and a caller proof of `CanEndRoot` (an abstract Prop, never universally True in production). Both end the incarnation/current fact/root governing relation and restore Vacant. **Domain identity itself stays live**, all other locations/package data are unchanged, and histories are retained. Take returns the old package as a loose survivor and permits non-discardable values. Destroy additionally requires the existing old-package discardability abstraction and consumes every old carrier; an inactive table record may remain.
+
+At the visible value level destroy resembles take followed by discarding the returned value. Dependency legality checks one combined destroy candidate; it does not first require a legal TakeStep. Thus old-only self-dependency rejects take but can be consumed by destroy, while a third surviving dependent package rejects both. `destroy uses the existing proof-side abstraction; this is not a runtime package flag requirement.` No destructor/Drop semantics is added.
+
+`InitializeStep`, `TakeStep`, `DestroyStep` all check WellFormed pre/raw/post. Preservation projections are supplemented by explicit carrier/history/frame, identity end and negative dependency proofs. The concrete initialize/take/reinitialize witness restores a unique loose package carrier and the same vacancy; history prevents equality with the original state and prevents old incarnation reuse. Governs/LiveIncarnation are derived views, not separate mutable relation tables.
+
 ## Machine-checked theorem inventory
 
 All names below are in `NewLang.F0` unless qualified otherwise.
@@ -166,7 +183,9 @@ F0.2 additionally checks `store_preserves_wellFormed`, `store_preserves_incarnat
 
 F0.3 adds 45 audited production/helper/fixture theorems: same-case identity/history/current/package and legality; distinct preservation, exchange and survival; pair freshness/history; both old-fact invalidation lemmas; generic and left/right self/cross rejection; reused/colliding fact rejection; independent and non-discardable witnesses; same-vs-distinct contrast; cyclic/third-survivor rejection and the broken dependency-check countermodel. See the [complete F0.3 theorem inventory](docs/F0_3_SWAP_REPORT.md). All existing F0.0/F0.1/F0.2 proofs remain checked.
 
-`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 102 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
+F0.4 audits 78 additional declarations: four incarnation-history preservation lemmas for prior operations, 54 lifetime production/helper theorems and 20 concrete fixtures. The [complete F0.4 inventory/report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md) covers initialization, vacancy/carrier conservation, fresh reinitialization, take/destroy survivor contrast, governing relation end versus domain survival, authorization/domain/discardability rejection and three omitted-check tests. Existing theorem statements and semantic claims remain unchanged; all 102 earlier audits still pass with correctly seeded ghost state.
+
+`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 180 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
 
 ## GitHub Actions
 
@@ -179,11 +198,11 @@ F0.3 adds 45 audited production/helper/fixture theorems: same-case identity/hist
 | F0.0 | State / WellFormed — complete |
 | F0.1 | replace — complete |
 | F0.2 | store — complete |
-| F0.3 | swap — implemented; PR review pending |
-| F0.4 | initialize / take / destroy — next after F0.3 review |
-| F0.5 | ptr / ref acquisition |
+| F0.3 | swap — complete |
+| F0.4 | initialize / take / destroy — implemented; PR review pending |
+| F0.5 | ptr / ref acquisition — next after F0.4 review |
 | F0.6 | LifetimeDomain transfer / finalization |
 
-F0.4 can reuse the pinned environment, allocation history and candidate/dependency machinery after F0.3 review and merge. Initialize/take/destroy, usedIncarnations and later operations are not implemented. Whole-language type safety and compiler correctness are not claimed.
+After F0.4 review and merge, F0.5 can use historical incarnation tracking, LiveIncarnation and the fresh same-site reinitialization theorem. PtrToken/ref acquisition, domain finalization, backing geometry and structural subobjects are not implemented. Whole-language type safety and compiler correctness are not claimed.
 
-See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)), the [F0.1 report](docs/F0_1_REPLACE_REPORT.md), the [F0.2 report](docs/F0_2_STORE_REPORT.md), and the [F0.3 report](docs/F0_3_SWAP_REPORT.md).
+See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)), the [F0.1 report](docs/F0_1_REPLACE_REPORT.md), the [F0.2 report](docs/F0_2_STORE_REPORT.md), the [F0.3 report](docs/F0_3_SWAP_REPORT.md), and the [F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md).

@@ -27,6 +27,7 @@ private def before (oldDependent incomingDependent otherDependent oldDiscardable
   loosePackages := {incomingPackage, thirdPackage}
   liveDomains := {initialRoot.governing}
   usedValueFacts := {initialRoot.currentFact, retiredFact}
+  usedIncarnations := {initialRoot.incarnation}
 
 private def after (a b c d : Bool) : State :=
   storeCandidate (before a b c d) location initialRoot incomingPackage freshFact
@@ -102,6 +103,10 @@ theorem before_wellFormed (a b c d : Bool) : WellFormed (before a b c d) := by
     rcases before_live_iff.mp live with ⟨_, rfl⟩
     simp [before]
 
+  · intro l r live
+    rcases before_live_iff.mp live with ⟨_, rfl⟩
+    simp [before]
+
 private theorem raw (a b c : Bool) :
     RawStore True True (before a b c true) location initialRoot
       incomingPackage freshFact (after a b c true) where
@@ -156,19 +161,22 @@ private theorem after_structure (a b c d : Bool) :
 
 private theorem after_wellFormed (a d : Bool) : WellFormed (after a false false d) := by
   rcases after_structure a false false d with ⟨carriers, places, incarnations, present, domains, history⟩
-  refine ⟨carriers, places, incarnations, present, domains, ?_, history⟩
-  intro pkg value survivor defined fact dependency
-  rcases after_survives_iff.mp survivor with incoming | other
-  · subst pkg
-    have value_eq : package false false = value := by
-      simpa [after, storeCandidate, before, oldPackage, incomingPackage] using defined
-    subst value
-    simp [package] at dependency
-  · subst pkg
-    have value_eq : package false true = value := by
-      simpa [after, storeCandidate, before, oldPackage, incomingPackage, thirdPackage] using defined
-    subst value
-    simp [package] at dependency
+  refine ⟨carriers, places, incarnations, present, domains, ?_, history, ?_⟩
+  · intro pkg value survivor defined fact dependency
+    rcases after_survives_iff.mp survivor with incoming | other
+    · subst pkg
+      have value_eq : package false false = value := by
+        simpa [after, storeCandidate, before, oldPackage, incomingPackage] using defined
+      subst value
+      simp [package] at dependency
+    · subst pkg
+      have value_eq : package false true = value := by
+        simpa [after, storeCandidate, before, oldPackage, incomingPackage, thirdPackage] using defined
+      subst value
+      simp [package] at dependency
+  · intro l r live
+    rcases after_live_iff.mp live with ⟨_, rfl⟩
+    simp [after, storeCandidate, before]
 
 /-- A concrete legal store consumes an old self-dependency in the same atomic transition. -/
 theorem store_can_eliminate_old_only_dependency :

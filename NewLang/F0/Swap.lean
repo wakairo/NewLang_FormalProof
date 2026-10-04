@@ -17,6 +17,7 @@ def swapCandidate (s : State) (left right : RootLocationId) (a b : LiveRoot)
   loosePackages := s.loosePackages
   liveDomains := s.liveDomains
   usedValueFacts := insert freshA (insert freshB s.usedValueFacts)
+  usedIncarnations := s.usedIncarnations
 
 structure RawSwapSame (canWriteLeft canWriteRight typeCompatible : Prop)
     (s : State) (location : RootLocationId) (root : LiveRoot) (s' : State) : Prop where
@@ -283,6 +284,13 @@ theorem swap_rejects_reused_right_fact (used : fb ∈ s.usedValueFacts) :
 theorem swap_rejects_colliding_new_facts (same : fa = fb) :
     ¬ RawSwapDistinct wl wr tc s left right a b fa fb s' := by
   intro h; exact h.fresh.2.2 same
+
+theorem swap_same_preserves_incarnation_history (h : SwapSameStep wl wr tc s left a s') :
+    s'.usedIncarnations = s.usedIncarnations := by rw [swap_same_is_identity h]
+
+theorem swap_distinct_preserves_incarnation_history
+    (h : RawSwapDistinct wl wr tc s left right a b fa fb s') : s'.usedIncarnations = s.usedIncarnations := by
+  rw [h.post_eq]; rfl
 
 end
 end NewLang.F0
