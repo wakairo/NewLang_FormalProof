@@ -1,6 +1,6 @@
-# NewLang F0 Formal Kernel — F0.1
+# NewLang F0 Formal Kernel — F0.2
 
-F0.0のflat State / WellFormed基盤に、F0.1としてproof-only historical freshnessと`replace`を追加しました。preservationとdependency non-launderingをmachine-checkしています。今回実装したoperationは`replace`のみです。
+F0.0のState / WellFormed、F0.1のhistorical freshness / `replace`に、F0.2のatomic `store`を追加しました。discardableな旧packageだけが持つold-current dependencyは、そのpackageと同時に消費できる一方、survivorのdependencyは引き続きrejectします。同じpre-stateからreplaceは拒否・storeは合法となる具体的な証明をmachine-checkしました。実装済みoperationは`replace`と`store`です。
 
 ## 仕様の優先順位
 
@@ -97,7 +97,7 @@ WF-2/3/8はdatatypeとderived carrierにより構造的に表現します。carr
 
 `State.usedValueFacts : Finset ValueFactId`にexecution historyで割り当てたIDを記録します。`FreshValueFact s vf`は`vf ∉ s.usedValueFacts`です。`WellFormed.valueFactsRecorded`により、liveなcurrent factは必ず履歴へ含まれます。`State.empty`の履歴は空で、既存smoke theoremは再証明済みです。
 
-Raw replaceは新IDをinsertし、以前の履歴全体を保持します。`replace_history_monotone`と`replace_old_fact_remains_used`を証明しました。現在deadでも使用済みのIDはfreshではありません。countermodelではID 2がその具体例です。初期状態には過去の割当てをすべて記録し、将来のallocating transitionも履歴を保持・拡張する必要があります。live factsだけから履歴を再構成してはいけません。
+Raw replaceとRaw storeは新IDをinsertし、以前の履歴全体を保持します。storeも同じ`FreshValueFact` / `ValueFactsRecorded`を再利用し、history monotonicityとold factの履歴保持を証明しました。現在deadでも使用済みのIDはfreshではありません。countermodelではID 2がその具体例です。初期状態には過去の割当てをすべて記録し、将来のallocating transitionも履歴を保持・拡張する必要があります。live factsだけから履歴を再構成してはいけません。
 
 この履歴は**proof-only ghost state**であり、NewLang compiler/runtimeにhistory setを要求しません。F0.4では同じ方式で`usedIncarnations : Finset IncarnationId`へ自然に拡張できますが、今回は未実装です。finite-support、payload、authority algebra、borrow checker、structural places、scope/backing facts、他operationも未検証です。
 
@@ -108,6 +108,16 @@ Raw replaceは新IDをinsertし、以前の履歴全体を保持します。`rep
 `RawReplace canWrite typeCompatible s location root incoming newFact s'`はpre-stateのlive root、incoming loose、historical freshness、callerが証明するwrite/type compatibility premise、candidateとの等式を保持します。resultは`root.package`です。production側ではauthorization premiseを常にTrueと定義しません。countermodelのみTrueを与えてstate/dependency ruleを独立に検証します。exclusive refやlifetime-ending authorityは要求しません。
 
 `ReplaceStep`は`WellFormed s ∧ RawReplace ... ∧ WellFormed s'`です。preservation theorem自体はpost-state条件のprojectionですが、raw transitionがすべて合法になるという主張ではありません。candidateの具体的更新、carrier transfer、freshness、old factのinvalidation、surviving dependencyからのrejectを別々に証明しています。依存のないlegal replaceの具体例も証明済みです。
+
+## store semantics
+
+visible value levelでは、storeはreplacementの旧値をdiscardする動作に相当します。ただしdependency legalityでは**一つのcombined transition**です。「legal ReplaceStepを先に要求し、そのresultをdiscardする」という定義ではありません。
+
+`storeCandidate`はtargetのcurrent fact / packageを更新し、incomingとoldのloose carrierを除去します。package tableとlive domainsを保存し、新factをhistoryへ追加します。`RawStore`はwrite/typeのcaller premiseと、旧`ValuePackage`の存在・`discardable = true`を要求します。incomingのdiscardability、exclusive ref、lifetime-ending authorityは要求せず、destructor / Drop semanticsも追加しません。
+
+`StoreStep = WellFormed pre ∧ RawStore ∧ WellFormed post`です。unit resultには旧値のcarrierがありません。pre-stateのcarrier uniquenessがincoming = oldと旧値の二重installationを排除するため、旧packageはpost-stateでsurviveしません。table recordは残しますが、carrierのない記録は`DependenciesValid`の対象外です。これはproof encodingであり、runtimeの物理削除やmemory managementの要求ではありません。
+
+preservation自体はpost-state条件のprojectionです。実質的な性質としてcarrier消費、old factの失効、frame、history保持を別に証明しました。同じ初期状態のself-dependentなdiscardable旧値について、replaceは拒否されstoreは合法です。第三のloose survivorやincomingが同じdependencyを持つ場合はstoreも拒否します。discardability guardを省くとpost-stateがWellFormedでもnon-discardable旧値を失えるため、このguardはtransition legalityに必要です。
 
 ## Machine-checked theorem一覧
 
@@ -131,24 +141,26 @@ Raw replaceは新IDをinsertし、以前の履歴全体を保持します。`rep
 
 `NewLang.F0.Counterexample.Replace`には`before_wellFormed`、`independent_replace_is_legal`、`unchecked_replace_launders_old_dependency`、`old_dependency_is_rejected`、`incoming_dependency_is_rejected`、`currently_dead_is_not_historically_fresh`があります。dependency checkを外したraw candidateは他のWellFormed fieldをすべて満たし、`DependenciesValid`だけが失敗します。broken Stepをproduction namespaceへ追加していません。
 
-`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、23 theoremのaxiom reportを検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
+F0.2ではstoreのWellFormed / incarnation / governing domain / place / location / frame保存、fresh factと履歴保持、incoming installation、旧package非survival、old fact失効、other survivor保存、第三survivor・incomingのdependency拒否、non-discardable拒否、使用済みfact再利用拒否を証明しました。具体的なreplace/store対比と3種類のbreak-testを含む全定理一覧は[F0.2 report](docs/F0_2_STORE_REPORT.md)を参照してください。既存F0.1 proofもすべて維持しています。
+
+`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、57 theoremのaxiom reportを検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
 
 ## GitHub Actions
 
-[`.github/workflows/lean.yml`](.github/workflows/lean.yml)はpush / pull_requestで実行します。read-only repository permission、Ubuntu 24.04、commit-pinned checkout v6.1.0を使用し、bootstrap prerequisitesを導入します。空のrunner temporary toolchain/cache pathで`bash scripts/bootstrap.sh`を実行し、固定toolchain / manifestによる`lake build`とproof checkerを実行します。latest Leanへのupgradeやmanifest更新は行いません。追加secretやserviceは不要です。
+[`.github/workflows/lean.yml`](.github/workflows/lean.yml)はpush / pull_requestで実行します。read-only repository permission、Ubuntu 24.04、commit-pinned checkout v6.1.0を使用し、bootstrap prerequisitesを導入します。空のrunner temporary toolchain/cache pathで`bash scripts/bootstrap.sh`を実行し、固定toolchain / manifestによる`lake build`とproof checkerを実行します。latest Leanへのupgradeやmanifest更新は行いません。追加secretやserviceは不要です。開発は専用branchからmain向けPRを作成し、pull_request-triggered Lean proofsの成功を確認します。PRはsemantic reviewまでopenのまま残し、CI成功だけでmergeしません。
 
-## Canonical milestone sequenceと次のF0.2
+## Canonical milestone sequenceと次のF0.3
 
 | Milestone | Scope |
 | --- | --- |
 | F0.0 | State / WellFormed — 完了 |
 | F0.1 | replace — 完了 |
-| F0.2 | store — 次 |
-| F0.3 | swap |
+| F0.2 | store — 実装済み、PR review待ち |
+| F0.3 | swap — F0.2 review後の次milestone |
 | F0.4 | initialize / take / destroy |
 | F0.5 | ptr / ref acquisition |
 | F0.6 | LifetimeDomain transfer / finalization |
 
-次は`store`です。historyとcandidate/dependency machineryを再利用できますが、old packageはresultとしてsurviveさせずconsumeする必要があります。store以降のoperationは今回は実装していません。NewLang全体のtype safetyやcompiler correctnessも主張しません。
+F0.2のreview・merge後はF0.3 `swap`へ進める基盤があります。固定環境とhistory / candidate / dependency machineryを再利用できます。swap以降のoperationとusedIncarnationsは未実装で、NewLang全体のtype safetyやcompiler correctnessも主張しません。
 
-[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)も参照してください。
+[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)も参照してください。

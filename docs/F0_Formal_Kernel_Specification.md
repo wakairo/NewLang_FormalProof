@@ -863,6 +863,19 @@ ValueFact(P, VF_old)
 
 これは `store` を literal `replace` then `discard` として legality checkしない理由を形式化する。
 
+### F0.2 implementation trace (non-normative)
+
+`NewLang/F0/Store.lean` implements `storeCandidate`, `RawStore`, and `StoreStep`.
+The candidate consumes the old carrier, installs the incoming package, and extends
+the F0.1 proof-only allocation history. Uncarried package-table records may remain;
+only surviving carriers participate in dependency validation. The existing Boolean
+old-package discardability premise is a static abstraction.
+
+`NewLang/F0/Counterexample/Store.lean` checks a legal old-only-dependency store
+and illegal replace from the same pre-state, plus other-survivor, incoming, and
+non-discardable rejection. See `docs/F0_2_STORE_REPORT.md` for traceability and
+theorem inventory. This implementation note changes no semantic rule.
+
 ---
 
 # 16. `swap`
