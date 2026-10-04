@@ -1292,6 +1292,26 @@ initialize same location with fresh incarnation
 
 後もold ptrのincarnation idは一致しないため、safe refを再取得できない。
 
+### F0.5 implementation trace (non-normative)
+
+`NewLang/F0/Reference.lean` implements §22.1–2 without changing State or
+WellFormed. PtrToken remains exactly location + incarnation, external to State.
+Successful InitializeStep is connected to the current result token by a theorem;
+arbitrary Lean value construction is not source-safe issuance. RawAcquireRef is
+a non-mutating derivation requiring an exact live location/incarnation, matching
+current governing domain, explicit ordinary stability evidence and omitted
+access/provenance/representation/backing obligations. AcquireRef adds WellFormed.
+Domain-live alone is not stability evidence. No persistent RefToken is introduced.
+
+Fixed-layout/site take and destroy lifecycle witnesses reject the old token and
+accept the freshly initialized token in the same final live state. Replace's
+current-fact change preserves pointer usability. Isolated private break-tests
+show stale revival when only initialization incarnation freshness or acquisition
+incarnation correspondence is omitted; a domain-match omission also accepts wrong
+evidence. AcquireRef proves point-of-acquisition legality/current liveness, not
+full future-use scope stability. §22.3 is deferred. See
+`docs/F0_5_PTR_REF_ACQUISITION_REPORT.md`. No normative rule changes.
+
 ## 22.3 Ref scope
 
 lexical scope / dependencyは F0 reference extensionの第二段階。

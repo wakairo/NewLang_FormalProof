@@ -6,3 +6,5 @@ import NewLang.F0.Swap
 import NewLang.F0.Counterexample.Swap
 import NewLang.F0.Lifetime
 import NewLang.F0.Counterexample.Lifetime
+import NewLang.F0.Reference
+import NewLang.F0.Counterexample.Reference

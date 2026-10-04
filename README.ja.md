@@ -1,6 +1,6 @@
-# NewLang F0 Formal Kernel — F0.4
+# NewLang F0 Formal Kernel — F0.5
 
-F0.3までのstate / replace / store / swap基盤へ、F0.4のinitialize / take / destroyとhistorical incarnation freshnessを追加しました。同じ自己依存pre-stateでtakeは拒否・atomic destroyは合法です。initialize → take → 同じsiteでinitializeの経路で、旧IDを履歴に残したまま異なるincarnation/current factを使うことをmachine-checkしました。ptr/ref acquisitionはF0.5です。
+F0.0–F0.4はreview・merge済みです。F0.5ではpersistent ptr tokenと取得時点のref legalityを追加しました。exact live incarnation、同じgoverning domain、明示的stability evidenceと省略したaccess条件を要求します。旧tokenはlifetime終了後も残りますが、同じsiteでfresh再initializeしてもrefを取得できません。incarnation freshnessだけを省くとstale tokenが復活する反例もmachine-checkしました。F0.5は実装済み・PR review待ちです。
 
 ## 仕様の優先順位
 
@@ -173,13 +173,25 @@ F0.3の45定理（production/helper/fixture）の一覧と、same-caseのidentit
 
 F0.4で78定理を追加auditします（既存operationのincarnation history保存4、lifetime production/helper 54、具体的fixture 20）。初期化・occupancy conservation・fresh reinitialize・take/destroy対比・domain lifecycle・authorization/discardability拒否・3種類の破壊試験の全一覧は[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)を参照してください。既存theorem statementとsemantic claimは変更せず、ghost historyをseedして従来の102 auditもすべて通っています。
 
-`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、180 theoremのaxiom reportを検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
+`lake build`はproductionとcounterexampleの両moduleをチェックします。`scripts/check-proofs.sh`はproject-owned Lean sourceの`sorry` / `axiom` / `admit`をscanし、208 theoremのaxiom reportを検査します。許可するのはLean標準の`propext`・`Classical.choice`・`Quot.sound`のみです。Leanの失敗statusを保持し、複数行のreportにも対応します。docsのproseとmathlib sourceはproject-source scanの対象外です。
+
+## F0.5 ptr / ref acquisition
+
+`PtrToken`のfieldは`location : RootLocationId`と`incarnation : IncarnationId`だけです。persistentな外部数学的valueで、Stateへregistryを追加しません。current ValueFactId / DomainIdは持ちません。任意のLean value構築はsource-safe issuanceではなく、Lean equalityもsource-level ptr equalityではありません。`initialize_yields_current_ptr`で既存の成功InitializeStepとresult tokenを接続し、pre-lifetime minting operationは追加しません。
+
+`RawAcquireRef stable access s ptr evidenceDomain`はexact locationのlive root・一致するincarnation・同じgoverning DomainId・`stable`の証明・`access`の証明を要求します。`AcquireRef`はさらにWellFormed sを要求します。取得はProp derivationで、state mutation / persistent RefTokenはありません。evidence domainとordinary stability evidenceの所持を区別し、domain-liveだけでは取得できません。`access`はprovenance、representation、originating BackingRegion liveness、alignment、range、read/write accessの省略条件です。productionで両Propを常にTrueにはしません。共通acquisition kernelで、exclusiveやwriteとending authorityの同一視を要求しません。
+
+証明対象は取得時点のlegality/current livenessです。将来のuse scope stabilityは未証明です。lexical scope graph、ref non-escape、一般的read/write semantics、ref -> ptr conversionは追加しません。
+
+take/reinitializeとdestroy/reinitializeで同じ固定RootSiteLayoutとlocationを維持します。同じfinal live stateでold ptrは拒否・fresh新ptrは受理です。replaceでcurrent factが変わっても同じptrは使えます。private break-testでincarnation freshness・取得時incarnation照合・domain照合の省略を分離しました。freshnessだけを省いた例は他のraw initialize条件とpre/postの全8 WellFormed fieldを満たします。
+
+[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)に新しい28定理（production 18、具体例・反例10）を列挙しています。既存180 audit、State、WellFormed、F0.0–F0.4 declaration、version pin、normative Draft 17.4は変更しません。
 
 ## GitHub Actions
 
 [`.github/workflows/lean.yml`](.github/workflows/lean.yml)はpush / pull_requestで実行します。read-only repository permission、Ubuntu 24.04、commit-pinned checkout v6.1.0を使用し、bootstrap prerequisitesを導入します。空のrunner temporary toolchain/cache pathで`bash scripts/bootstrap.sh`を実行し、固定toolchain / manifestによる`lake build`とproof checkerを実行します。latest Leanへのupgradeやmanifest更新は行いません。追加secretやserviceは不要です。開発は専用branchからmain向けPRを作成し、pull_request-triggered Lean proofsの成功を確認します。PRはsemantic reviewまでopenのまま残し、CI成功だけでmergeしません。
 
-## Canonical milestone sequenceと次のF0.5
+## Canonical milestone sequenceと次のF0.6
 
 | Milestone | Scope |
 | --- | --- |
@@ -187,10 +199,10 @@ F0.4で78定理を追加auditします（既存operationのincarnation history�
 | F0.1 | replace — 完了 |
 | F0.2 | store — 完了 |
 | F0.3 | swap — 完了 |
-| F0.4 | initialize / take / destroy — 実装済み、PR review待ち |
-| F0.5 | ptr / ref acquisition — F0.4 review後の次milestone |
-| F0.6 | LifetimeDomain transfer / finalization |
+| F0.4 | initialize / take / destroy — review・merge済み |
+| F0.5 | ptr / ref acquisition — 実装済み、PR review待ち |
+| F0.6 | LifetimeDomain transfer / finalization — F0.5 review後の次milestone |
 
-F0.4のreview・merge後はhistorical incarnation、LiveIncarnation、same-site fresh reinitialization proofを使ってF0.5へ進めます。PtrToken/ref acquisition、domain finalization、backing geometry、structural subobjectsは未実装で、NewLang全体のtype safetyやcompiler correctnessも主張しません。
+F0.5のreview・merge後はF0.6のLifetimeDomain transfer/finalizationへ進めます。ref scope/non-escape、backing geometry、structural subobjectsは未実装です。NewLang全体のmemory/type safetyやcompiler correctnessは主張しません。
 
-[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)も参照してください。
+[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)も参照してください。

@@ -1,8 +1,8 @@
-# NewLang F0 Formal Kernel — F0.4
+# NewLang F0 Formal Kernel — F0.5
 
 [日本語](README.ja.md)
 
-F0.0–F0.3 established the flat state and lifetime-preserving replace/store/swap. F0.4 adds initialize/take/destroy, historical incarnation freshness, and machine-checked occupancy round-trips. A concrete self-dependent old value rejects take but admits atomic destroy; reinitializing the same site uses a different incarnation and current fact while retaining both old identities. Ptr/ref acquisition remains F0.5.
+F0.0–F0.4 are reviewed and merged. F0.5 adds persistent ptr tokens and point-of-acquisition ref legality: exact live incarnation, matching governing domain, explicit stability evidence and omitted-access obligations. Old tokens survive lifetime end but cannot acquire a ref, even after fresh reinitialization at the same site. Omitting incarnation freshness demonstrably revives a stale token. F0.5 is implemented; PR review is pending.
 
 ## Specification boundary
 
@@ -157,6 +157,18 @@ At the visible value level destroy resembles take followed by discarding the ret
 
 `InitializeStep`, `TakeStep`, `DestroyStep` all check WellFormed pre/raw/post. Preservation projections are supplemented by explicit carrier/history/frame, identity end and negative dependency proofs. The concrete initialize/take/reinitialize witness restores a unique loose package carrier and the same vacancy; history prevents equality with the original state and prevents old incarnation reuse. Governs/LiveIncarnation are derived views, not separate mutable relation tables.
 
+## F0.5 ptr / ref acquisition
+
+`PtrToken` has exactly `location : RootLocationId` and `incarnation : IncarnationId`. It is a persistent external mathematical value; no token registry is added to State. It contains neither current ValueFactId nor DomainId. Arbitrary Lean construction is not source-safe issuance, and Lean equality is not source-level pointer equality. `initialize_yields_current_ptr` connects a successful existing InitializeStep to its corresponding result token; no pre-lifetime minting operation is introduced.
+
+`RawAcquireRef stable access s ptr evidenceDomain` requires a live root at the exact location, identical incarnation, matching governing DomainId, a proof of `stable` and a proof of `access`. `AcquireRef` also requires WellFormed s. Acquisition is a Prop derivation, with no state mutation and no persistent RefToken. The evidence domain is separate from possession of ordinary stability evidence; even a live domain does not establish that possession. `access` abstracts provenance, representation, originating BackingRegion liveness, alignment, range and required read/write access. Production never fixes either caller proposition to True. This is the common acquisition kernel, with no exclusive/write-equals-ending-authority requirement.
+
+AcquireRef proves point-of-acquisition legality/current liveness. It does not yet prove full future-use scope stability. No lexical scope graph, ref non-escape, general read/write semantics, or ref-to-ptr conversion is introduced.
+
+The same fixed RootSiteLayout and location are used in both take/reinitialize and destroy/reinitialize fixtures. In the final live state, old ptr fails and freshly issued ptr succeeds. Replace changes the current value fact while the same ptr remains usable. Three private break-tests isolate omitted incarnation freshness, omitted acquisition incarnation match, and omitted domain match; the freshness-only example satisfies all other raw initialize conditions and all eight pre/post WellFormed fields.
+
+The [F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md) lists all 28 new audited theorems (18 production, 10 concrete controls/countermodels), preserving the existing 180 audits. State, WellFormed, F0.0–F0.4 declarations, pins and normative Draft 17.4 remain unchanged.
+
 ## Machine-checked theorem inventory
 
 All names below are in `NewLang.F0` unless qualified otherwise.
@@ -185,7 +197,7 @@ F0.3 adds 45 audited production/helper/fixture theorems: same-case identity/hist
 
 F0.4 audits 78 additional declarations: four incarnation-history preservation lemmas for prior operations, 54 lifetime production/helper theorems and 20 concrete fixtures. The [complete F0.4 inventory/report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md) covers initialization, vacancy/carrier conservation, fresh reinitialization, take/destroy survivor contrast, governing relation end versus domain survival, authorization/domain/discardability rejection and three omitted-check tests. Existing theorem statements and semantic claims remain unchanged; all 102 earlier audits still pass with correctly seeded ghost state.
 
-`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 180 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
+`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 208 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
 
 ## GitHub Actions
 
@@ -199,10 +211,10 @@ F0.4 audits 78 additional declarations: four incarnation-history preservation le
 | F0.1 | replace — complete |
 | F0.2 | store — complete |
 | F0.3 | swap — complete |
-| F0.4 | initialize / take / destroy — implemented; PR review pending |
-| F0.5 | ptr / ref acquisition — next after F0.4 review |
-| F0.6 | LifetimeDomain transfer / finalization |
+| F0.4 | initialize / take / destroy — reviewed and merged |
+| F0.5 | ptr / ref acquisition — implemented; PR review pending |
+| F0.6 | LifetimeDomain transfer / finalization — next after F0.5 review |
 
-After F0.4 review and merge, F0.5 can use historical incarnation tracking, LiveIncarnation and the fresh same-site reinitialization theorem. PtrToken/ref acquisition, domain finalization, backing geometry and structural subobjects are not implemented. Whole-language type safety and compiler correctness are not claimed.
+After F0.5 review and merge, F0.6 can address LifetimeDomain transfer/finalization. Ref scope/non-escape, backing geometry and structural subobjects remain unimplemented. Whole-language memory/type safety and compiler correctness are not claimed.
 
-See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)), the [F0.1 report](docs/F0_1_REPLACE_REPORT.md), the [F0.2 report](docs/F0_2_STORE_REPORT.md), the [F0.3 report](docs/F0_3_SWAP_REPORT.md), and the [F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md).
+See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)), the [F0.1 report](docs/F0_1_REPLACE_REPORT.md), the [F0.2 report](docs/F0_2_STORE_REPORT.md), the [F0.3 report](docs/F0_3_SWAP_REPORT.md), the [F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), and the [F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md).
