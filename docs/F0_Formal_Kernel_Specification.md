@@ -945,6 +945,21 @@ both packages survive。
 
 「相手placeへ一緒に移ったから dependency も安全」という exemption は設けない。
 
+### F0.3 implementation trace (non-normative)
+
+`NewLang/F0/Swap.lean` distinguishes `RawSwapSame` (exact state identity, no
+allocation arguments) and `RawSwapDistinct` (one atomic candidate). `RawSwap` /
+`SwapStep` dispatch these swap-specific cases. `FreshValueFactPair` requires two
+historically unused, mutually distinct IDs, retained in the ghost history afterward.
+Package/dependency data, loose carriers and governing domains remain unchanged;
+only installed package carriers exchange and distinct targets' current facts freshen.
+
+The isolated `Counterexample/Swap.lean` checks legal same/self-dependent and
+independent/non-discardable swaps, self/cross/cyclic/third-survivor rejection, and
+historical reuse / allocation collision. A cyclic raw candidate meets every
+non-dependency invariant but fails DependenciesValid. See `docs/F0_3_SWAP_REPORT.md`.
+This trace note changes no semantic rule.
+
 ---
 
 # 17. `initialize`

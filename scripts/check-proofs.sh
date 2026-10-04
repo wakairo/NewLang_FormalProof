@@ -70,6 +70,51 @@ declarations=(
   NewLang.F0.Counterexample.Store.unchecked_other_dependency_breaks_candidate
   NewLang.F0.Counterexample.Store.unchecked_discardability_silently_loses_package
   NewLang.F0.Counterexample.Store.currently_dead_fact_cannot_be_reused
+  NewLang.F0.swap_same_is_identity
+  NewLang.F0.swap_same_preserves_history
+  NewLang.F0.swap_same_preserves_current_fact
+  NewLang.F0.swap_same_preserves_package
+  NewLang.F0.same_swap_is_legal
+  NewLang.F0.RawSwapDistinct.targets_after
+  NewLang.F0.RawSwapDistinct.packages_distinct
+  NewLang.F0.RawSwapDistinct.places_distinct
+  NewLang.F0.swap_distinct_preserves_wellFormed
+  NewLang.F0.swap_distinct_preserves_incarnations
+  NewLang.F0.swap_distinct_preserves_governingDomains
+  NewLang.F0.swap_distinct_preserves_places_and_locations
+  NewLang.F0.swap_distinct_exchanges_packages
+  NewLang.F0.swap_distinct_both_packages_survive
+  NewLang.F0.swap_distinct_preserves_loose_packages
+  NewLang.F0.swap_distinct_preserves_package_data_and_domains
+  NewLang.F0.swap_distinct_preserves_other_locations
+  NewLang.F0.swap_distinct_history_monotone
+  NewLang.F0.swap_distinct_creates_two_fresh_current_facts
+  NewLang.F0.swap_distinct_old_facts_remain_used
+  NewLang.F0.swap_distinct_survivors_preserved
+  NewLang.F0.rawSwapDistinct_old_left_fact_not_live
+  NewLang.F0.rawSwapDistinct_old_right_fact_not_live
+  NewLang.F0.swap_rejects_surviving_old_current_dependency
+  NewLang.F0.swap_rejects_left_self_current_dependency
+  NewLang.F0.swap_rejects_left_package_cross_dependency
+  NewLang.F0.swap_rejects_right_self_current_dependency
+  NewLang.F0.swap_rejects_right_package_cross_dependency
+  NewLang.F0.swap_rejects_reused_left_fact
+  NewLang.F0.swap_rejects_reused_right_fact
+  NewLang.F0.swap_rejects_colliding_new_facts
+  NewLang.F0.Counterexample.Swap.before_wellFormed
+  NewLang.F0.Counterexample.Swap.independent_distinct_swap_is_legal
+  NewLang.F0.Counterexample.Swap.swap_does_not_require_discardable
+  NewLang.F0.Counterexample.Swap.same_place_swap_preserves_self_dependency
+  NewLang.F0.Counterexample.Swap.left_self_dependency_is_rejected
+  NewLang.F0.Counterexample.Swap.right_self_dependency_is_rejected
+  NewLang.F0.Counterexample.Swap.left_cross_dependency_is_rejected
+  NewLang.F0.Counterexample.Swap.right_cross_dependency_is_rejected
+  NewLang.F0.Counterexample.Swap.self_dependency_allows_same_swap_but_rejects_distinct_swap
+  NewLang.F0.Counterexample.Swap.swap_rejects_cyclic_dependency_laundering
+  NewLang.F0.Counterexample.Swap.third_survivor_left_dependency_is_rejected
+  NewLang.F0.Counterexample.Swap.third_survivor_right_dependency_is_rejected
+  NewLang.F0.Counterexample.Swap.unchecked_cyclic_swap_breaks_dependencies
+  NewLang.F0.Counterexample.Swap.historical_reuse_and_pair_collision_are_rejected
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"
