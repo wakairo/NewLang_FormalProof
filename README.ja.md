@@ -276,7 +276,7 @@ splitはsourceを消費して同じregionのnonempty/disjoint/exactな二片を�
 
 対象は既存root-level sum slice / singleton fixed-root layoutです。任意fixed descendant treeやAllocation owner systemは実装しません。保持したidentity familyのfreshnessは証明します。owned claim handleは実際の既存Storage責任を参照し、opaque markerは追加package dataを保持するだけでallocator/Allocation capability theoremではありません。F1.4/F1.3/F1.2/F1.1/F0へのerasure obligationを保持します。identification/alignment/事前準備はcaller propositionで、metadata処理やbyte-copy algorithmは対象外です。
 
-既存**757** auditを順序どおり保持し、**77**追加して合計**834**です。logic whitelist、pin、manifest、bootstrap、workflowは変更しません。[F1.5日本語report](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md)（[英語](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.md)）に全theoremと15系統のcontrol/正本clause対応を記録します。current-head PR CIとREADY FOR REVIEW handoffは[Issue #16](https://github.com/wakairo/NewLang_FormalProof/issues/16)へ記録します。canonical hole/ambiguity/extraction errorはありません。M9、production relocation、LLVM、F2、後続milestoneへ進みません。
+既存**757** auditを順序どおり保持し、**77**追加して合計**834**です。logic whitelist、pin、manifest、bootstrap、workflowは変更しません。[F1.5日本語report](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md)（[英語](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.md)）に全theoremと15系統のcontrol/正本clause対応を記録します。exact-head PR CIとreview済みclosureは[Issue #16](https://github.com/wakairo/NewLang_FormalProof/issues/16)へ記録しています。canonical hole/ambiguity/extraction errorはありません。このclosure自体ではM9、production relocation、LLVM、F2、後続milestoneを開始しません。
 
 ## Milestonesとreview後のhandoff
 
@@ -294,8 +294,8 @@ splitはsourceを消費して同じregionのnonempty/disjoint/exactな二片を�
 | F1.2 | Conditional occurrence / sum — review・merge済み / CLOSED |
 | F1.3 | BackingRegion / placement / access — review・merge済み / CLOSED |
 | F1.4 | Raw occupancy / Storage / slot — review・merge済み / CLOSED |
-| F1.5 | Opaque lifetime-root relocation — 実装完了 / review待ち |
+| F1.5 | Opaque lifetime-root relocation — review・merge済み / CLOSED |
 
-F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2はopaque root-level sum sliceとF1.1へのerasureを実装します。F1.3はBackingRegion、root placement、最小access境界をrefineします。F1.4はraw/slot/rootの明示accountingを追加します。F1.5はIssue #16のbounded opaque root relocationを追加します。nested/fixed-aggregate sum embedding、lexical ref future-use、functionは後続です。F1.4はCLOSEDです。F1.5はopen・未merge PRとcurrent-head PR CI evidenceをIssue #16に残し、READY FOR REVIEWで停止します。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
+F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2はopaque root-level sum sliceとF1.1へのerasureを実装します。F1.3はBackingRegion、root placement、最小access境界をrefineします。F1.4はraw/slot/rootの明示accountingを追加します。F1.5はIssue #16のbounded opaque root relocationを追加します。nested/fixed-aggregate sum embedding、lexical ref future-use、functionは後続です。F1.4とF1.5はreview・merge済みでCLOSEDです。後続作業は別のCoordination handoffを待ちます。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
 
 [formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)、[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)、[F1.2 report](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)、[F1.3 report](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)、[F1.4 report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)、[F1.5 report](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md)も参照してください。
