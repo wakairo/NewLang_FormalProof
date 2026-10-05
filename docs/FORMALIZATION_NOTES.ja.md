@@ -98,4 +98,4 @@ Issue #10の正本はCompiler main `3d5f7249fcce5a01fe9bb1616dbe7d469f192d12`の
 - **FORMAL-EXTRACTION — 解決済みdocumentation解釈:** 旧F1.3 reportの「untyped extentに空を許すのでzero-sized typed rootを許す」という推論を訂正します。Draft 17.8 §23.1はstorable sizeofのpositive性を明記します。正本・F1.3コード・public theoremは変更しません。canonical ambiguity/holeではありません。
 - **FORMAL-SCOPE:** alignment/representation/platform ending契約はcaller義務です。sum lifetime start/end、allocator/deallocator、Allocation owner、relocation、parent/child非overlap、frontend/P5/M9/Sync、general metadata ownership、per-byte validity、full raw-byte operationは追加しません。
 
-参照範囲で新canonical **FORMAL-HOLE / FORMAL-AMBIGUITY: なし**。全639 auditを順序どおり保持し118追加、合計**757**、standard logic whitelistは同一です。pin/bootstrap/CIは変更しません。[F1.4 report](F1_4_RAW_OCCUPANCY_REPORT.ja.md)に全declaration/control inventoryとCI evidence pointerを記録します。**F1.4 READY FOR REVIEW**で停止し、PRをopen・未mergeで残します。
+参照範囲で新canonical **FORMAL-HOLE / FORMAL-AMBIGUITY: なし**。全639 auditを順序どおり保持し118追加、合計**757**、standard logic whitelistは同一です。pin/bootstrap/CIは変更しません。[F1.4 report](F1_4_RAW_OCCUPANCY_REPORT.ja.md)に全declaration/control inventoryとCI evidence pointerを記録します。F1.4はreview・merge済みで**CLOSED**です。
