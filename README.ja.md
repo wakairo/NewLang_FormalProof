@@ -245,7 +245,7 @@ same-place swapはexact no-opでfresh supply引数がありません。distinct 
 | F0.6 | LifetimeDomain transfer / finalization — CLOSED |
 | F1.0 | Structural Refinement Scaffold — CLOSED / MERGED |
 | F1.1 | Fixed subobject / structural current-state transitions — review・merge済み / CLOSED |
-| F1.2 | Conditional occurrence / sum — F1.1 reviewまでWAIT |
+| F1.2 | Conditional occurrence / sum — 次のseparate milestone候補 |
 | F1.3 | BackingRegion / placement — 後続 |
 | F1.4 | Raw occupancy / Storage / slot — 後続 |
 | F1.5 | Opaque lifetime-root relocation — 後続 |
