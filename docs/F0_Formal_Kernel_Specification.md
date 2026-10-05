@@ -1,9 +1,12 @@
 # NewLang F0 Formal Kernel Specification — Draft 0
 
 **Status:** Non-normative formalization bridge  
-**Source of truth:** `NewLang_v0_spec_Draft17_4.md`  
+**Historical extraction source:** `NewLang_v0_spec_Draft17_4.md`
 **Purpose:** Draft 17.4 の semantic core のうち、最初の machine-checked proof に必要な最小部分を切り出す。  
 **Non-goal:** この文書自体を新しい言語仕様にしない。Draft 17.4 と矛盾する場合は Draft 17.4 が優先する。
+
+
+**Current authority note:** This is the historical F0 extraction from Draft 17.4, not the current normative specification. Canonical authority is the Draft selected by `wakairo/NewLang_Compiler` main `docs/reference/CURRENT_SPEC.md`. F1.2 inspected Draft 17.6 at `aacb53b3cc599276125e7420d7cb4a5dbae19b5c`; see [F1.2 report](F1_2_CONDITIONAL_OCCURRENCE_REPORT.md). Existing resolved milestone-number correction history is retained.
 
 ---
 

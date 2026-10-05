@@ -19,3 +19,6 @@ import NewLang.F1.Store
 import NewLang.F1.Swap
 import NewLang.F1.Counterexample.Transition
 import NewLang.F1.Counterexample.RootTransition
+
+import NewLang.F1.Conditional.Proofs
+import NewLang.F1.Conditional.Counterexample.Sum

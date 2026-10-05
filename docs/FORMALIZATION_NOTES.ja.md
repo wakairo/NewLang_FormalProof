@@ -1,4 +1,4 @@
-# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 formalization notes
+# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 formalization notes
 
 現在のnormative source of truthは`NewLang_Compiler/main`の`docs/reference/CURRENT_SPEC.md`が指すDraftです（F1.1 review時点ではDraft 17.6）。このrepositoryのDraft 17.4はhistorical local snapshotとして保持し、変更していません。non-normative bridgeの編集修正は以下へ記録します。
 
@@ -57,3 +57,18 @@ F0.4はmain `941c1df9ae53a3536a9e7315deb1b1d70fea7e54`でreview・merge済みで
 - **FORMAL-SCOPE — refinement**: preservationはlegal post-invariantのprojectionですが、raw構築とnon-launderingを別途証明します。precisionを失うstate erasureはStepのexact simulationではありません。fixed-support transitionだけを実装し、conditional occurrence・physical geometry・Storage/slot・relocation・lexical future-use・function・source syntaxは延期します。
 
 canonical Draft 17.6のF1.1関連節§3.8/§13.5a/§17.4がhistorical Draft 17.4 snapshotと同一であることをreview時に確認しました。確認した§3.5–6/§3.8/§13.5a/§17.4から新しい**FORMAL-HOLE・FORMAL-AMBIGUITY・FORMAL-EXTRACTION**は発見していません。§26はfuture compatibilityだけの確認です。既存の解決済みF0番号履歴を残し、normative Draft・pin・manifest・bootstrap・CIを変更しません。既存332件を保持し135件を追加、合計467 auditです。全representation・定理一覧・controls・claim boundaryは[F1.1 report](F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)へ記録します。F1.1はreview PASS後にmainへmergeされCLOSEDです。F1.2は別milestoneとして進めます。
+
+
+## F1.2 conditional occurrence / sum semantics
+
+作業開始時のCompiler mainは`aacb53b3cc599276125e7420d7cb4a5dbae19b5c`で、CURRENT_SPECはDraft 17.6を指します。FormalProof mainは`f07d51822bd641ddf77a09be1a595ac40e3a34de`でした。双方ともprompt指定と一致しました。Draft 17.4は変更しないhistorical snapshotです。参照した正本は§13.5a / §17.4 / §26、特に§26.4 / §26.6–8 / §26.16–23 / §26.27–28です。
+
+- **FORMAL-ENCODING — conservative layerの範囲:** `F1.Conditional`はnominal closed sum、variant、OccurrenceIdを持つopaque root-level payload sliceを追加します。conditional payloadは独立incarnation/layout/domainを持ちません。value transferが保持するのはvariant/content/local dependencyで、source occurrence identityは保持しません。任意fixed aggregateへのembeddingとnested occurrenceは後続とし、F1.1の既存定義・public theoremは変更しません。
+- **FORMAL-ENCODING — 単一dependency invariant:** 共通Factにordinary F0 fact、exact occurrence、occurrence-qualified payload-current factを含めます。root/payloadのcanonical partitionからdependency unionを導出し、全surviving carrierを同じLiveFacts/DependenciesValidで検査します。provenanceやcontentへOccurrenceFactを自動付与しません。carrierのないtable recordはsurvivorではありません。
+- **FORMAL-ENCODING — ghost historyとstatic capability:** `usedOccurrences`はactive/retired双方のIDを再利用から除外します。payload presenceに対応するoptional atomic allocationを用い、distinct pairはdisjointにします。履歴はmonotonicです。payload-onlyとsame-placeではoccurrence historyを保存し、runtime counterや新incarnation supplyは要求しません。whole-sum Discardableは全possible payload typeから導出するため、payloadlessなcurrent variantでも回避できません。
+- **FORMAL-LEMMA — 二層identity:** whole更新はparent/fixed identityを保持し、同じvariantでもold occurrenceを終了してfreshに再開始します。payload-only更新はoccurrenceを保持しcurrent factsを更新します。same-place swapはexact identity、distinct swapは各parentを保存し値を交換して両old occurrenceを終了します。dependency dataは書き換えず、returned old payloadにもoccurrence identityは移しません。
+- **FORMAL-LEMMA — survivalとlaundering:** old-only occurrence dependencyはwhole replaceでreject、atomic whole storeでは消費可能です。incoming/external survivorに残ればrejectします。swapのself/cross/cyclic/third-survivor拒否は通常のpost invariantから導出します。循環raw candidateは他invariantをすべて満たしDependenciesValidだけが破れます。privateなidentity誤処理・dependency retargetingはraw relationと不整合です。static capabilityを外すbroken storeはWellFormed endpointsでもapplicabilityを満たしません。
+- **FORMAL-LEMMA — erasure:** rich dependency invariantからordinary obligationを導出して、singleton fixed-root erasureに対するF1.1 CurrentWellFormedを構成します。conditional precisionをforgetするstate erasureであり、exact Step simulationや完全なvalue correspondenceは主張しません。
+- **FORMAL-SCOPE — review境界:** parser/constructor/match/pattern/exhaustiveness frontend、nested sum、任意fixed aggregateへのsum embedding、source capability derivation、lexical future-use、function/callback/loop analysis、physical geometry、BackingRegion/Storage/slot/raw bytes、relocationは実装しません。write/type premiseはcaller obligationで、value transitionへCopy・lifetime-ending authorityを追加しません。
+
+参照したcanonical ruleにFORMAL-HOLE / FORMAL-AMBIGUITY / 新FORMAL-EXTRACTIONは見つかりませんでした。Draft 17.6はsame-place identity、same-variant reset、distinct fresh occurrence、nontransferとdependency保存を明示しています。normative ruleや既存semantic claimは変更していません。467件のbaseline auditを保持し100件追加して**567件**、whitelistは従来どおりです。pin/manifest/bootstrap/CIは変更しません。[F1.2 report](F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)にinventory、witness、control、erasure境界、CI evidenceを記録します。F1.2はIMPLEMENTATION COMPLETE / READY FOR REVIEWであり、mergeやF1.3実装へは進みません。
