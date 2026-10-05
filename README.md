@@ -9,7 +9,7 @@ F0.0–F0.6 are reviewed/merged and the flat semantic kernel is **CLOSED**. F1.0
 1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.6).
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
-3. The Lean model is an encoding for theorem proving.
+4. The Lean model is an encoding for theorem proving.
 
 During F1.1 review, the relevant Draft 17.6 sections §3.8 / §13.5a / §17.4 were verified identical to the historical Draft 17.4 snapshot. Draft 17.5's exclusive-reborrow clarification and Draft 17.6's raw-Storage byte bridge are outside F1.1 scope.
 
@@ -258,12 +258,12 @@ Concrete leaf, nested aggregate and root witnesses, same/distinct contrast, self
 | F0.5 | ptr / ref acquisition — CLOSED |
 | F0.6 | LifetimeDomain transfer / finalization — CLOSED |
 | F1.0 | Structural Refinement Scaffold — CLOSED / MERGED |
-| F1.1 | Fixed subobject / structural current-state transitions — implemented; review pending |
-| F1.2 | Conditional occurrence / sum — WAIT until F1.1 review |
+| F1.1 | Fixed subobject / structural current-state transitions — reviewed/merged / CLOSED |
+| F1.2 | Conditional occurrence / sum — next separate milestone candidate |
 | F1.3 | BackingRegion / placement — later |
 | F1.4 | Raw occupancy / Storage / slot — later |
 | F1.5 | Opaque lifetime-root relocation — later |
 
-F0 closure is limited to the reviewed flat kernel. F1.0 is CLOSED/MERGED; F1.1 supplies lifetime-preserving fixed structural transitions. F1.2 may begin after F1.1 review. Occurrences, backing/Storage, relocation, lexical ref future-use and functions remain unimplemented. Whole-language memory/type safety and compiler correctness are not claimed. This task stops before F1.2 and leaves the PR unmerged.
+F0 closure is limited to the reviewed flat kernel. F1.0 and F1.1 are CLOSED/MERGED. F1.2 may proceed as a separate milestone. Occurrences, backing/Storage, relocation, lexical ref future-use and functions remain unimplemented. Whole-language memory/type safety and compiler correctness are not claimed.
 
 See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md), [F1.0](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md), [F1.1](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md).
