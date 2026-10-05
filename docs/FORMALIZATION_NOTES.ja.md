@@ -1,4 +1,4 @@
-# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 formalization notes
+# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 formalization notes
 
 現在のnormative source of truthは`NewLang_Compiler/main`の`docs/reference/CURRENT_SPEC.md`が指すDraftです（F1.1 review時点ではDraft 17.6）。このrepositoryのDraft 17.4はhistorical local snapshotとして保持し、変更していません。non-normative bridgeの編集修正は以下へ記録します。
 
@@ -99,3 +99,13 @@ Issue #10の正本はCompiler main `3d5f7249fcce5a01fe9bb1616dbe7d469f192d12`の
 - **FORMAL-SCOPE:** alignment/representation/platform ending契約はcaller義務です。sum lifetime start/end、allocator/deallocator、Allocation owner、relocation、parent/child非overlap、frontend/P5/M9/Sync、general metadata ownership、per-byte validity、full raw-byte operationは追加しません。
 
 参照範囲で新canonical **FORMAL-HOLE / FORMAL-AMBIGUITY: なし**。全639 auditを順序どおり保持し118追加、合計**757**、standard logic whitelistは同一です。pin/bootstrap/CIは変更しません。[F1.4 report](F1_4_RAW_OCCUPANCY_REPORT.ja.md)に全declaration/control inventoryとCI evidence pointerを記録します。F1.4はreview・merge済みで**CLOSED**です。
+
+## F1.5 opaque lifetime-root relocation
+
+正本はCompiler main `acac894fc6c50101a3995a8f930a070987529335`のCURRENT_SPECが指すDraft 17.9です。FormalProof baseは`624df3bd4f1f69fc719a1382af44e8170a8ff9a5`、双方のcurrent mainを確認し、変更前build / 757 auditはPASSです。Compiler development processを最初に読み、Issue #16のsubstantive commentはTrack: Fと明示します。
+
+- **FORMAL-ENCODING:** 既存Occupancy.SumStateを保持し、package annotationに既存PtrTokenとvalue-owned claim handle、追加opaque data markerを置きます。finite ghost histories、derived `(incarnation,D)` relation key、receipt observationはnon-normativeです。general Allocation authorityを新設・証明しません。
+- **FORMAL-LEMMA:** same-place exact identity、distinct source end/destination fresh、package/deps/embedded ptr unchanged、全ledger footprint保存、S-D/S∩D/D-S責任分離、old occurrence survivor rejection、F1.4→F1.3→F1.2→F1.1/F0 erasureを証明します。post-WF projectionだけに依存せずraw conservationを証明し、全required 15 controlsを分離します。
+- **FORMAL-SCOPE:** root-level sumとsingleton fixed rootのbounded extensionです。保持したroot/fixed/current/payload occurrence familyはfreshです。任意fixed descendants、nested sums、general Allocation owner、source spelling、byte-copy algorithm、platform metadata、Pin、FFI、LLVM、M9/F2を追加しません。
+
+新規canonical **FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION: なし**。正本も既存public proofも変更しません。757 baseline auditを順序どおり保持して77追加、合計**834**。logic whitelist/pin/manifest/bootstrap/CIは不変です。[F1.5日本語report](F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md)に全theorem/control/clause inventoryとexact-head PR CI evidence pointerを記録します。F1.5 READY FOR REVIEWで停止し、PRはmergeしません。

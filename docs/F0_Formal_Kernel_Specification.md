@@ -6,7 +6,7 @@
 **Non-goal:** この文書自体を新しい言語仕様にしない。Draft 17.4 と矛盾する場合は Draft 17.4 が優先する。
 
 
-**Current authority note:** This is the historical F0 extraction from Draft 17.4, not the current normative specification. Canonical authority is the Draft selected by `wakairo/NewLang_Compiler` main `docs/reference/CURRENT_SPEC.md`. F1.4 inspects canonical Draft 17.8 at Compiler main `d4eff722fc7ee1a609875b51dcecbbf953dfe737`; see [F1.4 report](F1_4_RAW_OCCUPANCY_REPORT.ja.md). The F0 extraction remains historical and non-normative. Existing resolved milestone-number correction history is retained.
+**Current authority note:** This is the historical F0 extraction from Draft 17.4, not the current normative specification. Canonical authority is the Draft selected by `wakairo/NewLang_Compiler` main `docs/reference/CURRENT_SPEC.md`. F1.5 inspects canonical Draft 17.9 at Compiler main `acac894fc6c50101a3995a8f930a070987529335`; see [F1.5 report](F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md). The F0 extraction remains historical and non-normative. Existing resolved milestone-number correction history is retained.
 
 ---
 

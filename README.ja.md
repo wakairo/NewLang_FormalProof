@@ -1,18 +1,18 @@
-# NewLang FormalProof — F1.4
+# NewLang FormalProof — F1.5
 
 F0.0–F0.6はreview・merge済みでflat kernelは**CLOSED**です。F1.0はreview・merge済みでCLOSEDです。F1.1もreview PASS後にmainへmergeされCLOSEDです。F1.1ではfixed-shape structural replace/store/swapを形式化し、overlapするcurrent factをfresh化し、disjoint fact・全fixed incarnation・layout・governing relationを保存します。structured carried valueでchild-local dependency ownershipを保持します。
 
 
 F1.2 **Conditional Occurrence / Sum Semantics**はreview・merge済みでCLOSEDです。payload occurrenceはplace側のproof-only identityで、enclosing root incarnationやtransferされるsemantic valueとは区別します。whole更新は終了・fresh再開始、payload-only更新は保存、same-place swapはexact no-opです。単一のcandidate-post dependency invariantでresult/incoming/external/cyclic swapのlaunderingを拒否します。[F1.2 reportと100件の追加theorem inventory](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)を参照してください。
 
-F1.3はIssue #10に従い、canonical Draft 17.8 §3.1/§3.5/§14.1–3を形式化します。配置はpackage外のstate-owned関係です。replace/storeとdistinct swapは配置を保持し、same swapはexact identityです。initializeはdestination write、takeはsource readを要求し、destroyにはtakeのread条件を継承させません。古いptrは同じ配置の再initializeでも復活しません。[F1.3 reportと全theorem/control inventory](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)を参照してください。
+F1.3はIssue #10に従い、当時のcanonical Draft 17.8 §3.1/§3.5/§14.1–3を形式化します。配置はpackage外のstate-owned関係です。replace/storeとdistinct swapは配置を保持し、same swapはexact identityです。initializeはdestination write、takeはsource readを要求し、destroyにはtakeのread条件を継承させません。古いptrは同じ配置の再initializeでも復活しません。[F1.3 reportと全theorem/control inventory](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)を参照してください。
 
 
-F1.3はreview・merge済みで**CLOSED**です。F1.4はIssue #13に従い、raw occupancy / Storage / slotの責任保存を専用branchで実装しました。明示したlive regionの各byteにraw・typed-empty・live-rootの責任を一つだけ与え、split/merge、exact-size into_slot、total erase_slot、既存lifecycleを検証します。[F1.4日本語report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)を参照してください。F1.4はreview・merge済みで**CLOSED**です。このclosureだけではF1.5/P5/M9を開始しません。
+F1.3はreview・merge済みで**CLOSED**です。F1.4はIssue #13に従い、raw occupancy / Storage / slotの責任保存を専用branchで実装しました。明示したlive regionの各byteにraw・typed-empty・live-rootの責任を一つだけ与え、split/merge、exact-size into_slot、total erase_slot、既存lifecycleを検証します。[F1.4日本語report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)を参照してください。F1.4はreview・merge済みで**CLOSED**です。F1.5は[Issue #16](https://github.com/wakairo/NewLang_FormalProof/issues/16)の別handoffに基づき実施します。P5/M9は今回scope外です。
 
 ## 仕様の優先順位
 
-1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.8）。
+1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.9）。
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
 4. Lean model: proofのためのencoding。
@@ -260,13 +260,23 @@ sumのsemantic invariantを明示的に保持してF1.2、F1.1、F0へeraseし�
 
 ## F1.4 raw occupancy責任保存
 
-`NewLang/F1/Occupancy`はF1.3のnominal region/abstract byteを再利用します。relative intervalとproof-only geometryでexact partitionとadjacencyを表し、numeric addressからauthorityを得ません。finite ghost ledgerはStorage、empty slot<T>、state-owned root placementのaccounting viewを区別します。runtime shadow bitmap、source-visible owner、新しい独立placement ownerではありません。inactive recordにauthorityはありません。storable TはDraft 17.8 §23.1に従ってpositive sizeとし、alignment/representation validityはcaller obligationです。
+`NewLang/F1/Occupancy`はF1.3のnominal region/abstract byteを再利用します。relative intervalとproof-only geometryでexact partitionとadjacencyを表し、numeric addressからauthorityを得ません。finite ghost ledgerはStorage、empty slot<T>、state-owned root placementのaccounting viewを区別します。runtime shadow bitmap、source-visible owner、新しい独立placement ownerではありません。inactive recordにauthorityはありません。storable TはDraft 17.9 §23.1に従ってpositive sizeとし、alignment/representation validityはcaller obligationです。
 
 splitはsourceを消費して同じregionのnonempty/disjoint/exactな二片を作り、mergeはadjacentな二片をどちらの順序でもexact unionへ戻します。全ledger footprintとframed claimとのno-overlapを証明します。into_slotはexact sizeof(T)、erase_slotは安全かつtotalでexactな同一rangeを返します。initialize/take/destroyは同じrangeのslot/root責任を保存し、typed root終了だけではbackingを終了しません。takeのsemantic valueにsource placementを移しません。WO initialize/destroyの合法性、WO take拒否、同一rangeへのfresh restart後の旧ptr拒否もmachine-checkします。
 
 既存semantic/dependency義務を明示して保持し、physical validityはaccountingから導出します。erasureはrange/layout/claim precisionをforgetして既存F1.3/F1.2/F1.1/F0へ接続します。Raw split/mergeとlifecycleはcandidate-post legalityを保持します。conservation/no-overlapは別に証明し、concrete complete cycleで合法性の非vacuityを確認します。任意layout/sum lifecycle simulation、allocator、relocation、per-byte Defined、raw byte operationは実装せず、representation mutationはauthority frameだけです。
 
 全639 auditを順序どおり保持し118件追加、合計757件です。gapはcoverageだけ、Storage/slot/root/full-range重複はno-overlapだけを破ります。wrong-range initialize/take/eraseは両endpointをwell-formedにしてrelation違反を検出します。旧F1.3 reportのzero-sized root解釈をresolved FORMAL-EXTRACTIONとして訂正し、旧コード・定理・正本は変更しません。canonical hole/ambiguityはありません。pin/bootstrap/CIは変更せず、exact-head PR-triggered CI evidenceは[Issue #13](https://github.com/wakairo/NewLang_FormalProof/issues/13)のTrack: F handoffへ記録します。
+
+## F1.5 opaque lifetime-root relocation
+
+`NewLang/F1/Relocation`はCompiler main `acac894fc6c50101a3995a8f930a070987529335`のcanonical **Draft 17.9 §24.4**を、FormalProof main `624df3bd4f1f69fc719a1382af44e8170a8ff9a5`から形式化します。same abstract location（nominal regionとexact range）はexact no-opで、fresh identity、終了権限、raw read/writeを要求しません。distinct moveは一つのatomic candidateでsourceを終了し、destinationのroot/current fact/active payload occurrenceをfreshに開始します。domain identityは同じでもgoverning relationはfreshです。semantic packageはhidden dependency・embedded ptr・value-owned annotationを変更せず一度だけ移ります。
+
+既存F1.4 ledgerでraw `D-S`を消費し、raw `S-D`を返し、`S∩D`をrawとして重複させません。全ledger footprint保存はpost-state WFを仮定せずRawMoveから証明します。合法endpointは既存accountingとsurviving-dependency invariantを使います。非重なり・部分重なり・異なるregionの合法witnessがあり、old occurrenceへ依存する移動package・外部survivorはrejectされます。persistent provenanceはvalueとして残りますがstaleであり、address-sensitive valueの暗黙fixupはしません。
+
+対象は既存root-level sum slice / singleton fixed-root layoutです。任意fixed descendant treeやAllocation owner systemは実装しません。保持したidentity familyのfreshnessは証明します。owned claim handleは実際の既存Storage責任を参照し、opaque markerは追加package dataを保持するだけでallocator/Allocation capability theoremではありません。F1.4/F1.3/F1.2/F1.1/F0へのerasure obligationを保持します。identification/alignment/事前準備はcaller propositionで、metadata処理やbyte-copy algorithmは対象外です。
+
+既存**757** auditを順序どおり保持し、**77**追加して合計**834**です。logic whitelist、pin、manifest、bootstrap、workflowは変更しません。[F1.5日本語report](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md)（[英語](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.md)）に全theoremと15系統のcontrol/正本clause対応を記録します。current-head PR CIとREADY FOR REVIEW handoffは[Issue #16](https://github.com/wakairo/NewLang_FormalProof/issues/16)へ記録します。canonical hole/ambiguity/extraction errorはありません。M9、production relocation、LLVM、F2、後続milestoneへ進みません。
 
 ## Milestonesとreview後のhandoff
 
@@ -284,8 +294,8 @@ splitはsourceを消費して同じregionのnonempty/disjoint/exactな二片を�
 | F1.2 | Conditional occurrence / sum — review・merge済み / CLOSED |
 | F1.3 | BackingRegion / placement / access — review・merge済み / CLOSED |
 | F1.4 | Raw occupancy / Storage / slot — review・merge済み / CLOSED |
-| F1.5 | Opaque lifetime-root relocation — 後続 |
+| F1.5 | Opaque lifetime-root relocation — 実装完了 / review待ち |
 
-F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2はopaque root-level sum sliceとF1.1へのerasureを実装します。F1.3はBackingRegion、root placement、最小access境界をrefineします。F1.4はraw/slot/rootの明示accountingを追加します。nested/fixed-aggregate sum embedding、relocation、lexical ref future-use、functionは後続です。F1.4はreview・merge済みでCLOSEDです。F1.5は引き続き別のCoordination handoffを待ちます。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
+F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2はopaque root-level sum sliceとF1.1へのerasureを実装します。F1.3はBackingRegion、root placement、最小access境界をrefineします。F1.4はraw/slot/rootの明示accountingを追加します。F1.5はIssue #16のbounded opaque root relocationを追加します。nested/fixed-aggregate sum embedding、lexical ref future-use、functionは後続です。F1.4はCLOSEDです。F1.5はopen・未merge PRとcurrent-head PR CI evidenceをIssue #16に残し、READY FOR REVIEWで停止します。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
 
-[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)、[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)、[F1.2 report](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)、[F1.3 report](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)、[F1.4 report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)も参照してください。
+[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)、[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)、[F1.2 report](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)、[F1.3 report](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)、[F1.4 report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)、[F1.5 report](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md)も参照してください。

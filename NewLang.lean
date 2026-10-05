@@ -29,3 +29,5 @@ import NewLang.F1.Backing.Counterexample.Boundary
 
 import NewLang.F1.Occupancy.Partition
 import NewLang.F1.Occupancy.Counterexample.Lifetime
+
+import NewLang.F1.Relocation.Counterexample.Atomicity
