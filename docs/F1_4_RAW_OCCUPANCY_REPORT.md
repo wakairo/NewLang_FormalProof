@@ -2,7 +2,7 @@
 
 [日本語（primary）](F1_4_RAW_OCCUPANCY_REPORT.ja.md)
 
-Status: **F1.4 IMPLEMENTATION COMPLETE / F1.4 READY FOR REVIEW**. This is a proof report, not a normative language document or merge decision. Change history is Git; no independent version history is maintained.
+Status: **F1.4 REVIEWED / MERGED / CLOSED**. This is a proof report, not a normative language document. Change history is Git; no independent version history is maintained.
 
 ## Process, authority and baseline
 
@@ -10,7 +10,7 @@ Status: **F1.4 IMPLEMENTATION COMPLETE / F1.4 READY FOR REVIEW**. This is a proo
 - Process read first: [Compiler development process](https://github.com/wakairo/NewLang_Compiler/blob/d4eff722fc7ee1a609875b51dcecbbf953dfe737/docs/NewLang_Project_Development_Process.md).
 - Compiler main checked: `d4eff722fc7ee1a609875b51dcecbbf953dfe737`; `docs/reference/CURRENT_SPEC.md` selects canonical **Draft 17.8**. Inspected §3.3–3.5, §14.1–3 and §23.1. P4 reports are historical evidence, not authority; their old empty/endpoint ambiguity is not inherited.
 - FormalProof main/base checked: `1446011d7a9fa1b16fcb0cbbe88b660a57d28f2d`. F1.3 is reviewed/merged/CLOSED. Before changes: `lake build` PASS, `scripts/check-proofs.sh` PASS **639**.
-- Branch: `f1.4-raw-occupancy-storage-slot`. Main is untouched. PR remains open/unmerged. No F1.5/P5/M9/Sync/Red Team task is started.
+- The implementation branch was reviewed through PR #14 and merged. No F1.5/P5/M9/Sync/Red Team task was started by that merge.
 
 ## Encoding and claim boundary
 
@@ -80,7 +80,7 @@ Lean/Lake remains `leanprover/lean4:v4.34.1` (release commit `5045d0056413266e57
 
 Local `lake build` and `bash scripts/check-proofs.sh` PASS. All 639 existing audited declarations retain their original order. All **118** new public theorems are appended: **76 production/helper + 42 validation/helper**, total **757**. Project-owned sources contain no prohibited placeholders/custom semantic assumptions; only `propext`, `Classical.choice`, `Quot.sound` are allowed, unchanged. Private support proofs are kernel-checked through the audited declarations; no new automation/allocator framework is introduced.
 
-The unchanged `Lean proofs` workflow bootstraps the pinned environment on push/pull_request. The exact final-head **pull_request** run/job URL, success status, PR number and head SHA are recorded in the [Issue #13 Track: F READY FOR REVIEW handoff](https://github.com/wakairo/NewLang_FormalProof/issues/13). That GitHub evidence is the review-head CI record; this report does not maintain a duplicate self-referential commit/version log. READY is published only after that exact-head check succeeds. PR remains open/unmerged and main stays unchanged.
+The unchanged `Lean proofs` workflow bootstraps the pinned environment on push/pull_request. The exact final-head **pull_request** run/job URL, success status, PR number and head SHA are recorded in the [Issue #13 Track: F READY FOR REVIEW handoff](https://github.com/wakairo/NewLang_FormalProof/issues/13). That GitHub evidence is the review-head CI record; this report does not maintain a duplicate self-referential commit/version log. READY was published only after that exact-head check succeeded. PR #14 was subsequently reviewed and merged.
 
 ## Exact additional audited theorem inventory
 
