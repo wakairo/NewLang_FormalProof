@@ -2,7 +2,7 @@
 
 [日本語](README.ja.md)
 
-F0.0–F0.6 are reviewed/merged and the flat semantic kernel is **CLOSED**. F1.0 passed review and merged in PR #6 at `fdda0d99d3de961f782f465fa2033b5554790ba5`. F1.1 implements fixed-shape structural replace/store/swap: overlapping current facts freshen, disjoint facts stay live, and every fixed incarnation/layout/governing relation is retained. Structured carried values preserve child-local dependency ownership. F1.1 awaits semantic review in its dedicated open PR.
+F0.0–F0.6 are reviewed/merged and the flat semantic kernel is **CLOSED**. F1.0 is reviewed/merged and CLOSED. F1.1 has also passed review, merged to main, and is CLOSED. It formalizes fixed-shape structural replace/store/swap: overlapping current facts freshen, disjoint facts stay live, and every fixed incarnation/layout/governing relation is retained. Structured carried values preserve child-local dependency ownership.
 
 ## Specification boundary
 
