@@ -6,9 +6,12 @@ F0.0–F0.6 are reviewed/merged and the flat semantic kernel is **CLOSED**. F1.0
 
 ## Specification boundary
 
-1. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is the normative specification and source of truth.
-2. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
+1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.6).
+2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
+3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
 3. The Lean model is an encoding for theorem proving.
+
+During F1.1 review, the relevant Draft 17.6 sections §3.8 / §13.5a / §17.4 were verified identical to the historical Draft 17.4 snapshot. Draft 17.5's exclusive-reborrow clarification and Draft 17.6's raw-Storage byte bridge are outside F1.1 scope.
 
 **Formal representation choices are non-normative.**
 
