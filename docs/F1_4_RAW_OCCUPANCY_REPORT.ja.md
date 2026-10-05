@@ -2,7 +2,7 @@
 
 [English](F1_4_RAW_OCCUPANCY_REPORT.md)
 
-**F1.4 IMPLEMENTATION COMPLETE / F1.4 READY FOR REVIEW**。proof reportであり、normative文書やmerge判断ではありません。変更履歴の正はGitで、独自Version historyは持ちません。
+**F1.4 REVIEWED / MERGED / CLOSED**。proof reportであり、normative文書ではありません。変更履歴の正はGitで、独自Version historyは持ちません。
 
 ## 運用・正本・baseline
 
@@ -10,7 +10,7 @@
 
 Compiler mainは`d4eff722fc7ee1a609875b51dcecbbf953dfe737`、CURRENT_SPECは**Draft 17.8**。確認範囲は§3.3–3.5 / §14.1–3 / §23.1です。古いP4文書のempty/endpoint ambiguityを引き継ぎません。FormalProof main/baseは`1446011d7a9fa1b16fcb0cbbe88b660a57d28f2d`、F1.3はreview・merge済み/CLOSEDでした。変更前に`lake build` PASS、proof audit **639件PASS**を確認しました。
 
-branchは`f1.4-raw-occupancy-storage-slot`。mainを変更せず、PRはopen・未mergeで残します。F1.5/P5/M9/Sync/Red Teamは開始しません。historical local Draft 17.4も変更しません。
+実装branchはPR #14でreviewされmainへmerge済みです。このmerge自体ではF1.5/P5/M9/Sync/Red Teamを開始していません。historical local Draft 17.4も変更していません。
 
 ## State/modelとclaim境界
 
@@ -80,7 +80,7 @@ Lean/Lakeは`leanprover/lean4:v4.34.1`（release `5045d0056413266e57c625dcd7c365
 
 local `lake build`と`bash scripts/check-proofs.sh`はPASS。既存639 audited declarationを元の順序で全て保持し、public theorem **118件**（production/helper **76**、validation/helper **42**）を追加して合計**757件**です。project-owned Lean sourceに禁止placeholderやcustom semantic仮定はありません。許可logicは従来の`propext` / `Classical.choice` / `Quot.sound`のみです。private supportもaudit対象proofの依存としてkernel-checkされます。
 
-既存`Lean proofs`はpush/pull_requestでpinned環境をbootstrapします。**final headと一致するpull_request run/jobのURL・success・PR number・head SHA**は[Issue #13のTrack: F READY FOR REVIEW handoff](https://github.com/wakairo/NewLang_FormalProof/issues/13)をreview-head CI evidenceとします。self-referential commit/version logはreport内へ複製しません。そのcheck成功後にのみREADYを公開し、PRはopen・未merge、mainは未変更で残します。
+既存`Lean proofs`はpush/pull_requestでpinned環境をbootstrapします。**final headと一致するpull_request run/jobのURL・success・PR number・head SHA**は[Issue #13のTrack: F READY FOR REVIEW handoff](https://github.com/wakairo/NewLang_FormalProof/issues/13)をreview-head CI evidenceとします。self-referential commit/version logはreport内へ複製しません。そのcheck成功後にのみREADYを公開し、その後PR #14はreview・mergeされました。
 
 ## 追加auditのexact theorem inventory
 

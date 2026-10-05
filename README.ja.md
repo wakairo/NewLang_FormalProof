@@ -8,7 +8,7 @@ F1.2 **Conditional Occurrence / Sum Semantics**はreview・merge済みでCLOSED�
 F1.3はIssue #10に従い、canonical Draft 17.8 §3.1/§3.5/§14.1–3を形式化します。配置はpackage外のstate-owned関係です。replace/storeとdistinct swapは配置を保持し、same swapはexact identityです。initializeはdestination write、takeはsource readを要求し、destroyにはtakeのread条件を継承させません。古いptrは同じ配置の再initializeでも復活しません。[F1.3 reportと全theorem/control inventory](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)を参照してください。
 
 
-F1.3はreview・merge済みで**CLOSED**です。F1.4はIssue #13に従い、raw occupancy / Storage / slotの責任保存を専用branchで実装しました。明示したlive regionの各byteにraw・typed-empty・live-rootの責任を一つだけ与え、split/merge、exact-size into_slot、total erase_slot、既存lifecycleを検証します。[F1.4日本語report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)を参照してください。**F1.4 READY FOR REVIEW**で停止し、mergeやF1.5/P5/M9/Syncは行いません。
+F1.3はreview・merge済みで**CLOSED**です。F1.4はIssue #13に従い、raw occupancy / Storage / slotの責任保存を専用branchで実装しました。明示したlive regionの各byteにraw・typed-empty・live-rootの責任を一つだけ与え、split/merge、exact-size into_slot、total erase_slot、既存lifecycleを検証します。[F1.4日本語report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)を参照してください。F1.4はreview・merge済みで**CLOSED**です。このclosureだけではF1.5/P5/M9を開始しません。
 
 ## 仕様の優先順位
 
@@ -283,9 +283,9 @@ splitはsourceを消費して同じregionのnonempty/disjoint/exactな二片を�
 | F1.1 | Fixed subobject / structural current-state transitions — review・merge済み / CLOSED |
 | F1.2 | Conditional occurrence / sum — review・merge済み / CLOSED |
 | F1.3 | BackingRegion / placement / access — review・merge済み / CLOSED |
-| F1.4 | Raw occupancy / Storage / slot — READY FOR REVIEW（未merge） |
+| F1.4 | Raw occupancy / Storage / slot — review・merge済み / CLOSED |
 | F1.5 | Opaque lifetime-root relocation — 後続 |
 
-F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2はopaque root-level sum sliceとF1.1へのerasureを実装します。F1.3はBackingRegion、root placement、最小access境界をrefineします。F1.4はraw/slot/rootの明示accountingを追加します。nested/fixed-aggregate sum embedding、relocation、lexical ref future-use、functionは後続です。F1.4 READY FOR REVIEWで停止し、F1.5はreview・merge後の別Coordination handoffを待ちます。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
+F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2はopaque root-level sum sliceとF1.1へのerasureを実装します。F1.3はBackingRegion、root placement、最小access境界をrefineします。F1.4はraw/slot/rootの明示accountingを追加します。nested/fixed-aggregate sum embedding、relocation、lexical ref future-use、functionは後続です。F1.4はreview・merge済みでCLOSEDです。F1.5は引き続き別のCoordination handoffを待ちます。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
 
 [formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)、[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)、[F1.2 report](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)、[F1.3 report](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)、[F1.4 report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)も参照してください。
