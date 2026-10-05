@@ -85,3 +85,17 @@ Issue #10の正本はCompiler main `3d5f7249fcce5a01fe9bb1616dbe7d469f192d12`の
 - **FORMAL-SCOPE**: root-level sum sliceと別の最小flat lifetime/access sliceです。typed geometry/alignment/empty-destination責任とplatform end契約はcaller propositionです。full sum lifecycle、nested embedding、Storage/slot conservation、raw bytes、allocation/deallocation、relocation、lexical checking、frontend、P5、M9は実装しません。
 
 確認したDraft 17.8に**FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION**はありません。Coordinator判断が必要なcanonical concernはありません。古いpresent-tense statusを更新し、独自Version historyは作りません。既存567 auditを保持し72追加、合計**639**。logic whitelist/pin/manifest/bootstrap/CIは変更しません。[F1.3 report](F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)に全inventoryとCI evidenceを記録し、F1.3はreview・merge済みで**CLOSED**です。
+
+
+## F1.4 raw occupancy / Storage / slot
+
+正本はCompiler main `d4eff722fc7ee1a609875b51dcecbbf953dfe737`のCURRENT_SPECが指すDraft 17.8（§3.3–3.5、§14.1–3、§23.1）です。FormalProof baseは`1446011d7a9fa1b16fcb0cbbe88b660a57d28f2d`、F1.3はCLOSEDです。Compilerのdevelopment processに従い、Issue #13のsubstantive commentはTrack: Fと明記します。
+
+- **FORMAL-ENCODING:** relative intervalを既存abstract byteへ写像します。ghost ledgerはraw/empty/live responsibilityとpositive typed layoutを持ち、明示scopeだけでcomplete/disjoint accountingを行います。live-root claimはstate-owned placementの同じ責任を表し、第二ownerではありません。inactive handleは再利用可能ですが、object identityのhistoryは変更しません。runtime ledger/shadow bitmap/source-visible owner/numeric-address authorityは要求しません。
+- **FORMAL-ENCODING:** semantic義務を明示して継承し、physical validityはaccountingから導きます。flat/conditional erasureはrange/layout/claim precisionをforgetし既存invariantを保持します。erased WellFormedを仮定せず、任意typed-layout/lifetime simulationは主張しません。
+- **FORMAL-LEMMA:** split/mergeは全ledgerのbyte責任とframed claimとのno-overlapを保存します。endpoint split、異region/gap/overlap mergeを拒否し、逆順adjacencyも許可します。into_slotはexact static size、erase_slotはread/write条件なしでsafe/totalです。lifecycleはexact責任/backingと既存write/read/destroy/stale規則を保存します。全cycleとWO destroyの合法witnessを検証します。
+- **FORMAL-LEMMA:** coverage lossとresponsibility duplicationを他shape義務を保持して隔離します。wrong-range initialize/take/eraseはwell-formed両endpointでrelation違反を示します。subclaim/slot/root存続中のfull Storage再構成を拒否します。representation mutationはsemantic-authority state保存だけをmodel化します。
+- **FORMAL-EXTRACTION — 解決済みdocumentation解釈:** 旧F1.3 reportの「untyped extentに空を許すのでzero-sized typed rootを許す」という推論を訂正します。Draft 17.8 §23.1はstorable sizeofのpositive性を明記します。正本・F1.3コード・public theoremは変更しません。canonical ambiguity/holeではありません。
+- **FORMAL-SCOPE:** alignment/representation/platform ending契約はcaller義務です。sum lifetime start/end、allocator/deallocator、Allocation owner、relocation、parent/child非overlap、frontend/P5/M9/Sync、general metadata ownership、per-byte validity、full raw-byte operationは追加しません。
+
+参照範囲で新canonical **FORMAL-HOLE / FORMAL-AMBIGUITY: なし**。全639 auditを順序どおり保持し118追加、合計**757**、standard logic whitelistは同一です。pin/bootstrap/CIは変更しません。[F1.4 report](F1_4_RAW_OCCUPANCY_REPORT.ja.md)に全declaration/control inventoryとCI evidence pointerを記録します。**F1.4 READY FOR REVIEW**で停止し、PRをopen・未mergeで残します。
