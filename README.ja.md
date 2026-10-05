@@ -4,9 +4,12 @@ F0.0–F0.6はreview・merge済みでflat kernelは**CLOSED**です。F1.0はPR 
 
 ## 仕様の優先順位
 
-1. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): normative specification / source of truth。
-2. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。Draft 17.4は変更していません。
+1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.6）。
+2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
+3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
 3. Lean model: proofのためのencoding。
+
+Draft 17.6のうちF1.1が参照する§3.8 / §13.5a / §17.4はhistorical Draft 17.4 snapshotと同一であることをreview時に確認しています。Draft 17.5のexclusive-reborrow clarificationとDraft 17.6のraw-Storage byte bridgeはF1.1 scope外です。
 
 **Formal representation choices are non-normative.**
 
