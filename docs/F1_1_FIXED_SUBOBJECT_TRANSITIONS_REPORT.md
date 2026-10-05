@@ -38,8 +38,8 @@ F1.0 PR #6 passed review and merged at main
 `fdda0d99d3de961f782f465fa2033b5554790ba5`. Before changes, this exact main passed
 `lake clean newlang-formal`, `lake build` (694 jobs) and all **332** audits.
 All F0 semantic sources and all F1.0 Lean definitions/theorems remain byte-for-byte
-unchanged. F0 remains CLOSED; F1.0 remains CLOSED/MERGED. This branch implements
-F1.1 for review and does not merge it.
+unchanged. F0 remains CLOSED; F1.0 remains CLOSED/MERGED. F1.1 subsequently passed
+review and merged to main; this report records the reviewed milestone.
 
 ## Authority and inspected rules
 
