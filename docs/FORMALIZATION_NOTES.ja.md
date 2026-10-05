@@ -1,6 +1,6 @@
 # F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 formalization notes
 
-Draft 17.4をnormative source of truthとして維持し、変更していません。non-normative bridgeの編集修正は以下へ記録します。
+現在のnormative source of truthは`NewLang_Compiler/main`の`docs/reference/CURRENT_SPEC.md`が指すDraftです（F1.1 review時点ではDraft 17.6）。このrepositoryのDraft 17.4はhistorical local snapshotとして保持し、変更していません。non-normative bridgeの編集修正は以下へ記録します。
 
 - **FORMAL-EXTRACTION — F0.1前に解決**: 元のF0 Draft 0にあったmilestone番号の衝突を§20.2・§20.3・§24 traceability tableで修正し、§28へF0.6を追加しました。LifetimeDomain transfer/finalizationはF0.6、F0.2はstoreです。semantic ruleは変更していません。F0.0ではscope/roadmapの不一致として記録していた問題について、その履歴と解決を保持します。
 - **FORMAL-ENCODING — F0.0から維持**: `RootLocationId → Occupancy`は同じPlaceIdと異なるcurrent factsを持つ二つのlocationを表せます。`PlacesUnique`によりこの不正stateを排除してWF-4を表現します。location-based carrierはpackageの二重installationも隠しません。F0.1のold-fact invalidation証明では、他rootが同じplaceのold factをliveに保つ可能性をplace uniquenessで排除します。
@@ -56,4 +56,4 @@ F0.4はmain `941c1df9ae53a3536a9e7315deb1b1d70fea7e54`でreview・merge済みで
 - **FORMAL-LEMMA — erasure/controls**: 中心F1-to-F0 WellFormed定理を変更せず、carried obligationがactual erased package tableへ残ることを追加証明します。leaf/nested/root・aggregate/two-root swap witnessでvacuityを排除します。private broken candidateで祖先/子孫更新漏れ、incarnation refresh、sibling過剰invalidate、抽出/flatteningでの依存消失、guard省略、same-place割当、overlap applicability、freshness違反を検査します。
 - **FORMAL-SCOPE — refinement**: preservationはlegal post-invariantのprojectionですが、raw構築とnon-launderingを別途証明します。precisionを失うstate erasureはStepのexact simulationではありません。fixed-support transitionだけを実装し、conditional occurrence・physical geometry・Storage/slot・relocation・lexical future-use・function・source syntaxは延期します。
 
-確認したDraft 17.4 §3.5–6/§3.8/§13.5a/§17.4から新しい**FORMAL-HOLE・FORMAL-AMBIGUITY・FORMAL-EXTRACTION**は発見していません。§26はfuture compatibilityだけの確認です。既存の解決済みF0番号履歴を残し、normative Draft・pin・manifest・bootstrap・CIを変更しません。既存332件を保持し135件を追加、合計467 auditです。全representation・定理一覧・controls・claim boundaryは[F1.1 report](F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)へ記録します。PRは未mergeでreview待ちとし、review後にF1.2へ進めます。
+canonical Draft 17.6のF1.1関連節§3.8/§13.5a/§17.4がhistorical Draft 17.4 snapshotと同一であることをreview時に確認しました。確認した§3.5–6/§3.8/§13.5a/§17.4から新しい**FORMAL-HOLE・FORMAL-AMBIGUITY・FORMAL-EXTRACTION**は発見していません。§26はfuture compatibilityだけの確認です。既存の解決済みF0番号履歴を残し、normative Draft・pin・manifest・bootstrap・CIを変更しません。既存332件を保持し135件を追加、合計467 auditです。全representation・定理一覧・controls・claim boundaryは[F1.1 report](F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)へ記録します。PRは未mergeでreview待ちとし、review後にF1.2へ進めます。
