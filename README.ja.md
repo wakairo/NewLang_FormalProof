@@ -1,6 +1,9 @@
-# NewLang FormalProof — F1.1
+# NewLang FormalProof — F1.2
 
 F0.0–F0.6はreview・merge済みでflat kernelは**CLOSED**です。F1.0はreview・merge済みでCLOSEDです。F1.1もreview PASS後にmainへmergeされCLOSEDです。F1.1ではfixed-shape structural replace/store/swapを形式化し、overlapするcurrent factをfresh化し、disjoint fact・全fixed incarnation・layout・governing relationを保存します。structured carried valueでchild-local dependency ownershipを保持します。
+
+
+F1.2 **Conditional Occurrence / Sum Semantics**を実装し、READY FOR REVIEWです。payload occurrenceはplace側のproof-only identityで、enclosing root incarnationやtransferされるsemantic valueとは区別します。whole更新は終了・fresh再開始、payload-only更新は保存、same-place swapはexact no-opです。単一のcandidate-post dependency invariantでresult/incoming/external/cyclic swapのlaunderingを拒否します。[F1.2 reportと100件の追加theorem inventory](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)を参照してください。
 
 ## 仕様の優先順位
 
@@ -226,13 +229,21 @@ replaceは完全なold structured valueをresultへ返し、storeはold valueを
 
 same-place swapはexact no-opでfresh supply引数がありません。distinct swapはdisjointなlive targetとrelative shape一致を要求し、pre-state全fragmentをatomicに交換します。両overlap集合のunionをfresh化し、common ancestorへは一度だけ割り当てます。dependencyはexact old factのままでretargetしません。Copy・Discardable・lifetime-ending authorityを追加しません。
 
-既存332 auditをすべて保持し、135件（production/helper 92、具体fixture/破壊試験43）を追加して合計467件を検査します。`sorry`/`axiom`/`admit`はproject-owned Lean sourceにありません。許可logicはpropext・Classical.choice・Quot.soundのみです。F1.0中心erasure theoremを保持し、installed/loose obligationがactual erased packageへ残ることも証明します。F1 StepとF0 Stepの一対一対応は主張しません。全定理・representation・leaf/nested/root witness・dependency/freshness/更新漏れの破壊試験は[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)へ記録します。
+既存332 auditをすべて保持し、F1.1で135件（production/helper 92、具体fixture/破壊試験43）を追加して467件、F1.2で100件を追加して合計567件を検査します。`sorry`/`axiom`/`admit`はproject-owned Lean sourceにありません。許可logicはpropext・Classical.choice・Quot.soundのみです。F1.0中心erasure theoremを保持し、installed/loose obligationがactual erased packageへ残ることも証明します。F1 StepとF0 Stepの一対一対応は主張しません。全定理・representation・leaf/nested/root witness・dependency/freshness/更新漏れの破壊試験は[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)へ記録します。
+
+## F1.2 conditional occurrence semantics
+
+`NewLang/F1/Conditional/Model.lean`はnominal closed sum、OccurrenceId、ordinary/occurrence/payload-currentの共通fact、value-ownedなlocal dependency、proof-only `usedOccurrences`を定義します。現在deadなIDもhistorical freshnessでは再利用できません。payloadが存在する場合だけoccurrenceを生成し、distinct swapでは両allocationをdisjointにします。
+
+`Transition.lean`はwhole replace/storeのatomic candidate、occurrenceを維持するpayload-only更新、same/distinct swap relationを定義します。whole storeのDiscardableは全possible payload typeから導出し、legal replaceを先に要求しません。swapでは両old packageがsurviveし、exact dependencyやsource occurrenceを付け替えません。Copy・lifetime-ending authorityは要求しません。
+
+`Proofs.lean`はparent/fixed identity、carrier、freshness/history、occurrenceの終了/保存、survivor依存の拒否を証明します。erasureはconditional precisionをforgetし、ordinary obligationを保持してF1.1 CurrentWellFormedを構成します。`Counterexample/Sum.lean`にはvariant遷移、same/distinct対比、old-only store、non-Discardable swap、DependenciesValidだけが破れる循環case、isolated broken raw ruleがあります。任意fixed aggregateへのsum embeddingとnested occurrenceは後続です。既存467件を保持し、同じstandard-logic whitelistで**567件**をauditします。
 
 ## GitHub Actions
 
 [`.github/workflows/lean.yml`](.github/workflows/lean.yml)はpush / pull_requestで実行します。read-only repository permission、Ubuntu 24.04、commit-pinned checkout v6.1.0を使用し、bootstrap prerequisitesを導入します。空のrunner temporary toolchain/cache pathで`bash scripts/bootstrap.sh`を実行し、固定toolchain / manifestによる`lake build`とproof checkerを実行します。latest Leanへのupgradeやmanifest更新は行いません。追加secretやserviceは不要です。開発は専用branchからmain向けPRを作成し、pull_request-triggered Lean proofsの成功を確認します。PRはsemantic reviewまでopenのまま残し、CI成功だけでmergeしません。
 
-## MilestonesとF1.2へのhandoff
+## Milestonesとreview後のhandoff
 
 | Milestone | Scope |
 | --- | --- |
@@ -245,11 +256,11 @@ same-place swapはexact no-opでfresh supply引数がありません。distinct 
 | F0.6 | LifetimeDomain transfer / finalization — CLOSED |
 | F1.0 | Structural Refinement Scaffold — CLOSED / MERGED |
 | F1.1 | Fixed subobject / structural current-state transitions — review・merge済み / CLOSED |
-| F1.2 | Conditional occurrence / sum — 次のseparate milestone候補 |
+| F1.2 | Conditional occurrence / sum — 実装済み / READY FOR REVIEW |
 | F1.3 | BackingRegion / placement — 後続 |
 | F1.4 | Raw occupancy / Storage / slot — 後続 |
 | F1.5 | Opaque lifetime-root relocation — 後続 |
 
-F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2は別milestoneとして開始できます。Occurrence、backing/Storage、relocation、lexical ref future-use、functionは未実装です。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
+F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2はopaque root-level sum sliceとF1.1へのerasureを実装します。nested/fixed-aggregate sum embedding、backing/Storage、relocation、lexical ref future-use、functionは後続です。review・merge後の次milestoneはF1.3 BackingRegion / placementです。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
 
-[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)、[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)も参照してください。
+[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)、[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)、[F1.2 report](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)も参照してください。
