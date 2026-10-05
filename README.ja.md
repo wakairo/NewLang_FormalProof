@@ -1,13 +1,13 @@
 # NewLang FormalProof — F1.1
 
-F0.0–F0.6はreview・merge済みでflat kernelは**CLOSED**です。F1.0はPR #6でreview PASS後、main `fdda0d99d3de961f782f465fa2033b5554790ba5`へmergeされCLOSEDです。F1.1ではfixed-shape structural replace/store/swapを実装しました。overlapするcurrent factをfresh化し、disjoint fact・全fixed incarnation・layout・governing relationを保存します。structured carried valueでchild-local dependency ownershipを保持し、専用open PRでsemantic reviewを待ちます。
+F0.0–F0.6はreview・merge済みでflat kernelは**CLOSED**です。F1.0はreview・merge済みでCLOSEDです。F1.1もreview PASS後にmainへmergeされCLOSEDです。F1.1ではfixed-shape structural replace/store/swapを形式化し、overlapするcurrent factをfresh化し、disjoint fact・全fixed incarnation・layout・governing relationを保存します。structured carried valueでchild-local dependency ownershipを保持します。
 
 ## 仕様の優先順位
 
 1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.6）。
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
-3. Lean model: proofのためのencoding。
+4. Lean model: proofのためのencoding。
 
 Draft 17.6のうちF1.1が参照する§3.8 / §13.5a / §17.4はhistorical Draft 17.4 snapshotと同一であることをreview時に確認しています。Draft 17.5のexclusive-reborrow clarificationとDraft 17.6のraw-Storage byte bridgeはF1.1 scope外です。
 
@@ -244,12 +244,12 @@ same-place swapはexact no-opでfresh supply引数がありません。distinct 
 | F0.5 | ptr / ref acquisition — CLOSED |
 | F0.6 | LifetimeDomain transfer / finalization — CLOSED |
 | F1.0 | Structural Refinement Scaffold — CLOSED / MERGED |
-| F1.1 | Fixed subobject / structural current-state transitions — 実装済み、review待ち |
-| F1.2 | Conditional occurrence / sum — F1.1 reviewまでWAIT |
+| F1.1 | Fixed subobject / structural current-state transitions — review・merge済み / CLOSED |
+| F1.2 | Conditional occurrence / sum — 次のseparate milestone候補 |
 | F1.3 | BackingRegion / placement — 後続 |
 | F1.4 | Raw occupancy / Storage / slot — 後続 |
 | F1.5 | Opaque lifetime-root relocation — 後続 |
 
-F0 closureはreview済みflat kernelに限定します。F1.0はCLOSED/MERGEDで、F1.1はfixed structural transitionを実装済みです。F1.2はF1.1 review後に開始できます。Occurrence、backing/Storage、relocation、lexical ref future-use、functionは未実装です。言語全体のmemory/type safetyやcompiler correctnessを主張せず、PRをmergeせずF1.2の前で停止します。
+F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2は別milestoneとして開始できます。Occurrence、backing/Storage、relocation、lexical ref future-use、functionは未実装です。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
 
 [formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)、[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)も参照してください。

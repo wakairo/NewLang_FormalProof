@@ -38,8 +38,8 @@ F1.0 PR #6 passed review and merged at main
 `fdda0d99d3de961f782f465fa2033b5554790ba5`. Before changes, this exact main passed
 `lake clean newlang-formal`, `lake build` (694 jobs) and all **332** audits.
 All F0 semantic sources and all F1.0 Lean definitions/theorems remain byte-for-byte
-unchanged. F0 remains CLOSED; F1.0 remains CLOSED/MERGED. This branch implements
-F1.1 for review and does not merge it.
+unchanged. F0 remains CLOSED; F1.0 remains CLOSED/MERGED. F1.1 subsequently passed
+review and merged to main; this report records the reviewed milestone.
 
 ## Authority and inspected rules
 
@@ -275,12 +275,7 @@ counterexample modules. Lean/Lake `4.34.1`, elan `4.2.4`, mathlib
 cache import closure (655 modules) and GitHub Actions workflow are unchanged.
 CI runs the existing pinned bootstrap on fresh runner-temporary directories.
 
-Branch: `f1.1-fixed-subobject-transitions`, base main
-`fdda0d99d3de961f782f465fa2033b5554790ba5`. An open PR targets main; it is not merged
-by this task. The final PR body and task completion report record the actual current
-head SHA and its successful **pull_request-event** `Lean proofs` run URL. Keeping
-that GitHub-generated metadata outside the source commit avoids a recursive head
-SHA/update cycle. An older intermediate green run is insufficient.
+The F1.1 feature branch was reviewed with current-head `Lean proofs` green and has since been merged to `main`. Exact PR/head/run metadata remains in Git history and the merged PR rather than being duplicated here. This report records the semantic/proof claims and scope boundaries, while Git remains the change-history source of truth.
 
 ## Findings and next milestone
 
@@ -293,9 +288,7 @@ SHA/update cycle. An older intermediate green run is insufficient.
 | FORMAL-AMBIGUITY | None found: §13.5a and §17.4 support complete fragment transfer, overlap updates, unchanged exact dependencies and static Discardable applicability |
 | FORMAL-EXTRACTION | No new extraction error; resolved F0 milestone-number history is retained |
 
-F1.1's implementation gate is the local proof/audit success plus current-head PR CI.
-Semantic closure awaits human/ChatGPT review; the PR remains unmerged. F1.2 can start
-**after that review**, with conditional occurrence support handled separately.
+F1.1 passed semantic review and current-head proof/audit CI and is CLOSED/MERGED. F1.2 may start as a separately reviewed milestone, with conditional occurrence support handled separately.
 No OccurrenceId, sum transition, BackingRegion/ByteRange, Storage/slot, relocation,
 lexical ref future-use, function boundary, concurrency or source syntax is implemented.
 No whole-language type/memory safety or compiler correctness is claimed.
