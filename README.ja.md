@@ -1,6 +1,6 @@
-# NewLang F0 Formal Kernel — F1.0
+# NewLang FormalProof — F1.1
 
-F0.0–F0.6はreview・merge済みで、main `92c9ed7610fb3f1c419788194f83979a63172731`にて**F0 flat semantic kernelはCLOSED**です。F1.0では有限semantic path、canonical root/child current-state、local dependency ownership、derived subtree dependencyを追加しました。child value dependencyをenclosing F0 root factへ保守的にwidenするerasureと、F1 WellFormedからF0 WellFormedを導く定理をmachine-checkしました。F1.0は実装済み・PR review待ちです。
+F0.0–F0.6はreview・merge済みでflat kernelは**CLOSED**です。F1.0はPR #6でreview PASS後、main `fdda0d99d3de961f782f465fa2033b5554790ba5`へmergeされCLOSEDです。F1.1ではfixed-shape structural replace/store/swapを実装しました。overlapするcurrent factをfresh化し、disjoint fact・全fixed incarnation・layout・governing relationを保存します。structured carried valueでchild-local dependency ownershipを保持し、専用open PRでsemantic reviewを待ちます。
 
 ## 仕様の優先順位
 
@@ -211,13 +211,25 @@ F1 Stateは有限live root support、canonical roots、flat loose values/carrier
 
 eraseToF0はcanonical root nodeからroot occupancyをderiveし、loose carrier・domain/carrier・child IDを含む全historyを保存します。root subtree dependency unionからinstalled packageをderiveし、**exact currently live**なchild factをenclosing root factへwidenします（strategy A）。domain factはidentityを保持し、unknown/stale value factはそのまま残します。loose valueにも同じabstractionを適用し、root discardabilityは保存します。中心定理は9個のF0 invariantを個別に証明して結合し、erase_local_dependency_obligationはlocal obligationが実際のerased root packageへ残ることを示します。state abstractionであり、Stepの一対一対応ではありません。
 
-Pair/Holder・nested witness、overlap/locality/history、cycle・duplicate parent・fact/incarnation collision・stale dependency拒否を検証しました。private broken erasureはchild obligationを落としてもF0 WellFormedが成立するため、dependency conservationの独立した証明が必要です。F1 operation、Occurrence、physical backing、source API syntaxは追加していません。[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)に追加66定理とhandoffを記録します。
+Pair/Holder・nested witness、overlap/locality/history、cycle・duplicate parent・fact/incarnation collision・stale dependency拒否を検証しました。private broken erasureはchild obligationを落としてもF0 WellFormedが成立するため、dependency conservationの独立した証明が必要です。F1.0自体ではoperation・Occurrence・physical backing・source API syntaxを追加していません。[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)に追加66定理とhandoffを記録します。
+
+## F1.1 fixed structural current-state transitions
+
+F1.0のflat loose packageだけではaggregateのchild-local dependency partitionを復元できません。既存F1.Stateを保った`CurrentState`層へ、local opaque content token、固定のper-place type capability、structured loose carrierを追加します。`StructuredValue`はrelative shapeと各positionのcontent/dependency/capabilityを持ち、source PlaceId・incarnation・placement・governing ownershipを持ちません。dependency atom内のPlaceIdは参照先identityであり、移動するplace ownershipではありません。`CurrentWellFormed`でflat summaryとstructured valueの一致を検査します。F0/F1.0のLean fileは変更しません。
+
+`affectedBy`はlive/tracked support内のstructural overlap集合です。target・祖先・子孫のcurrent factはfresh、known-disjoint live nodeのfactとlocal fragmentは保存します。`FreshStructuralFacts`は全historical historyに対するfreshnessとsupport上のinjectivityを要求し、全new factをhistoryへ加えます。旧historyを消さず、全fixed incarnation・layout・domain/governing relation・live support・usedIncarnationsを保存します。history/carrierはproof-only ghost stateで、runtime representation要件ではありません。
+
+replaceは完全なold structured valueをresultへ返し、storeはold valueを同じatomic transition内で終了します。storeが要求するDiscardableはtargetの固定type capabilityで、childへrootのdiscardabilityを流用しません。old-only dependencyはstoreで消え得ますが、replace result・incoming・外部survivorに残れば通常のpost-WellFormedで拒否します。child operationではenclosing root carrierを保存し、whole-root operationではF0に沿ってcarrierを移します。
+
+same-place swapはexact no-opでfresh supply引数がありません。distinct swapはdisjointなlive targetとrelative shape一致を要求し、pre-state全fragmentをatomicに交換します。両overlap集合のunionをfresh化し、common ancestorへは一度だけ割り当てます。dependencyはexact old factのままでretargetしません。Copy・Discardable・lifetime-ending authorityを追加しません。
+
+既存332 auditをすべて保持し、135件（production/helper 92、具体fixture/破壊試験43）を追加して合計467件を検査します。`sorry`/`axiom`/`admit`はproject-owned Lean sourceにありません。許可logicはpropext・Classical.choice・Quot.soundのみです。F1.0中心erasure theoremを保持し、installed/loose obligationがactual erased packageへ残ることも証明します。F1 StepとF0 Stepの一対一対応は主張しません。全定理・representation・leaf/nested/root witness・dependency/freshness/更新漏れの破壊試験は[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)へ記録します。
 
 ## GitHub Actions
 
 [`.github/workflows/lean.yml`](.github/workflows/lean.yml)はpush / pull_requestで実行します。read-only repository permission、Ubuntu 24.04、commit-pinned checkout v6.1.0を使用し、bootstrap prerequisitesを導入します。空のrunner temporary toolchain/cache pathで`bash scripts/bootstrap.sh`を実行し、固定toolchain / manifestによる`lake build`とproof checkerを実行します。latest Leanへのupgradeやmanifest更新は行いません。追加secretやserviceは不要です。開発は専用branchからmain向けPRを作成し、pull_request-triggered Lean proofsの成功を確認します。PRはsemantic reviewまでopenのまま残し、CI成功だけでmergeしません。
 
-## MilestonesとF1.1へのhandoff
+## MilestonesとF1.2へのhandoff
 
 | Milestone | Scope |
 | --- | --- |
@@ -228,13 +240,13 @@ Pair/Holder・nested witness、overlap/locality/history、cycle・duplicate pare
 | F0.4 | initialize / take / destroy — CLOSED |
 | F0.5 | ptr / ref acquisition — CLOSED |
 | F0.6 | LifetimeDomain transfer / finalization — CLOSED |
-| F1.0 | Structural Refinement Scaffold — 実装済み、PR review待ち |
-| F1.1 | Fixed subobject semantics — F1.0 review後 |
-| F1.2 | Conditional occurrence / sum — 後続 |
+| F1.0 | Structural Refinement Scaffold — CLOSED / MERGED |
+| F1.1 | Fixed subobject / structural current-state transitions — 実装済み、review待ち |
+| F1.2 | Conditional occurrence / sum — F1.1 reviewまでWAIT |
 | F1.3 | BackingRegion / placement — 後続 |
 | F1.4 | Raw occupancy / Storage / slot — 後続 |
 | F1.5 | Opaque lifetime-root relocation — 後続 |
 
-F0 closureはreview済みflat kernelに限定します。F1.0はstate/invariant refinementまでで、review後にF1.1へ進めます。fixed-field operation、occurrence、backing/Storage、relocation、lexical ref scopeは未実装で、今回F1.1へは進みません。NewLang全体のmemory/type safetyやcompiler correctnessは主張しません。
+F0 closureはreview済みflat kernelに限定します。F1.0はCLOSED/MERGEDで、F1.1はfixed structural transitionを実装済みです。F1.2はF1.1 review後に開始できます。Occurrence、backing/Storage、relocation、lexical ref future-use、functionは未実装です。言語全体のmemory/type safetyやcompiler correctnessを主張せず、PRをmergeせずF1.2の前で停止します。
 
-[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)も参照してください。
+[formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)、[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)も参照してください。

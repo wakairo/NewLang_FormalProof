@@ -1,5 +1,11 @@
 # F1.0 — Structural Refinement Scaffold
 
+Historical milestone status: F1.0 passed review and merged in PR #6 at main
+`fdda0d99d3de961f782f465fa2033b5554790ba5`; it is CLOSED/MERGED. This report records
+the 332-audit F1.0 scaffold as implemented then. Its subsequent transition extension
+is documented in the [F1.1 report](F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md).
+
+
 ## Scope and closed F0 baseline
 
 F0.0–F0.6 were reviewed and merged; the **F0 flat semantic kernel is CLOSED** at
