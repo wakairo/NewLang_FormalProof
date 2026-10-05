@@ -103,7 +103,7 @@ Lean/Lake **4.34.1**, elan **4.2.4**, mathlib `d13f23b723b8a846827a245b89c10fc7d
 
 The existing 467 audit entries are retained in their original order. **100** F1.2 public declarations are added: **567** total. A project-clean `lake build` passed (**705 jobs**) and `bash scripts/check-proofs.sh` passed all **567** reports, with no Lean warnings. Project-owned Lean source contains no proof placeholders or custom semantic assumptions. Audited dependencies are only the existing whitelist: `propext`, `Classical.choice`, `Quot.sound` (or none).
 
-The existing `Lean proofs` workflow builds and audits from fresh pinned toolchain/cache paths on push and pull_request. PR-triggered execution and the final-head run are recorded in the PR body after completion; CI confirmation is pending when this report is first committed. The PR remains open and unmerged for semantic review.
+The existing `Lean proofs` workflow builds and audits from fresh pinned toolchain/cache paths on push and pull_request. The **pull_request-triggered run passed** on implementation commit `7978cc8e9da1046a894a34818a5b07f2b89c1480`: [run 37266657271](https://github.com/wakairo/NewLang_FormalProof/actions/runs/37266657271), job `proofs`, **success**, 1m55s. This report-only evidence update triggers another check; the final-head run and status are recorded in [PR #9](https://github.com/wakairo/NewLang_FormalProof/pull/9). The PR remains open and unmerged for semantic review.
 
 ## Complete added audited declaration inventory
 
