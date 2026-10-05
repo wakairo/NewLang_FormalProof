@@ -1,4 +1,4 @@
-# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 formalization notes
+# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 formalization notes
 
 現在のnormative source of truthは`NewLang_Compiler/main`の`docs/reference/CURRENT_SPEC.md`が指すDraftです（F1.1 review時点ではDraft 17.6）。このrepositoryのDraft 17.4はhistorical local snapshotとして保持し、変更していません。non-normative bridgeの編集修正は以下へ記録します。
 
@@ -71,4 +71,17 @@ canonical Draft 17.6のF1.1関連節§3.8/§13.5a/§17.4がhistorical Draft 17.4
 - **FORMAL-LEMMA — erasure:** rich dependency invariantからordinary obligationを導出して、singleton fixed-root erasureに対するF1.1 CurrentWellFormedを構成します。conditional precisionをforgetするstate erasureであり、exact Step simulationや完全なvalue correspondenceは主張しません。
 - **FORMAL-SCOPE — review境界:** parser/constructor/match/pattern/exhaustiveness frontend、nested sum、任意fixed aggregateへのsum embedding、source capability derivation、lexical future-use、function/callback/loop analysis、physical geometry、BackingRegion/Storage/slot/raw bytes、relocationは実装しません。write/type premiseはcaller obligationで、value transitionへCopy・lifetime-ending authorityを追加しません。
 
-参照したcanonical ruleにFORMAL-HOLE / FORMAL-AMBIGUITY / 新FORMAL-EXTRACTIONは見つかりませんでした。Draft 17.6はsame-place identity、same-variant reset、distinct fresh occurrence、nontransferとdependency保存を明示しています。normative ruleや既存semantic claimは変更していません。467件のbaseline auditを保持し100件追加して**567件**、whitelistは従来どおりです。pin/manifest/bootstrap/CIは変更しません。[F1.2 report](F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)にinventory、witness、control、erasure境界、CI evidenceを記録します。F1.2はIMPLEMENTATION COMPLETE / READY FOR REVIEWであり、mergeやF1.3実装へは進みません。
+参照したcanonical ruleにFORMAL-HOLE / FORMAL-AMBIGUITY / 新FORMAL-EXTRACTIONは見つかりませんでした。Draft 17.6はsame-place identity、same-variant reset、distinct fresh occurrence、nontransferとdependency保存を明示しています。normative ruleや既存semantic claimは変更していません。467件のbaseline auditを保持し100件追加して**567件**、whitelistは従来どおりです。pin/manifest/bootstrap/CIは変更しません。[F1.2 report](F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)にinventory、witness、control、erasure境界、CI evidenceを記録します。F1.2はreview・merge済みでCLOSEDです。
+
+
+## F1.3 BackingRegion / placement / access boundary
+
+Issue #10の正本はCompiler main `3d5f7249fcce5a01fe9bb1616dbe7d469f192d12`のCURRENT_SPECが指すDraft 17.8です。FormalProof baseは`70e7c63beacf9234a0b924b1e6cbf30ab9ef4b94`。作業開始時に双方のcurrent mainと一致しました。F1.2はmerge済み/CLOSEDです。
+
+- **FORMAL-ENCODING**: BackingRegionIdとabstract byte instanceはroot/place/incarnation/valueとは別のnominal identityです。root-location側の配置はpackage dataに含めません。finite extentはabstract byte集合で、numeric addressやraw byte validityではありません。root非alias条件をfixed parent/childへ適用しません。
+- **FORMAL-ENCODING**: sumは明示したF1.2 invariantと単一dependency検証を、flat lifetimeは既存9 F0 invariantを保持します。erasureでphysical/access precisionをforgetします。隠れたerased-WF仮定やexact Step対応はありません。concrete controlでgeometryとsemantic validityを別途確認します。
+- **FORMAL-LEMMA**: whole/payload value変更とswapは配置/backingを保持、same swapはidentityです。takeはsource配置関係を終了し、destination initializeはsemantic dataを保持しつつ明示されたdestination配置を使用します。live rootはlive regionを要求し、root終了だけではregionを終了しません。
+- **FORMAL-LEMMA**: ordinary initializeのdestination write、ptr evidence非増幅、takeのptr/backing readを証明します。destroyはDiscardableとending条件を要求し、take-read条件を継承しません。RW/WO具体例とbroken destroy guardで対比します。同じ配置へのfresh restartは合法で、旧incarnation ptrを拒否します。
+- **FORMAL-SCOPE**: root-level sum sliceと別の最小flat lifetime/access sliceです。typed geometry/alignment/empty-destination責任とplatform end契約はcaller propositionです。full sum lifecycle、nested embedding、Storage/slot conservation、raw bytes、allocation/deallocation、relocation、lexical checking、frontend、P5、M9は実装しません。
+
+確認したDraft 17.8に**FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION**はありません。Coordinator判断が必要なcanonical concernはありません。古いpresent-tense statusを更新し、独自Version historyは作りません。既存567 auditを保持し72追加、合計**639**。logic whitelist/pin/manifest/bootstrap/CIは変更しません。[F1.3 report](F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)に全inventoryとCI evidenceを記録し、**F1.3 READY FOR REVIEW**で停止します。

@@ -1,15 +1,17 @@
-# NewLang FormalProof — F1.2
+# NewLang FormalProof — F1.3
 
 [日本語](README.ja.md)
 
 F0.0–F0.6 are reviewed/merged and the flat semantic kernel is **CLOSED**. F1.0 is reviewed/merged and CLOSED. F1.1 has also passed review, merged to main, and is CLOSED. It formalizes fixed-shape structural replace/store/swap: overlapping current facts freshen, disjoint facts stay live, and every fixed incarnation/layout/governing relation is retained. Structured carried values preserve child-local dependency ownership.
 
 
-F1.2 implements **Conditional Occurrence / Sum Semantics** and is READY FOR REVIEW. A conditional payload occurrence is place-owned ghost identity, independent of the enclosing root incarnation and of transferred semantic values. Whole updates end/restart it; payload-only updates preserve it; same-place swap is identity. The single candidate-post dependency invariant blocks returned/incoming/external and cyclic-swap laundering. See the [F1.2 report and 100-theorem inventory](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md).
+F1.2 **Conditional Occurrence / Sum Semantics** is reviewed/merged and CLOSED. A conditional payload occurrence is place-owned ghost identity, independent of the enclosing root incarnation and of transferred semantic values. Whole updates end/restart it; payload-only updates preserve it; same-place swap is identity. The single candidate-post dependency invariant blocks returned/incoming/external and cyclic-swap laundering. See the [F1.2 report and 100-theorem inventory](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md).
+
+F1.3 implements Issue #10's **BackingRegion / placement / access boundary** against canonical Draft 17.8 §3.1/§3.5/§14.1–3. Placement is state-owned, separate from semantic packages. Replace/store and distinct swap retain it; same swap is exact identity. Initialize requires destination write, take requires source read, and destroy does not inherit take's read guard. Reinitialization on the same placement never revives an old ptr. See the [F1.3 report and complete theorem/control inventory](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md).
 
 ## Specification boundary
 
-1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.6).
+1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.8).
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
 4. The Lean model is an encoding for theorem proving.
@@ -231,7 +233,7 @@ F0.3 adds 45 audited production/helper/fixture theorems: same-case identity/hist
 
 F0.4 audits 78 additional declarations: four incarnation-history preservation lemmas for prior operations, 54 lifetime production/helper theorems and 20 concrete fixtures. The [complete F0.4 inventory/report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md) covers initialization, vacancy/carrier conservation, fresh reinitialization, take/destroy survivor contrast, governing relation end versus domain survival, authorization/domain/discardability rejection and three omitted-check tests. Existing theorem statements and semantic claims remain unchanged; all 102 earlier audits still pass with correctly seeded ghost state.
 
-`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 567 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. All 266 closed-F0 and 66 reviewed-F1.0 audits remain in their original order; F1.1 adds 135 (92 production/helper facts and 43 concrete controls); F1.2 retains all 467 and adds 100. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
+`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 639 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. All 266 closed-F0 and 66 reviewed-F1.0 audits remain in their original order; F1.1 adds 135 (92 production/helper facts and 43 concrete controls); F1.2 retains all 467 and adds 100; F1.3 retains all 567 and adds 72. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
 
 ## F1.1 fixed structural current-state transitions
 
@@ -257,6 +259,16 @@ Concrete leaf, nested aggregate and root witnesses, same/distinct contrast, self
 
 [`.github/workflows/lean.yml`](.github/workflows/lean.yml) runs on push and pull_request with read-only repository permissions, Ubuntu 24.04, and checkout pinned to its v6.1.0 commit. It installs bootstrap prerequisites, uses empty runner-temporary toolchain/cache paths, and executes `scripts/bootstrap.sh`, which runs `lake build` and the proof checker using the committed Lean pin and dependency manifest. It never selects latest Lean or updates the manifest. No additional CI service or secret is required. Development uses a dedicated branch and an open PR targeting `main`; the pull_request-triggered Lean proofs run must pass before semantic review. CI success does not merge the PR.
 
+## F1.3 BackingRegion / placement / access
+
+`NewLang/F1/Backing/Model.lean` defines nominal backing identities, opaque abstract byte instances separate from numeric addresses, ordinary read/write evidence, and state-owned root-location placements. Distinct live regions have disjoint abstract bytes; every live root needs an extent inside a live region. These are non-normative proof representations, with no runtime tag/counter requirement.
+
+`Current.lean` lifts reviewed F1.2 whole/payload/swap relations with a physical frame and backing-write obligation. `Lifetime.lean` uses a separate flat F0 lifecycle slice to validate ordinary initialize/take/destroy access boundaries. It does not implement sum initialization, slot ownership or Storage conservation. Issued ptr evidence equals the supplied evidence and cannot exceed backing access. Ending a root removes its placement relation while preserving the region.
+
+The sum invariant explicitly retains semantic shape and dependency obligations and erases to F1.2, F1.1 and F0. The flat slice retains all nine F0 obligations. Physical validity alone does not imply semantic validity; no exact lifetime simulation is claimed. Erasure forgets placement/byte/access precision. Typed geometry, alignment, empty-destination responsibility and platform-specific end conditions remain caller propositions.
+
+`Counterexample/Boundary.lean` supplies backed sum witnesses, RW take, WO initialize/destroy, rejection of RO initialize/WO take/amplified authority/dead backing, misplaced transferred values, and same-placement stale-token controls. All 567 baseline audits remain: **639 total**. Pins/manifest/bootstrap/CI are unchanged. Stop: F1.3 IMPLEMENTATION COMPLETE / READY FOR REVIEW; no merge or F1.4/P5/M9 work.
+
 ## Milestones and next step
 
 | Milestone | Scope |
@@ -270,11 +282,11 @@ Concrete leaf, nested aggregate and root witnesses, same/distinct contrast, self
 | F0.6 | LifetimeDomain transfer / finalization — CLOSED |
 | F1.0 | Structural Refinement Scaffold — CLOSED / MERGED |
 | F1.1 | Fixed subobject / structural current-state transitions — reviewed/merged / CLOSED |
-| F1.2 | Conditional occurrence / sum — implemented / READY FOR REVIEW |
-| F1.3 | BackingRegion / placement — later |
+| F1.2 | Conditional occurrence / sum — reviewed/merged / CLOSED |
+| F1.3 | BackingRegion / placement / access — READY FOR REVIEW |
 | F1.4 | Raw occupancy / Storage / slot — later |
 | F1.5 | Opaque lifetime-root relocation — later |
 
-F0 closure is limited to the reviewed flat kernel. F1.0 and F1.1 are CLOSED/MERGED. F1.2 implements an opaque root-level conditional-occurrence slice with erasure to F1.1. Nested/fixed-aggregate sum embedding, backing/Storage, relocation, lexical ref future-use and functions remain deferred. After review/merge, the next milestone is F1.3 BackingRegion / placement. Whole-language memory/type safety and compiler correctness are not claimed.
+F0 closure is limited to the reviewed flat kernel. F1.0 and F1.1 are CLOSED/MERGED. F1.2 implements an opaque root-level conditional-occurrence slice with erasure to F1.1. F1.3 refines backing identity, root placement and minimum access boundaries. Nested/fixed-aggregate sum embedding, Storage/slot, relocation, lexical ref future-use and functions remain deferred. After review/merge, the next milestone is F1.4 Raw occupancy / Storage / slot. Whole-language memory/type safety and compiler correctness are not claimed.
 
-See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md), [F1.0](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md), [F1.1](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md), [F1.2](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md).
+See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md), [F1.0](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md), [F1.1](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md), [F1.2](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md), [F1.3](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md).
