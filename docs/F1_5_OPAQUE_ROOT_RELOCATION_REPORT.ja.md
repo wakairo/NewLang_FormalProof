@@ -10,7 +10,7 @@ Track: F
 - `docs/reference/CURRENT_SPEC.md` → `docs/reference/NewLang_v0_spec_Draft17_9.md`。
 - FormalProof current main/base: `624df3bd4f1f69fc719a1382af44e8170a8ff9a5`。
 - F1.3 / F1.4はreview・merge済み/CLOSED。変更前の`lake build`は720 jobsでPASS、`bash scripts/check-proofs.sh`は757 declarationsでPASS。
-- branch: `f1.5-opaque-root-relocation`。PRはmain向け、open・未mergeでreviewへ渡します。
+- branch `f1.5-opaque-root-relocation` はPR #17でreviewされ、mainへmerge済みです。F1.5はCLOSEDです。
 
 正本はcanonical Draftです。local Draft 17.4はhistorical snapshot、bridge/report/Leanはnon-normative encoding/evidenceです。正本、既存F0–F1.4 Lean source/public theorem、pin/manifest/bootstrap/CI workflowを変更しません。
 
@@ -120,7 +120,7 @@ source syntax、production relocation、byte-copy/memmove、numeric machine addr
 
 Lean/Lake **4.34.1**、elan **4.2.4**、mathlib `d13f23b723b8a846827a245b89c10fc7d3f11612`、transitive manifestは不変です。project-only clean（`lake clean newlang-formal`）後の`lake build`は729 jobsでPASSです。`bash scripts/check-proofs.sh`もPASSです。757 baselineを同じ順序で保持し、以下77 public declarationsを追加した**834**をauditしました。project-owned `sorry`/`axiom`/`admit`はなく、許可logic dependencyは従来の`propext`、`Classical.choice`、`Quot.sound`のみです。
 
-**CI結果のevidence pointer:** [Issue #16](https://github.com/wakairo/NewLang_FormalProof/issues/16)のTrack: F review handoffに、open PR URL、current head SHA、`pull_request` eventの`Lean proofs` run/job結果とリンクを記録します。commit自身のSHAを本文に埋めた独立historyは作りません。unchanged workflowはfresh runnerでpinned bootstrap/build/auditを実行します。GitHub APIでexact head/event/completed/successを確認してから**F1.5 IMPLEMENTATION COMPLETE / F1.5 READY FOR REVIEW**とします。merge・後続作業はしません。
+**CI結果のevidence pointer:** [Issue #16](https://github.com/wakairo/NewLang_FormalProof/issues/16)のTrack: F review handoffに、open PR URL、current head SHA、`pull_request` eventの`Lean proofs` run/job結果とリンクを記録します。commit自身のSHAを本文に埋めた独立historyは作りません。unchanged workflowはfresh runnerでpinned bootstrap/build/auditを実行します。GitHub APIでexact head/event/completed/successを確認して**F1.5 IMPLEMENTATION COMPLETE / F1.5 READY FOR REVIEW**を記録し、その後PR #17はreview・mergeされました。このclosure自体では後続作業を開始しません。
 
 ## 全77 public declaration / canonical clause inventory
 
