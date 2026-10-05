@@ -1,4 +1,4 @@
-# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 formalization notes
+# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 formalization notes
 
 [日本語](FORMALIZATION_NOTES.ja.md)
 
@@ -101,3 +101,13 @@ Authority is Compiler main `d4eff722fc7ee1a609875b51dcecbbf953dfe737`, CURRENT_S
 - **FORMAL-SCOPE:** Alignment/representation/platform ending contracts remain caller obligations. No sum lifetime start/end, allocator/deallocator, Allocation ownership, relocation, parent/child non-overlap, frontend/P5/M9/Sync, general metadata ownership, per-byte validity or full raw-byte operations are added.
 
 New canonical **FORMAL-HOLE / FORMAL-AMBIGUITY: none** in the inspected rules. All 639 audits retain their order; 118 additions yield **757**, with the same three-standard-logic whitelist. Pins, bootstrap and CI are unchanged. Full declaration/control inventory and review CI evidence pointers are in the [F1.4 report](F1_4_RAW_OCCUPANCY_REPORT.md). F1.4 is reviewed/merged and **CLOSED**.
+
+## F1.5 opaque lifetime-root relocation
+
+Canonical authority is Compiler main `acac894fc6c50101a3995a8f930a070987529335`, CURRENT_SPEC selecting Draft 17.9; FormalProof base is `624df3bd4f1f69fc719a1382af44e8170a8ff9a5`. Both current mains were verified. Baseline build and all 757 audits passed. The Compiler development process was read first; substantive Issue #16 comments identify Track: F.
+
+- **FORMAL-ENCODING:** actual existing Occupancy.SumState plus unchanged value-owned annotations for existing PtrToken/claim handles and opaque extra data. Finite ghosts, derived `(incarnation,D)` governing key and receipt are non-normative. A general Allocation authority system is neither introduced nor proved.
+- **FORMAL-LEMMA:** exact same-place identity, distinct source end/fresh destination, unchanged package/dependency/embedded ptr transfer, whole-ledger raw footprint conservation, S-D/S∩D/D-S classification, ended-occurrence dependency rejection and explicit F1.4/F1.3/F1.2/F1.1/F0 erasure. Substantive raw conservation complements the legal-Step WF projection; all fifteen required controls are isolated.
+- **FORMAL-SCOPE:** bounded root-level sum with singleton fixed-root layout. Retained identity families freshen. Arbitrary fixed descendants/nested sums/general Allocation owners/source spelling/byte-copy/platform metadata/Pin/FFI/LLVM/M9/F2 are omitted.
+
+No new canonical **FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION** was found. Canonical and prior public proofs remain unchanged. All 757 baseline audits remain in order; 77 additions give **834**, with unchanged logic whitelist/pins/manifest/bootstrap/workflow. The [primary report](F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md) inventories all declarations, controls and clauses and points to exact-head PR CI evidence. Stop at F1.5 READY FOR REVIEW with the PR open and unmerged.
