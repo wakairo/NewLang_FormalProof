@@ -8,6 +8,7 @@ Status: **F1.3 IMPLEMENTATION COMPLETE / F1.3 READY FOR REVIEW**. Dedicated bran
 - Canonical repository: `wakairo/NewLang_Compiler`, exact main `3d5f7249fcce5a01fe9bb1616dbe7d469f192d12`.
 - [CURRENT_SPEC selector](https://github.com/wakairo/NewLang_Compiler/blob/3d5f7249fcce5a01fe9bb1616dbe7d469f192d12/docs/reference/CURRENT_SPEC.md) selects [Draft 17.8](https://github.com/wakairo/NewLang_Compiler/blob/3d5f7249fcce5a01fe9bb1616dbe7d469f192d12/docs/reference/NewLang_v0_spec_Draft17_8.md).
 - FormalProof base main: `70e7c63beacf9234a0b924b1e6cbf30ab9ef4b94`, with F0–F1.2 merged. Both current mains matched the issue's exact baselines before implementation.
+- End-of-task authority recheck: Compiler main advanced to `d4eff722fc7ee1a609875b51dcecbbf953dfe737` with development-process documentation changes only; CURRENT_SPEC and Draft 17.8 are unchanged. The proof remains pinned to Issue #10's exact canonical snapshot. FormalProof main remains the base SHA above.
 - Baseline `lake build`: PASS, 705 jobs. Baseline proof audit: PASS, all 567 declarations.
 - Inspected authority: §3.1 (nominal regions and abstract backing-byte non-aliasing), §3.5 (incarnation and state-owned placement), §14.1–3 (ordinary start/take/destroy access), and existing §13.5a/§17.4 current-value/dependency boundaries. Draft 17.8 explicitly requires take-read while distinguishing atomic destroy.
 
@@ -43,7 +44,7 @@ Sum erasure forgets physical/access precision, retains the exact F1.2 semantic s
 
 Initialization's caller propositions include typed empty-destination responsibility, geometric/type applicability, representation and alignment. Root ending retains the same World; region finalization/deallocation is not inferred or implemented. Destroy's caller contract can include platform-specific end requirements; absence of a generic read guard does not waive that contract.
 
-No placement field was added to any semantic value/package. A concrete take/reinitialize transfer keeps identical package data but uses a different explicitly supplied destination region. Backing authority comes from destination evidence, never the returned package. Numeric addresses are omitted from the production model; the isolated equal-label control establishes only that an arbitrary hypothetical address label cannot identify nominal regions or grant authority.
+No placement field was added to any semantic value/package. A concrete take/reinitialize transfer keeps identical package data but uses a different root location and explicitly supplied destination region. Backing authority comes from destination evidence, never the returned package. Numeric addresses are omitted from the production model; the isolated equal-label control establishes only that an arbitrary hypothetical address label cannot identify nominal regions or grant authority.
 
 ## Witnesses and isolated controls
 
@@ -72,7 +73,9 @@ Negative controls are private definitions inside `Counterexample/Boundary.lean`,
 
 Lean/Lake `leanprover/lean4:v4.34.1`, mathlib `d13f23b723b8a846827a245b89c10fc7d3f11612`, elan/bootstrap checksums, manifest and CI workflow are unchanged. All 567 prior audit declarations remain in original order; 72 additions yield **639**. Only the existing `propext`, `Classical.choice`, `Quot.sound` whitelist is allowed. Project-owned Lean sources have no proof placeholders or custom semantic assumptions.
 
-Final local verification: `lake clean newlang-formal` followed by `lake build`: **PASS (709 jobs)**; `bash scripts/check-proofs.sh`: **PASS (639 reports)**. All prior sources were rebuilt, all 567 prior audit entries were verified retained in order, and project-owned placeholder scan passed. Exact-head PR-triggered CI evidence will be recorded after GitHub verification. The existing **Lean proofs** workflow is reused without changes.
+Final local verification: `lake clean newlang-formal` followed by `lake build`: **PASS (709 jobs)**; `bash scripts/check-proofs.sh`: **PASS (639 reports)**. All prior sources were rebuilt, all 567 prior audit entries were verified retained in order, and project-owned placeholder scan passed. The existing **Lean proofs** workflow is reused without changes.
+
+[PR #11](https://github.com/wakairo/NewLang_FormalProof/pull/11) targets main and remains open/unmerged. The [implementation PR-event run](https://github.com/wakairo/NewLang_FormalProof/actions/runs/37280671840) succeeded for head `c77e461645f30e17be4c2e00b64b9a5e0fb65b30` (job `proofs`). The final-head run permalink, exact SHA, event and job verdict are maintained in the PR body and [current PR checks](https://github.com/wakairo/NewLang_FormalProof/pull/11/checks), so the branch does not embed its own self-referential commit hash. READY FOR REVIEW handoff requires that final-head PR event to succeed.
 
 ## Exact new audited inventory (72)
 

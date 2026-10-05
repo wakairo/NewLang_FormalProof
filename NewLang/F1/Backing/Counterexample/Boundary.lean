@@ -374,7 +374,38 @@ theorem equal_hypothetical_addresses_do_not_identify_regions :
 private def transferSource : FlatState :=
   {(taken rw) with physical := ⟨twoSites.world,fun _ => none⟩}
 private def transferPost (n : Nat) : FlatState :=
-  {(restarted rw) with physical := ⟨twoSites.world,fun l => if l = ⟨0⟩ then some (placement n) else none⟩}
+  ⟨initializeCandidate sites (taken rw).semantic ⟨1⟩ ⟨0⟩ ⟨0⟩ ⟨2⟩ ⟨2⟩,
+    ⟨twoSites.world,fun l => if l = ⟨1⟩ then some (placement n) else none⟩⟩
+
+private theorem transfer_live_iff {n l r} :
+    (transferPost n).semantic.occupancy l = .live r ↔
+    l = ⟨1⟩ ∧ r = initializeRoot sites ⟨1⟩ ⟨0⟩ ⟨0⟩ ⟨2⟩ ⟨2⟩ := by
+  by_cases eq : l = ⟨1⟩ <;> simp [transferPost,initializeCandidate,taken,flat,semantic,eq,eq_comm]
+
+private theorem transfer_semantic_wf (n : Nat) : F0.WellFormed (transferPost n).semantic := by
+  constructor
+  · intro pkg c1 c2 h1 h2
+    cases c1 <;> cases c2 <;> simp only [Carries,transfer_live_iff] at h1 h2
+    · rcases h1 with ⟨_,⟨l,_⟩,_⟩; rcases h2 with ⟨_,⟨m,_⟩,_⟩
+      exact congrArg Carrier.installed (l.trans m.symm)
+    · simp [transferPost,initializeCandidate,taken,flat,semantic] at h2
+    · simp [transferPost,initializeCandidate,taken,flat,semantic] at h1
+    · rfl
+  · intro l m a b la mb _
+    exact (transfer_live_iff.mp la).1.trans (transfer_live_iff.mp mb).1.symm
+  · intro l m a b la mb _
+    exact (transfer_live_iff.mp la).1.trans (transfer_live_iff.mp mb).1.symm
+  · intro pkg _; exact ⟨data,rfl⟩
+  · intro l r live; rcases transfer_live_iff.mp live with ⟨_,rfl⟩
+    simp [transferPost,initializeCandidate,taken,flat,semantic,initializeRoot]
+  · intro pkg value _ present fact dep
+    have eq : value = data := Option.some.inj present.symm; subst value
+    exact False.elim (Finset.notMem_empty _ dep)
+  · intro l r live; rcases transfer_live_iff.mp live with ⟨_,rfl⟩
+    simp [transferPost,initializeCandidate,initializeRoot]
+  · intro l r live; rcases transfer_live_iff.mp live with ⟨_,rfl⟩
+    simp [transferPost,initializeCandidate,initializeRoot]
+  · intro d; by_cases same : d = ⟨0⟩ <;> simp [transferPost,initializeCandidate,taken,flat,semantic,same]
 
 private theorem transfer_source_wf : FlatWellFormed transferSource := by
   have semanticWF := flat_wellFormed_erases_to_f0 readwrite_take_is_legal.2.2
@@ -387,31 +418,31 @@ private theorem transfer_source_wf : FlatWellFormed transferSource := by
   · intro l m a b placed; cases placed
 
 private theorem transfer_post_wf (n : Nat) (live : n = 0 ∨ n = 1) : FlatWellFormed (transferPost n) := by
-  have semanticWF := flat_wellFormed_erases_to_f0 (flat_wf rw true 2 ∅ {1,2} (by simp) (by simp))
-  refine ⟨semanticWF,?_⟩
+  refine ⟨transfer_semantic_wf n,?_⟩
   constructor
   · exact (annotation_wf ({⟨0⟩,⟨1⟩} : Finset RootLocationId)).regions
-  · intro l; simp only [transferPost,restarted,flat,FlatLive,live_iff]
-    by_cases eq : l = ⟨0⟩ <;> simp [eq]
+  · intro l; simp only [FlatLive,transfer_live_iff]
+    by_cases eq : l = ⟨1⟩ <;> simp [transferPost,eq]
   · intro l pl placed
-    by_cases eq : l = ⟨0⟩
+    by_cases eq : l = ⟨1⟩
     · have pe : pl = placement n := by simpa [transferPost,eq] using placed.symm
       subst pl; rcases live with rfl|rfl <;> simp [transferPost,twoSites,annotate,placement]
     · simp [transferPost,eq] at placed
   · intro l pl placed
-    by_cases eq : l = ⟨0⟩
+    by_cases eq : l = ⟨1⟩
     · have pe : pl = placement n := by simpa [transferPost,eq] using placed.symm
       subst pl; exact Finset.Subset.refl _
     · simp [transferPost,eq] at placed
   · intro l m a b la mb different
-    by_cases le : l = ⟨0⟩ <;> by_cases me : m = ⟨0⟩ <;> simp [transferPost,le,me] at la mb
+    by_cases le : l = ⟨1⟩ <;> by_cases me : m = ⟨1⟩ <;> simp [transferPost,le,me] at la mb
     exact False.elim (different (le.trans me.symm))
 
 private theorem transfer_raw :
-    RawInitialize sites True True transferSource ⟨0⟩ ⟨0⟩ ⟨0⟩ ⟨2⟩ ⟨2⟩
+    RawInitialize sites True True transferSource ⟨1⟩ ⟨0⟩ ⟨0⟩ ⟨2⟩ ⟨2⟩
       (placement 1) ⟨region 1,rw⟩ (transferPost 1) := by
   constructor
-  · exact restart_raw.semantic
+  · refine ⟨rfl,restart_raw.semantic.incoming_loose,restart_raw.semantic.domain_live,
+      restart_raw.semantic.fresh_incarnation,restart_raw.semantic.fresh_fact,trivial,trivial,rfl⟩
   · exact ⟨by simp [transferSource,twoSites,annotate],accessLe_refl rw⟩
   · rfl
   · rfl
@@ -420,10 +451,10 @@ private theorem transfer_raw :
   · simp [transferPost,transferSource,startPlacement]
 
 theorem value_transfer_installs_at_destination_not_source :
-    InitializeStep sites True True transferSource ⟨0⟩ ⟨0⟩ ⟨0⟩ ⟨2⟩ ⟨2⟩
+    InitializeStep sites True True transferSource ⟨1⟩ ⟨0⟩ ⟨0⟩ ⟨2⟩ ⟨2⟩
       (placement 1) ⟨region 1,rw⟩ (transferPost 1) ∧
     (first rw).semantic.packages ⟨0⟩ = (transferPost 1).semantic.packages ⟨0⟩ ∧
-    (first rw).physical.placement ⟨0⟩ ≠ (transferPost 1).physical.placement ⟨0⟩ := by
+    (first rw).physical.placement ⟨0⟩ ≠ (transferPost 1).physical.placement ⟨1⟩ := by
   refine ⟨⟨transfer_source_wf,transfer_raw,transfer_post_wf 1 (Or.inr rfl)⟩,rfl,?_⟩
   simp [first,flat,onePhysical,transferPost,placement,region,byte]
 
@@ -434,13 +465,13 @@ private structure BrokenPlacedValue where
 
 private def brokenTransferredValue : BrokenPlacedValue := ⟨data,placement 0⟩
 private def brokenValueOwnedCandidate : FlatState :=
-  {(restarted rw) with physical := ⟨twoSites.world,fun l =>
-    if l = ⟨0⟩ then some brokenTransferredValue.sourcePlacement else none⟩}
+  {(transferPost 0) with physical := ⟨twoSites.world,fun l =>
+    if l = ⟨1⟩ then some brokenTransferredValue.sourcePlacement else none⟩}
 
 theorem broken_value_owned_source_placement_is_rejected :
     FlatWellFormed brokenValueOwnedCandidate ∧
     brokenValueOwnedCandidate.semantic = (transferPost 1).semantic ∧
-    ¬ RawInitialize sites True True transferSource ⟨0⟩ ⟨0⟩ ⟨0⟩ ⟨2⟩ ⟨2⟩
+    ¬ RawInitialize sites True True transferSource ⟨1⟩ ⟨0⟩ ⟨0⟩ ⟨2⟩ ⟨2⟩
       (placement 1) ⟨region 1,rw⟩ brokenValueOwnedCandidate := by
   refine ⟨transfer_post_wf 0 (Or.inl rfl),rfl,?_⟩
   intro raw
