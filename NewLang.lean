@@ -26,3 +26,6 @@ import NewLang.F1.Conditional.Counterexample.Sum
 import NewLang.F1.Backing.Current
 import NewLang.F1.Backing.Lifetime
 import NewLang.F1.Backing.Counterexample.Boundary
+
+import NewLang.F1.Occupancy.Partition
+import NewLang.F1.Occupancy.Counterexample.Lifetime

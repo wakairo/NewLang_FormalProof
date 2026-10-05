@@ -1,4 +1,4 @@
-# NewLang FormalProof — F1.3
+# NewLang FormalProof — F1.4
 
 [日本語](README.ja.md)
 
@@ -8,6 +8,9 @@ F0.0–F0.6 are reviewed/merged and the flat semantic kernel is **CLOSED**. F1.0
 F1.2 **Conditional Occurrence / Sum Semantics** is reviewed/merged and CLOSED. A conditional payload occurrence is place-owned ghost identity, independent of the enclosing root incarnation and of transferred semantic values. Whole updates end/restart it; payload-only updates preserve it; same-place swap is identity. The single candidate-post dependency invariant blocks returned/incoming/external and cyclic-swap laundering. See the [F1.2 report and 100-theorem inventory](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md).
 
 F1.3 implements Issue #10's **BackingRegion / placement / access boundary** against canonical Draft 17.8 §3.1/§3.5/§14.1–3. Placement is state-owned, separate from semantic packages. Replace/store and distinct swap retain it; same swap is exact identity. Initialize requires destination write, take requires source read, and destroy does not inherit take's read guard. Reinitialization on the same placement never revives an old ptr. See the [F1.3 report and complete theorem/control inventory](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md).
+
+
+F1.3 is reviewed/merged and **CLOSED**. F1.4 implements Issue #13's **raw occupancy / Storage / slot responsibility conservation** on a dedicated review branch. Each byte in explicitly scoped live backing has exactly one raw, typed-empty or live-root responsibility. Split/merge conserve exact partition and nominal region identity; into_slot requires exact size; erase_slot is total. The reviewed initialize/take/destroy access and stale-ptr rules are retained. See the [F1.4 report](docs/F1_4_RAW_OCCUPANCY_REPORT.md) ([日本語](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)). Status: **F1.4 READY FOR REVIEW**; no merge or F1.5 implementation is authorized by this handoff.
 
 ## Specification boundary
 
@@ -233,7 +236,7 @@ F0.3 adds 45 audited production/helper/fixture theorems: same-case identity/hist
 
 F0.4 audits 78 additional declarations: four incarnation-history preservation lemmas for prior operations, 54 lifetime production/helper theorems and 20 concrete fixtures. The [complete F0.4 inventory/report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md) covers initialization, vacancy/carrier conservation, fresh reinitialization, take/destroy survivor contrast, governing relation end versus domain survival, authorization/domain/discardability rejection and three omitted-check tests. Existing theorem statements and semantic claims remain unchanged; all 102 earlier audits still pass with correctly seeded ghost state.
 
-`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 639 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. All 266 closed-F0 and 66 reviewed-F1.0 audits remain in their original order; F1.1 adds 135 (92 production/helper facts and 43 concrete controls); F1.2 retains all 467 and adds 100; F1.3 retains all 567 and adds 72. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
+`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 757 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. All 266 closed-F0 and 66 reviewed-F1.0 audits remain in their original order; F1.1 adds 135 (92 production/helper facts and 43 concrete controls); F1.2 retains all 467 and adds 100; F1.3 retains all 567 and adds 72; F1.4 retains all 639 in their original order and adds 118 (76 production/helper, 42 concrete validation/helper declarations). It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
 
 ## F1.1 fixed structural current-state transitions
 
@@ -269,6 +272,16 @@ The sum invariant explicitly retains semantic shape and dependency obligations a
 
 `Counterexample/Boundary.lean` supplies backed sum witnesses, RW take, WO initialize/destroy, rejection of RO initialize/WO take/amplified authority/dead backing, misplaced transferred values, and same-placement stale-token controls. All 567 baseline audits remain: **639 total**. Pins/manifest/bootstrap/CI are unchanged. F1.3 is reviewed/merged and CLOSED. This closure does not start F1.4/P5/M9 work.
 
+## F1.4 raw occupancy responsibility
+
+`NewLang/F1/Occupancy` reuses F1.3 nominal regions and abstract bytes. Region-relative intervals and a proof-only geometry map make contiguity/adjacency exact without numeric-address authority. A finite ghost ledger distinguishes Storage, empty slot<T> and the accounting view of a state-owned live-root placement. It is not a runtime shadow bitmap, a source-visible owner type or a second placement owner. Inactive entries grant no responsibility. Layout size is positive for storable T (Draft 17.8 §23.1); alignment and representation validity remain caller obligations.
+
+Split consumes one raw carrier into two nonempty disjoint exact fragments. Merge consumes same-region adjacent carriers in either order. Both preserve the entire ledger footprint and no-overlap against framed claims. Into_slot converts exactly sizeof(T); erase_slot is safe/total and returns exactly its slot range. Initialize consumes a slot into its same-range live placement; take/destroy return the same empty responsibility while retaining backing lifetime. Take transfers semantic value without source placement. WO initialize/destroy remain legal, WO take is rejected, and same-range fresh restart does not revive stale ptr.
+
+All inherited semantic/dependency obligations remain explicit. Physical validity is derived from accounting; erasure forgets intervals, layout keys and claim precision before the unchanged F1.3/F1.2/F1.1/F0 erasures. Raw split/merge and lifecycle steps retain candidate-post legality; conservation/no-overlap facts are substantive proofs, not assumed post conditions. Concrete complete-cycle endpoints establish legal witnesses. No arbitrary-layout/sum lifecycle simulation, allocator, relocation, per-byte Defined state or raw-byte implementation is claimed. Representation mutation is limited to an authority-frame proposition.
+
+The [report](docs/F1_4_RAW_OCCUPANCY_REPORT.md) maps every required control to its declaration and inventories all 118 additions. Gap/lost responsibility isolates coverage; duplicate raw/slot/root/full-range claims isolate no-overlap; wrong-range initialize/take/erase has fully well-formed endpoints. A resolved **FORMAL-EXTRACTION** corrects the prior report's zero-sized-root interpretation; the F1.3 untyped encoding/public proofs and canonical Draft are unchanged. There is no new canonical hole/ambiguity. Pinned tooling and existing CI are unchanged; exact-head PR CI evidence is recorded in [Issue #13](https://github.com/wakairo/NewLang_FormalProof/issues/13).
+
 ## Milestones and next step
 
 | Milestone | Scope |
@@ -284,9 +297,9 @@ The sum invariant explicitly retains semantic shape and dependency obligations a
 | F1.1 | Fixed subobject / structural current-state transitions — reviewed/merged / CLOSED |
 | F1.2 | Conditional occurrence / sum — reviewed/merged / CLOSED |
 | F1.3 | BackingRegion / placement / access — reviewed/merged / CLOSED |
-| F1.4 | Raw occupancy / Storage / slot — later |
+| F1.4 | Raw occupancy / Storage / slot — READY FOR REVIEW (unmerged) |
 | F1.5 | Opaque lifetime-root relocation — later |
 
-F0 closure is limited to the reviewed flat kernel. F1.0 and F1.1 are CLOSED/MERGED. F1.2 implements an opaque root-level conditional-occurrence slice with erasure to F1.1. F1.3 refines backing identity, root placement and minimum access boundaries. Nested/fixed-aggregate sum embedding, Storage/slot, relocation, lexical ref future-use and functions remain deferred. After review/merge, the next milestone is F1.4 Raw occupancy / Storage / slot. Whole-language memory/type safety and compiler correctness are not claimed.
+F0 closure is limited to the reviewed flat kernel. F1.0 and F1.1 are CLOSED/MERGED. F1.2 implements an opaque root-level conditional-occurrence slice with erasure to F1.1. F1.3 refines backing identity, root placement and minimum access boundaries. F1.4 adds explicit raw/slot/root accounting. Nested/fixed-aggregate sum embedding, relocation, lexical ref future-use and functions remain deferred. Stop at F1.4 READY FOR REVIEW; F1.5 requires a separate Coordination handoff after review/merge. Whole-language memory/type safety and compiler correctness are not claimed.
 
-See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md), [F1.0](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md), [F1.1](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md), [F1.2](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md), [F1.3](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md).
+See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md), [F1.0](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md), [F1.1](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md), [F1.2](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md), [F1.3](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md), [F1.4](docs/F1_4_RAW_OCCUPANCY_REPORT.md).
