@@ -1,14 +1,17 @@
-# NewLang F0 Formal Kernel — F1.0
+# NewLang FormalProof — F1.1
 
 [日本語](README.ja.md)
 
-F0.0–F0.6 are reviewed and merged; the **F0 flat semantic kernel is CLOSED** at main `92c9ed7610fb3f1c419788194f83979a63172731`. F1.0 adds a structural refinement scaffold: finite semantic paths, one canonical root/child current state, local dependency ownership and derived subtree dependencies. Its machine-checked erasure conservatively widens child value dependencies to enclosing F0 root facts and proves F1 WellFormed implies F0 WellFormed. F1.0 is implemented; PR review is pending.
+F0.0–F0.6 are reviewed/merged and the flat semantic kernel is **CLOSED**. F1.0 passed review and merged in PR #6 at `fdda0d99d3de961f782f465fa2033b5554790ba5`. F1.1 implements fixed-shape structural replace/store/swap: overlapping current facts freshen, disjoint facts stay live, and every fixed incarnation/layout/governing relation is retained. Structured carried values preserve child-local dependency ownership. F1.1 awaits semantic review in its dedicated open PR.
 
 ## Specification boundary
 
-1. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is the normative specification and source of truth.
-2. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
+1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.6).
+2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
+3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
 3. The Lean model is an encoding for theorem proving.
+
+During F1.1 review, the relevant Draft 17.6 sections §3.8 / §13.5a / §17.4 were verified identical to the historical Draft 17.4 snapshot. Draft 17.5's exclusive-reborrow clarification and Draft 17.6's raw-Storage byte bridge are outside F1.1 scope.
 
 **Formal representation choices are non-normative.**
 
@@ -195,7 +198,7 @@ F1 State has finite live root support, canonical roots, flat loose values/carrie
 
 `eraseToF0` derives root occupancy from the canonical root node and retains loose carriers, domains/carriers and all history—including erased child IDs. It derives the installed package from the root subtree union, widening each **exact currently live** child value fact to its enclosing root's current fact (strategy A). Domain facts retain identity; unknown/stale value facts are retained rather than silently remapped. Loose-value dependencies use the same abstraction. Root discardability is preserved. The central `f1_wellFormed_erases_to_f0_wellFormed` assembles nine separately proved F0 invariants; `erase_local_dependency_obligation` proves every local obligation reaches the actual erased root package. This is state abstraction, not one-to-one Step correspondence.
 
-Concrete Pair/Holder and nested witnesses prove non-vacuous refinement, overlap, dependency locality and history retention. Private controls reject cycles, duplicate parents, fact/incarnation collisions and stale dependencies. A deliberately broken erasure still has F0 WellFormed endpoints while dropping a child obligation, demonstrating why conservative dependency preservation needs its own proof. No F1 operation, occurrence, physical backing or source API syntax is introduced. See the [F1.0 report and 66-theorem inventory](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md).
+Concrete Pair/Holder and nested witnesses prove non-vacuous refinement, overlap, dependency locality and history retention. Private controls reject cycles, duplicate parents, fact/incarnation collisions and stale dependencies. A deliberately broken erasure still has F0 WellFormed endpoints while dropping a child obligation, demonstrating why conservative dependency preservation needs its own proof. F1.0 itself introduced no operation, occurrence, physical backing or source API syntax. See the [F1.0 report and 66-theorem inventory](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md).
 
 ## Machine-checked theorem inventory
 
@@ -225,7 +228,19 @@ F0.3 adds 45 audited production/helper/fixture theorems: same-case identity/hist
 
 F0.4 audits 78 additional declarations: four incarnation-history preservation lemmas for prior operations, 54 lifetime production/helper theorems and 20 concrete fixtures. The [complete F0.4 inventory/report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md) covers initialization, vacancy/carrier conservation, fresh reinitialization, take/destroy survivor contrast, governing relation end versus domain survival, authorization/domain/discardability rejection and three omitted-check tests. Existing theorem statements and semantic claims remain unchanged; all 102 earlier audits still pass with correctly seeded ghost state.
 
-`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 332 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. All 266 closed-F0 audits remain; F1.0 adds 66. It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
+`lake build` checks both production and isolated validation modules. `scripts/check-proofs.sh` scans project-owned Lean sources for `sorry` / `axiom` / `admit`, then checks 467 theorem axiom reports against only `propext`, `Classical.choice`, and `Quot.sound`. All 266 closed-F0 and 66 reviewed-F1.0 audits remain in their original order; F1.1 adds 135 (92 production/helper facts and 43 concrete controls). It preserves Lean failures and handles multiline reports. Specification prose and mathlib sources are outside the project-source scan.
+
+## F1.1 fixed structural current-state transitions
+
+`CurrentState` conservatively wraps the reviewed F1.State with local opaque content tokens, a fixed per-place type-capability map, and structured loose carriers. `StructuredValue` records relative shape and per-relative-position content/dependencies/capabilities; it contains no source place/incarnation/domain ownership. `CurrentWellFormed` checks each flat loose summary against its structured value. F1.0's flat loose values alone could not preserve an aggregate's child-local dependency partition. All F0 and F1.0 Lean source files remain unchanged.
+
+`affectedBy` contains exactly live/tracked nodes structurally overlapping a replace/store target: target, ancestors and descendants. Known-disjoint live nodes retain their current facts and local fragments. `FreshStructuralFacts` requires historical freshness and injectivity on the affected support; all new facts join usedValueFacts while all earlier history stays. Fixed incarnations, layouts, governing domains, domain carriers, live support and usedIncarnations are unchanged. These histories and carriers are **proof-only ghost state**.
+
+Replace returns the complete old structured value; store atomically ends it and requires **the target type's** Discardable capability. A child does not use its root's discardability. An old-only dependency can disappear through store; old replace results, incoming values and other survivors still reject if their exact dependency source dies. Child operations retain the enclosing root package carrier; whole-root replacement/consumption uses the F0 carrier behavior.
+
+Same-place swap is exact identity and has no fresh-supply argument. Distinct swap requires disjoint live targets and compatible relative shapes, exchanges complete pre-state fragments atomically, and refreshes the union of both overlap sets once per node. Dependency atoms never retarget. Common ancestors' own LocalDeps remain. Copy, Discardable and lifetime-ending authority are not swap requirements. `F1.WellFormed → F0.WellFormed` remains intact, with conservative installed and carried obligations; no exact F1/F0 Step equivalence is claimed.
+
+Concrete leaf, nested aggregate and root witnesses, same/distinct contrast, self/cyclic/third-survivor rejection, external disjoint dependency acceptance, non-discardable swap, historical reuse/collision, missing ancestor/descendant refresh, incarnation refresh, flattened dependencies and omitted discardability controls are machine-checked. See the [F1.1 report, exact representation and complete 135-theorem inventory](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md).
 
 ## GitHub Actions
 
@@ -242,13 +257,13 @@ F0.4 audits 78 additional declarations: four incarnation-history preservation le
 | F0.4 | initialize / take / destroy — CLOSED |
 | F0.5 | ptr / ref acquisition — CLOSED |
 | F0.6 | LifetimeDomain transfer / finalization — CLOSED |
-| F1.0 | Structural Refinement Scaffold — implemented; PR review pending |
-| F1.1 | Fixed subobject semantics — after F1.0 review |
-| F1.2 | Conditional occurrence / sum — later |
+| F1.0 | Structural Refinement Scaffold — CLOSED / MERGED |
+| F1.1 | Fixed subobject / structural current-state transitions — implemented; review pending |
+| F1.2 | Conditional occurrence / sum — WAIT until F1.1 review |
 | F1.3 | BackingRegion / placement — later |
 | F1.4 | Raw occupancy / Storage / slot — later |
 | F1.5 | Opaque lifetime-root relocation — later |
 
-F0 closure is limited to the reviewed flat kernel. F1.0 now supplies state/invariant refinement; F1.1 may begin after this PR's review. Fixed-field operations, occurrences, backing/Storage, relocation and lexical ref scope remain unimplemented. Whole-language memory/type safety and compiler correctness are not claimed. This task stops before F1.1.
+F0 closure is limited to the reviewed flat kernel. F1.0 is CLOSED/MERGED; F1.1 supplies lifetime-preserving fixed structural transitions. F1.2 may begin after F1.1 review. Occurrences, backing/Storage, relocation, lexical ref future-use and functions remain unimplemented. Whole-language memory/type safety and compiler correctness are not claimed. This task stops before F1.2 and leaves the PR unmerged.
 
-See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md), [F1.0](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md).
+See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md), [F1.0](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md), [F1.1](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md).

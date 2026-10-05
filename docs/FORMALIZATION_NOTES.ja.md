@@ -1,6 +1,6 @@
-# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 formalization notes
+# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 formalization notes
 
-Draft 17.4をnormative source of truthとして維持し、変更していません。non-normative bridgeの編集修正は以下へ記録します。
+現在のnormative source of truthは`NewLang_Compiler/main`の`docs/reference/CURRENT_SPEC.md`が指すDraftです（F1.1 review時点ではDraft 17.6）。このrepositoryのDraft 17.4はhistorical local snapshotとして保持し、変更していません。non-normative bridgeの編集修正は以下へ記録します。
 
 - **FORMAL-EXTRACTION — F0.1前に解決**: 元のF0 Draft 0にあったmilestone番号の衝突を§20.2・§20.3・§24 traceability tableで修正し、§28へF0.6を追加しました。LifetimeDomain transfer/finalizationはF0.6、F0.2はstoreです。semantic ruleは変更していません。F0.0ではscope/roadmapの不一致として記録していた問題について、その履歴と解決を保持します。
 - **FORMAL-ENCODING — F0.0から維持**: `RootLocationId → Occupancy`は同じPlaceIdと異なるcurrent factsを持つ二つのlocationを表せます。`PlacesUnique`によりこの不正stateを排除してWF-4を表現します。location-based carrierはpackageの二重installationも隠しません。F0.1のold-fact invalidation証明では、他rootが同じplaceのold factをliveに保つ可能性をplace uniquenessで排除します。
@@ -44,4 +44,16 @@ F0.4はmain `941c1df9ae53a3536a9e7315deb1b1d70fea7e54`でreview・merge済みで
 - **FORMAL-LEMMA — controls**: ownership/overlap/history、cycle graphの表現不能、duplicate parent・fact/incarnation collision・stale dependency拒否、private broken erasureを確認しました。recorded stale child factもnon-liveです。broken erasureはobligationを失ってもF0 WellFormedとなるため、conservationは独立したproof obligationです。
 - **FORMAL-SCOPE — 後続**: F1.0はstate/invariant scaffoldだけです。fixed/whole-aggregate operationはF1.1、conditional occurrence F1.2、BackingRegion/placement F1.3、raw occupancy/Storage/slot F1.4、relocation F1.5です。loose aggregate精密化、lexical refs/functions、source APIは今回scope外です。OccurrenceId、backing ID、allocator framework、F0 semantic changeは追加しません。
 
-変更前のclosed mainでclean build/266 auditがPASSしました。旧266件を保持し66件を追加、計332 auditで許可した標準Lean logicのみを使います。version pin/manifest/checksum/CIは変更せず、bootstrapでFinset.Union cache closureを取得します。確認したDraft 17.4 structural ruleから新しいFORMAL-HOLE・AMBIGUITY・EXTRACTIONは発見していません。解決済みF0 extraction履歴も保持します。[F1.0 report](F1_0_STRUCTURAL_REFINEMENT_REPORT.md)にstrategy比較、controls、F1.1 handoffを記録します。F1.0は実装済み・review待ち、F1.1は未着手です。
+変更前のclosed mainでclean build/266 auditがPASSしました。旧266件を保持し66件を追加、計332 auditで許可した標準Lean logicのみを使います。version pin/manifest/checksum/CIは変更せず、bootstrapでFinset.Union cache closureを取得します。確認したDraft 17.4 structural ruleから新しいFORMAL-HOLE・AMBIGUITY・EXTRACTIONは発見していません。解決済みF0 extraction履歴も保持します。[F1.0 report](F1_0_STRUCTURAL_REFINEMENT_REPORT.md)にstrategy比較、controls、F1.1 handoffを記録します。F1.0はその後PR #6でreview PASS、main `fdda0d99d3de961f782f465fa2033b5554790ba5`へmergeされ、scaffoldはCLOSED/MERGEDです。
+
+
+## F1.1 fixed structural transitions
+
+- **FORMAL-ENCODING — representation audit**: flat loose ValuePackageだけではrelative child ownershipを復元できません。既存F0/F1.0 Lean fileを保ったCurrentState層で、structured carried value・opaque local content・固定type capabilityを追加し、flat summary一致を検査します。relative positionはsemantic coordinateでABI/source pathではありません。exact dependency参照を維持し、place/incarnation/domain ownershipはvalueへ入れません。
+- **FORMAL-ENCODING — structural freshness**: live/tracked overlap集合はtarget・祖先・子孫を含みます。history排除とsupport上のfresh-map injectivityで再利用・衝突を防ぎ、全imageをhistoryへ加えます。incarnation historyは不変です。same-place swapにfresh supplyはなく、distinct swapのunionはcommon ancestorへ一度だけ割り当てます。KnownDisjoint単独をauthorityにはしません。
+- **FORMAL-ENCODING — carrier/type境界**: whole-root replaceはold/incoming root carrierを移し、child replaceはroot carrierを維持して別のloose resultを作ります。storeはold resultを追加せずinput loose carrierを消費します。inactive tableはsurvivorではありません。Discardableはtargetの固定type metadataで、rootやruntime payloadをproxyにしません。全operationでmetadataを保存します。
+- **FORMAL-LEMMA — structural conformance**: layout・全fixed incarnation・domain/governing relation・live supportを保存し、affected old factはdead、disjoint old factはliveです。抽出/installでlocal content/dependencyを保持します。replaceのold result/incoming/external conflictは拒否し、atomic storeはold-only依存を終了できますがsurvivor/incoming依存は拒否します。same-place自己依存swapは合法、distinct self/cyclic/third-survivor依存は拒否、external disjoint依存は合法です。non-Discardable swapにCopy/ending要件は追加しません。
+- **FORMAL-LEMMA — erasure/controls**: 中心F1-to-F0 WellFormed定理を変更せず、carried obligationがactual erased package tableへ残ることを追加証明します。leaf/nested/root・aggregate/two-root swap witnessでvacuityを排除します。private broken candidateで祖先/子孫更新漏れ、incarnation refresh、sibling過剰invalidate、抽出/flatteningでの依存消失、guard省略、same-place割当、overlap applicability、freshness違反を検査します。
+- **FORMAL-SCOPE — refinement**: preservationはlegal post-invariantのprojectionですが、raw構築とnon-launderingを別途証明します。precisionを失うstate erasureはStepのexact simulationではありません。fixed-support transitionだけを実装し、conditional occurrence・physical geometry・Storage/slot・relocation・lexical future-use・function・source syntaxは延期します。
+
+canonical Draft 17.6のF1.1関連節§3.8/§13.5a/§17.4がhistorical Draft 17.4 snapshotと同一であることをreview時に確認しました。確認した§3.5–6/§3.8/§13.5a/§17.4から新しい**FORMAL-HOLE・FORMAL-AMBIGUITY・FORMAL-EXTRACTION**は発見していません。§26はfuture compatibilityだけの確認です。既存の解決済みF0番号履歴を残し、normative Draft・pin・manifest・bootstrap・CIを変更しません。既存332件を保持し135件を追加、合計467 auditです。全representation・定理一覧・controls・claim boundaryは[F1.1 report](F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)へ記録します。PRは未mergeでreview待ちとし、review後にF1.2へ進めます。
