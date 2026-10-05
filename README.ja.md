@@ -253,7 +253,7 @@ same-place swapはexact no-opでfresh supply引数がありません。distinct 
 
 sumのsemantic invariantを明示的に保持してF1.2、F1.1、F0へeraseします。flat sliceも既存9 invariantを保持します。physical validityだけからsemantic validityを導く主張やexact lifetime simulationはありません。erasureは配置・byte/access precisionをforgetします。typed geometry、alignment、empty-destination responsibilityとplatform end条件はcaller propositionです。
 
-`Counterexample/Boundary.lean`は既存sum witnessの配置付与、RW take、WO initialize/destroy、RO initialize拒否、WO take拒否、authority amplification拒否、dead backing、誤った配置転送、同じ配置のstale ptr再使用を検証します。全567 baseline auditを保持し、合計**639件**です。pin/manifest/bootstrap/CIは変更しません。F1.3 IMPLEMENTATION COMPLETE / READY FOR REVIEWで停止し、mergeやF1.4/P5/M9へは進みません。
+`Counterexample/Boundary.lean`は既存sum witnessの配置付与、RW take、WO initialize/destroy、RO initialize拒否、WO take拒否、authority amplification拒否、dead backing、誤った配置転送、同じ配置のstale ptr再使用を検証します。全567 baseline auditを保持し、合計**639件**です。pin/manifest/bootstrap/CIは変更しません。F1.3はreview・merge済みでCLOSEDです。このclosure自体はF1.4/P5/M9を開始しません。
 
 ## Milestonesとreview後のhandoff
 
@@ -269,7 +269,7 @@ sumのsemantic invariantを明示的に保持してF1.2、F1.1、F0へeraseし�
 | F1.0 | Structural Refinement Scaffold — CLOSED / MERGED |
 | F1.1 | Fixed subobject / structural current-state transitions — review・merge済み / CLOSED |
 | F1.2 | Conditional occurrence / sum — review・merge済み / CLOSED |
-| F1.3 | BackingRegion / placement / access — READY FOR REVIEW |
+| F1.3 | BackingRegion / placement / access — review・merge済み / CLOSED |
 | F1.4 | Raw occupancy / Storage / slot — 後続 |
 | F1.5 | Opaque lifetime-root relocation — 後続 |
 

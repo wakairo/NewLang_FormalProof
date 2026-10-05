@@ -267,7 +267,7 @@ Concrete leaf, nested aggregate and root witnesses, same/distinct contrast, self
 
 The sum invariant explicitly retains semantic shape and dependency obligations and erases to F1.2, F1.1 and F0. The flat slice retains all nine F0 obligations. Physical validity alone does not imply semantic validity; no exact lifetime simulation is claimed. Erasure forgets placement/byte/access precision. Typed geometry, alignment, empty-destination responsibility and platform-specific end conditions remain caller propositions.
 
-`Counterexample/Boundary.lean` supplies backed sum witnesses, RW take, WO initialize/destroy, rejection of RO initialize/WO take/amplified authority/dead backing, misplaced transferred values, and same-placement stale-token controls. All 567 baseline audits remain: **639 total**. Pins/manifest/bootstrap/CI are unchanged. Stop: F1.3 IMPLEMENTATION COMPLETE / READY FOR REVIEW; no merge or F1.4/P5/M9 work.
+`Counterexample/Boundary.lean` supplies backed sum witnesses, RW take, WO initialize/destroy, rejection of RO initialize/WO take/amplified authority/dead backing, misplaced transferred values, and same-placement stale-token controls. All 567 baseline audits remain: **639 total**. Pins/manifest/bootstrap/CI are unchanged. F1.3 is reviewed/merged and CLOSED. This closure does not start F1.4/P5/M9 work.
 
 ## Milestones and next step
 
@@ -283,7 +283,7 @@ The sum invariant explicitly retains semantic shape and dependency obligations a
 | F1.0 | Structural Refinement Scaffold — CLOSED / MERGED |
 | F1.1 | Fixed subobject / structural current-state transitions — reviewed/merged / CLOSED |
 | F1.2 | Conditional occurrence / sum — reviewed/merged / CLOSED |
-| F1.3 | BackingRegion / placement / access — READY FOR REVIEW |
+| F1.3 | BackingRegion / placement / access — reviewed/merged / CLOSED |
 | F1.4 | Raw occupancy / Storage / slot — later |
 | F1.5 | Opaque lifetime-root relocation — later |
 

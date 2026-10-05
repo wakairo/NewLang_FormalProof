@@ -1,6 +1,6 @@
 # F1.3 — BackingRegion / placement / access boundary
 
-Status: **F1.3 IMPLEMENTATION COMPLETE / F1.3 READY FOR REVIEW**. Dedicated branch `f1.3-backing-placement-access`; PR remains open and unmerged. Git is the change history.
+Status: **F1.3 REVIEWED / MERGED / CLOSED**. Git is the change history.
 
 ## Authority and baseline
 
@@ -75,7 +75,7 @@ Lean/Lake `leanprover/lean4:v4.34.1`, mathlib `d13f23b723b8a846827a245b89c10fc7d
 
 Final local verification: `lake clean newlang-formal` followed by `lake build`: **PASS (709 jobs)**; `bash scripts/check-proofs.sh`: **PASS (639 reports)**. All prior sources were rebuilt, all 567 prior audit entries were verified retained in order, and project-owned placeholder scan passed. The existing **Lean proofs** workflow is reused without changes.
 
-[PR #11](https://github.com/wakairo/NewLang_FormalProof/pull/11) targets main and remains open/unmerged. The [implementation PR-event run](https://github.com/wakairo/NewLang_FormalProof/actions/runs/37280671840) succeeded for head `c77e461645f30e17be4c2e00b64b9a5e0fb65b30` (job `proofs`). The final-head run permalink, exact SHA, event and job verdict are maintained in the PR body and [current PR checks](https://github.com/wakairo/NewLang_FormalProof/pull/11/checks), so the branch does not embed its own self-referential commit hash. READY FOR REVIEW handoff requires that final-head PR event to succeed.
+[PR #11](https://github.com/wakairo/NewLang_FormalProof/pull/11) was reviewed and merged. The [implementation PR-event run](https://github.com/wakairo/NewLang_FormalProof/actions/runs/37280671840) succeeded for head `c77e461645f30e17be4c2e00b64b9a5e0fb65b30` (job `proofs`). The final-head run permalink, exact SHA, event and job verdict are maintained in the PR body and [current PR checks](https://github.com/wakairo/NewLang_FormalProof/pull/11/checks), so the branch does not embed its own self-referential commit hash. The READY FOR REVIEW handoff required that final-head PR event to succeed.
 
 ## Exact new audited inventory (72)
 
