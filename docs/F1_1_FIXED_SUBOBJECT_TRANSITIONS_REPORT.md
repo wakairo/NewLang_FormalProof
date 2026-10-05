@@ -43,15 +43,23 @@ F1.1 for review and does not merge it.
 
 ## Authority and inspected rules
 
-Draft 17.4 remains normative; the F0 bridge remains non-normative; this layer is
-proof encoding. Inspected rules include §3.5's same-or-disjoint typed referents,
-§3.6/§3.8's fixed-subobject lifetime relation, §13.5a's current-value overlap and
-smallest-subvalue dependency ownership, and §17.4's complete-value transfer,
-atomic store, same-place swap and fixed aggregate rules. §26 was read only to check
-that fixed-support helpers do not claim conditional occurrence semantics.
-Backend/physical-layout and source-surface authority are not expanded in this task.
-No new normative rule or adjudication is invented. Draft 17.4 is unchanged, with SHA-256
+The canonical language specification is selected by `docs/reference/CURRENT_SPEC.md`
+on `wakairo/NewLang_Compiler` `main`; at final review it points to Draft 17.6.
+The local Draft 17.4 file remains an unchanged historical snapshot with SHA-256
 `a552468ec3d96a79d17495fb251f63475c752ee0a8ee1e1ffa5bf9a887818c12`.
+
+For the F1.1 scope, Draft 17.6 §3.8 / §13.5a / §17.4 were compared directly with
+the local Draft 17.4 snapshot and are byte-for-byte identical. Draft 17.5's
+exclusive-reborrow clarification and Draft 17.6's raw-Storage byte bridge do not
+change fixed-subobject replace/store/swap semantics.
+
+The F0 bridge remains non-normative; this layer is proof encoding. Inspected rules
+include §3.5's same-or-disjoint typed referents, §3.6/§3.8's fixed-subobject lifetime
+relation, §13.5a's current-value overlap and smallest-subvalue dependency ownership,
+and §17.4's complete-value transfer, atomic store, same-place swap and fixed aggregate
+rules. §26 was read only to check that fixed-support helpers do not claim conditional
+occurrence semantics. Backend/physical-layout and source-surface authority are not
+expanded in this task. No new normative rule or adjudication is invented.
 
 **Formal representation choices are non-normative.** The ghost sets, coordinate
 functions, carrier IDs, tokens, capability bits and classical selection functions
