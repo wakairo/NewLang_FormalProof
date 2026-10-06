@@ -1,4 +1,4 @@
-# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 formalization notes
+# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 / F2 formalization notes
 
 [日本語](FORMALIZATION_NOTES.ja.md)
 
@@ -111,3 +111,13 @@ Canonical authority is Compiler main `acac894fc6c50101a3995a8f930a070987529335`,
 - **FORMAL-SCOPE:** bounded root-level sum with singleton fixed-root layout. Retained identity families freshen. Arbitrary fixed descendants/nested sums/general Allocation owners/source spelling/byte-copy/platform metadata/Pin/FFI/LLVM/M9/F2 are omitted.
 
 No new canonical **FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION** was found. Canonical and prior public proofs remain unchanged. All 757 baseline audits remain in order; 77 additions give **834**, with unchanged logic whitelist/pins/manifest/bootstrap/workflow. The [primary report](F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md) inventories all declarations, controls and clauses and points to exact-head PR CI evidence. F1.5 is reviewed/merged and CLOSED; later work requires a separate Coordination handoff.
+
+## F2 bounded cyclic loop-header formal kernel
+
+Canonical Compiler main `2a3643449ae5d9fa619909c9fa16d21b8d2ac5e6` / CURRENT_SPEC Draft 17.16 and FormalProof base main `a3a8c70becb3da6a9c2fc6f91ca578f49b19df32` were checked against Issue #19 after reading the development process. Baseline build and all 834 audits pass.
+
+- **FORMAL-ENCODING:** orthogonal zero/one affine slot, captured availability and mutable outer Copy fact; concrete state, exact layer and may/Unknown H are distinct. Reuse F0 nominal identity/fact concepts, with binding identity and proof-only histories. Stable external facts cannot freeze the modeled mutable place's old current fact. Body and acyclic calls are ordinary transfer premises, not a compiler checker or F1.5 full erasure.
+- **FORMAL-LEMMA:** entry plus all supplied continue edges yields arbitrary finite-sequence soundness. Concrete two-edge traces exist for every finite index list. Unchanged/transformed affine responsibility, exact outer availability, ending scope, blocker-preserving widening, larger sound H, finite static break joins, return separation and zero normal exit are checked. All 15 required negative controls have concrete evidence.
+- **FORMAL-SCOPE:** one bounded loop; nested loops would use nested instances but composition is not proved; recursive SCC is excluded. No exact grammar, production, M/P/R, memory/relocation changes, LLVM, FFI, modules, concurrency or later milestone.
+
+**New FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION: none found.** Canonical rules and prior public statements are unchanged. Preserve 834 audits in order and add 96 (930 total), with the same logic whitelist/pins/manifest/bootstrap/workflow. See the [primary report](F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.ja.md) ([English](F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.md)) for exact theorem/control/clause inventory and Issue #19 exact-head PR CI evidence pointer. Stop at F2 READY FOR REVIEW with PR and Issue open; review/Coordination decides closure.

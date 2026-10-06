@@ -1,4 +1,4 @@
-# NewLang FormalProof — F1.5
+# NewLang FormalProof — F2
 
 [日本語](README.ja.md)
 
@@ -10,11 +10,14 @@ F1.2 **Conditional Occurrence / Sum Semantics** is reviewed/merged and CLOSED. A
 F1.3 implements Issue #10's **BackingRegion / placement / access boundary** against the then-canonical Draft 17.8 §3.1/§3.5/§14.1–3. Placement is state-owned, separate from semantic packages. Replace/store and distinct swap retain it; same swap is exact identity. Initialize requires destination write, take requires source read, and destroy does not inherit take's read guard. Reinitialization on the same placement never revives an old ptr. See the [F1.3 report and complete theorem/control inventory](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md).
 
 
-F1.3 is reviewed/merged and **CLOSED**. F1.4 implements Issue #13's **raw occupancy / Storage / slot responsibility conservation** on a dedicated review branch. Each byte in explicitly scoped live backing has exactly one raw, typed-empty or live-root responsibility. Split/merge conserve exact partition and nominal region identity; into_slot requires exact size; erase_slot is total. The reviewed initialize/take/destroy access and stale-ptr rules are retained. See the [F1.4 report](docs/F1_4_RAW_OCCUPANCY_REPORT.md) ([日本語](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)). F1.4 is reviewed/merged and **CLOSED**. F1.5 is authorized separately by [Issue #16](https://github.com/wakairo/NewLang_FormalProof/issues/16); P5/M9 work is outside this task.
+F1.3 is reviewed/merged and **CLOSED**. F1.4 implements Issue #13's **raw occupancy / Storage / slot responsibility conservation** on a dedicated review branch. Each byte in explicitly scoped live backing has exactly one raw, typed-empty or live-root responsibility. Split/merge conserve exact partition and nominal region identity; into_slot requires exact size; erase_slot is total. The reviewed initialize/take/destroy access and stale-ptr rules are retained. See the [F1.4 report](docs/F1_4_RAW_OCCUPANCY_REPORT.md) ([日本語](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)). F1.4 is reviewed/merged and **CLOSED**. F1.5 is reviewed/merged and **CLOSED**. F2 is authorized by [Issue #19](https://github.com/wakairo/NewLang_FormalProof/issues/19).
+
+
+F2 implements the **bounded cyclic loop-header formal kernel** against canonical Draft 17.16. Concrete header state and abstract H are separate. An entry-containing inductive post-fixpoint covers arbitrary finite continue sequences; symbolic affine origins retain exact responsibility and hidden blockers. Finite break summaries, return separation and zero normal exit are checked. Existing 834 audits are retained, with 96 new declarations (930 total). See the [primary Japanese F2 report](docs/F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.ja.md) ([English](docs/F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.md)) for all 15 controls, 8 positive witnesses, clause inventory and CI handoff. Scope ends at **F2 READY FOR REVIEW** with the PR open/unmerged; source grammar, production and later work are excluded.
 
 ## Specification boundary
 
-1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.9).
+1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.16).
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
 4. The Lean model is an encoding for theorem proving.
@@ -309,7 +312,12 @@ All **757** previous declaration audits remain in order; **77** additions give *
 | F1.3 | BackingRegion / placement / access — reviewed/merged / CLOSED |
 | F1.4 | Raw occupancy / Storage / slot — reviewed/merged / CLOSED |
 | F1.5 | Opaque lifetime-root relocation — reviewed/merged / CLOSED |
+| F2 | Bounded cyclic loop-header formal kernel — READY FOR REVIEW, open/unmerged PR |
 
 F0 closure is limited to the reviewed flat kernel. F1.0 and F1.1 are CLOSED/MERGED. F1.2 implements an opaque root-level conditional-occurrence slice with erasure to F1.1. F1.3 refines backing identity, root placement and minimum access boundaries. F1.4 adds explicit raw/slot/root accounting. F1.5 adds bounded opaque root relocation under Issue #16. Nested/fixed-aggregate sum embedding, lexical ref future-use and functions remain deferred. F1.4 and F1.5 are reviewed/merged and CLOSED; subsequent work requires a separate Coordination handoff. Whole-language memory/type safety and compiler correctness are not claimed.
 
 See [formalization notes](docs/FORMALIZATION_NOTES.md) ([日本語](docs/FORMALIZATION_NOTES.ja.md)) and milestone reports: [F0.1](docs/F0_1_REPLACE_REPORT.md), [F0.2](docs/F0_2_STORE_REPORT.md), [F0.3](docs/F0_3_SWAP_REPORT.md), [F0.4](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md), [F0.5](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md), [F0.6](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md), [F1.0](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md), [F1.1](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md), [F1.2](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md), [F1.3](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md), [F1.4](docs/F1_4_RAW_OCCUPANCY_REPORT.md), [F1.5](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md).
+
+## F2 cyclic header boundary
+
+`NewLang/F2` reuses F0 nominal PackageId/Fact/current-value identities in a small orthogonal control-flow slice: zero/one affine parameter, one captured availability, one outer Copy current fact, at most two indices per continue/break/return class. Histories and symbolic may/Unknown information are proof-only. Unknown preserves all blockers and exact availability remains outside widening. Body evaluation and acyclic calls are explicit transfer premises; no full F1.5 erasure or source checker is claimed. All finite lists of the two continue edges have legal concrete traces, and the checked H covers them. Break summaries are finite by static edge index, even when runtime package identities are not finite. Return is excluded from normal results, and zero break means zero normal result. The toolchain, mathlib pin, manifest, bootstrap, standard-logic whitelist and existing CI are unchanged. Exact-head PR-event CI evidence is recorded in Issue #19's Track: F handoff.

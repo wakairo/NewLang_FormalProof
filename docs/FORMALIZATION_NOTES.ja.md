@@ -1,4 +1,4 @@
-# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 formalization notes
+# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 / F2 formalization notes
 
 現在のnormative source of truthは`NewLang_Compiler/main`の`docs/reference/CURRENT_SPEC.md`が指すDraftです（F1.1 review時点ではDraft 17.6）。このrepositoryのDraft 17.4はhistorical local snapshotとして保持し、変更していません。non-normative bridgeの編集修正は以下へ記録します。
 
@@ -109,3 +109,13 @@ Issue #10の正本はCompiler main `3d5f7249fcce5a01fe9bb1616dbe7d469f192d12`の
 - **FORMAL-SCOPE:** root-level sumとsingleton fixed rootのbounded extensionです。保持したroot/fixed/current/payload occurrence familyはfreshです。任意fixed descendants、nested sums、general Allocation owner、source spelling、byte-copy algorithm、platform metadata、Pin、FFI、LLVM、M9/F2を追加しません。
 
 新規canonical **FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION: なし**。正本も既存public proofも変更しません。757 baseline auditを順序どおり保持して77追加、合計**834**。logic whitelist/pin/manifest/bootstrap/CIは不変です。[F1.5日本語report](F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md)に全theorem/control/clause inventoryとexact-head PR CI evidence pointerを記録します。F1.5はreview・merge済みでCLOSEDです。後続作業は別のCoordination handoffを待ちます。
+
+## F2 bounded cyclic loop-header formal kernel
+
+development processを最初に読み、Compiler main `2a3643449ae5d9fa619909c9fa16d21b8d2ac5e6` / CURRENT_SPEC Draft 17.16とFormalProof base main `a3a8c70becb3da6a9c2fc6f91ca578f49b19df32`がIssue #19と一致することを確認しました。baseline build / 834 auditはPASSです。
+
+- **FORMAL-ENCODING:** affine slot 0/1、captured availability 1、outer Copy current fact 1のorthogonal slice。concrete state、exact layer、may/Unknown Hを分離し、F0 nominal fact/packageを再利用します。binding identity/historyはproof-onlyで、stable external factへouter mutable placeの旧factを混ぜません。body/acyclic callはtransfer premise、compiler checkerやF1.5 full erasureではありません。
+- **FORMAL-LEMMA:** entry + 全supplied continue closureから任意finite列のsoundnessを導きます。2 edgeの任意finite index列にconcrete legal traceが存在します。unchanged/transformed affine責任、exact availability、iteration scope終了、blockerを保持するwidening、より大きいsound H、finite static break join、return分離、zero normal exitと15 required controlsを検証します。
+- **FORMAL-SCOPE:** one bounded loopのみ。nested loopはnested instanceを使う方向ですがcomposition未証明、recursive SCCは除外します。exact grammar、production、M/P/R、memory/relocation変更、LLVM、FFI、modules、concurrency、後続へ進みません。
+
+**新規FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION: なし。** 正本と既存public statementは変更せず、834 auditを順序どおり保持して96追加、合計930です。logic whitelist/pin/manifest/bootstrap/workflowは不変。[日本語report](F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.ja.md)（[英語](F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.md)）へ全定理/control/clause inventoryとIssue #19 exact-head PR CI evidence pointerを記録します。PR/IssueをopenのままF2 READY FOR REVIEWで停止し、closureはreview/Coordinationへ返します。
