@@ -8,10 +8,10 @@ F1.2 **Conditional Occurrence / Sum Semantics**はreview・merge済みでCLOSED�
 F1.3はIssue #10に従い、当時のcanonical Draft 17.8 §3.1/§3.5/§14.1–3を形式化します。配置はpackage外のstate-owned関係です。replace/storeとdistinct swapは配置を保持し、same swapはexact identityです。initializeはdestination write、takeはsource readを要求し、destroyにはtakeのread条件を継承させません。古いptrは同じ配置の再initializeでも復活しません。[F1.3 reportと全theorem/control inventory](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)を参照してください。
 
 
-F1.3はreview・merge済みで**CLOSED**です。F1.4はIssue #13に従い、raw occupancy / Storage / slotの責任保存を専用branchで実装しました。明示したlive regionの各byteにraw・typed-empty・live-rootの責任を一つだけ与え、split/merge、exact-size into_slot、total erase_slot、既存lifecycleを検証します。[F1.4日本語report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)を参照してください。F1.4はreview・merge済みで**CLOSED**です。F1.5はreview・merge済みで**CLOSED**です。F2は[Issue #19](https://github.com/wakairo/NewLang_FormalProof/issues/19)のhandoffに基づき実施します。
+F1.3はreview・merge済みで**CLOSED**です。F1.4はIssue #13に従い、raw occupancy / Storage / slotの責任保存を専用branchで実装しました。明示したlive regionの各byteにraw・typed-empty・live-rootの責任を一つだけ与え、split/merge、exact-size into_slot、total erase_slot、既存lifecycleを検証します。[F1.4日本語report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)を参照してください。F1.4はreview・merge済みで**CLOSED**です。F1.5はreview・merge済みで**CLOSED**です。F2もreview・merge済みで**CLOSED**です。
 
 
-F2はcanonical Draft 17.16の**bounded cyclic loop-header formal kernel**を実装します。concrete header stateとabstract Hを分離し、entryを含むinductive post-fixpointから任意finite continue列のsoundnessを証明します。symbolic affine originでもexact責任とhidden blockerを保持し、finite break summary・return分離・zero normal exitを検証します。既存834 auditを保持し96追加、合計930です。[F2日本語report](docs/F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.ja.md)（[英語](docs/F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.md)）に15 controls、8 positive witnesses、全clause inventoryとCI handoffを記録します。PRはopen/unmergedで**F2 READY FOR REVIEW**までとし、source grammar・production・後続へ進みません。
+F2はcanonical Draft 17.16の**bounded cyclic loop-header formal kernel**を実装します。concrete header stateとabstract Hを分離し、entryを含むinductive post-fixpointから任意finite continue列のsoundnessを証明します。symbolic affine originでもexact責任とhidden blockerを保持し、finite break summary・return分離・zero normal exitを検証します。既存834 auditを保持し96追加、合計930です。[F2日本語report](docs/F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.ja.md)（[英語](docs/F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.md)）に15 controls、8 positive witnesses、全clause inventoryとCI handoffを記録します。F2はCoordination reviewを通過してmerge・close済みです。exact loop source grammar、production implementation、後続作業は別milestoneとして残します。
 
 
 ## 仕様の優先順位
