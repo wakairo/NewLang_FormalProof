@@ -1,4 +1,4 @@
-# NewLang FormalProof — F1.5
+# NewLang FormalProof — F2
 
 F0.0–F0.6はreview・merge済みでflat kernelは**CLOSED**です。F1.0はreview・merge済みでCLOSEDです。F1.1もreview PASS後にmainへmergeされCLOSEDです。F1.1ではfixed-shape structural replace/store/swapを形式化し、overlapするcurrent factをfresh化し、disjoint fact・全fixed incarnation・layout・governing relationを保存します。structured carried valueでchild-local dependency ownershipを保持します。
 
@@ -8,11 +8,15 @@ F1.2 **Conditional Occurrence / Sum Semantics**はreview・merge済みでCLOSED�
 F1.3はIssue #10に従い、当時のcanonical Draft 17.8 §3.1/§3.5/§14.1–3を形式化します。配置はpackage外のstate-owned関係です。replace/storeとdistinct swapは配置を保持し、same swapはexact identityです。initializeはdestination write、takeはsource readを要求し、destroyにはtakeのread条件を継承させません。古いptrは同じ配置の再initializeでも復活しません。[F1.3 reportと全theorem/control inventory](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)を参照してください。
 
 
-F1.3はreview・merge済みで**CLOSED**です。F1.4はIssue #13に従い、raw occupancy / Storage / slotの責任保存を専用branchで実装しました。明示したlive regionの各byteにraw・typed-empty・live-rootの責任を一つだけ与え、split/merge、exact-size into_slot、total erase_slot、既存lifecycleを検証します。[F1.4日本語report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)を参照してください。F1.4はreview・merge済みで**CLOSED**です。F1.5は[Issue #16](https://github.com/wakairo/NewLang_FormalProof/issues/16)の別handoffに基づき実施します。P5/M9は今回scope外です。
+F1.3はreview・merge済みで**CLOSED**です。F1.4はIssue #13に従い、raw occupancy / Storage / slotの責任保存を専用branchで実装しました。明示したlive regionの各byteにraw・typed-empty・live-rootの責任を一つだけ与え、split/merge、exact-size into_slot、total erase_slot、既存lifecycleを検証します。[F1.4日本語report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)を参照してください。F1.4はreview・merge済みで**CLOSED**です。F1.5はreview・merge済みで**CLOSED**です。F2は[Issue #19](https://github.com/wakairo/NewLang_FormalProof/issues/19)のhandoffに基づき実施します。
+
+
+F2はcanonical Draft 17.16の**bounded cyclic loop-header formal kernel**を実装します。concrete header stateとabstract Hを分離し、entryを含むinductive post-fixpointから任意finite continue列のsoundnessを証明します。symbolic affine originでもexact責任とhidden blockerを保持し、finite break summary・return分離・zero normal exitを検証します。既存834 auditを保持し96追加、合計930です。[F2日本語report](docs/F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.ja.md)（[英語](docs/F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.md)）に15 controls、8 positive witnesses、全clause inventoryとCI handoffを記録します。PRはopen/unmergedで**F2 READY FOR REVIEW**までとし、source grammar・production・後続へ進みません。
+
 
 ## 仕様の優先順位
 
-1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.9）。
+1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.16）。
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
 4. Lean model: proofのためのencoding。
@@ -295,7 +299,12 @@ splitはsourceを消費して同じregionのnonempty/disjoint/exactな二片を�
 | F1.3 | BackingRegion / placement / access — review・merge済み / CLOSED |
 | F1.4 | Raw occupancy / Storage / slot — review・merge済み / CLOSED |
 | F1.5 | Opaque lifetime-root relocation — review・merge済み / CLOSED |
+| F2 | Bounded cyclic loop-header formal kernel — READY FOR REVIEW、open/unmerged PR |
 
 F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2はopaque root-level sum sliceとF1.1へのerasureを実装します。F1.3はBackingRegion、root placement、最小access境界をrefineします。F1.4はraw/slot/rootの明示accountingを追加します。F1.5はIssue #16のbounded opaque root relocationを追加します。nested/fixed-aggregate sum embedding、lexical ref future-use、functionは後続です。F1.4とF1.5はreview・merge済みでCLOSEDです。後続作業は別のCoordination handoffを待ちます。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
 
 [formalization notes](docs/FORMALIZATION_NOTES.ja.md)と[F0.1 report](docs/F0_1_REPLACE_REPORT.md)、[F0.2 report](docs/F0_2_STORE_REPORT.md)、[F0.3 report](docs/F0_3_SWAP_REPORT.md)、[F0.4 report](docs/F0_4_LIFETIME_OCCUPANCY_REPORT.md)、[F0.5 report](docs/F0_5_PTR_REF_ACQUISITION_REPORT.md)、[F0.6 report](docs/F0_6_DOMAIN_TRANSFER_FINALIZATION_REPORT.md)、[F1.0 report](docs/F1_0_STRUCTURAL_REFINEMENT_REPORT.md)、[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)、[F1.2 report](docs/F1_2_CONDITIONAL_OCCURRENCE_REPORT.md)、[F1.3 report](docs/F1_3_BACKING_PLACEMENT_ACCESS_REPORT.md)、[F1.4 report](docs/F1_4_RAW_OCCUPANCY_REPORT.ja.md)、[F1.5 report](docs/F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md)も参照してください。
+
+## F2 cyclic header boundary
+
+`NewLang/F2`は既存F0 PackageId/Fact/current-value identityを再利用する独立した小control-flow sliceです。affine parameter 0/1、captured availability 1、outer Copy current fact 1、各continue/break/return class最大2 indexに限定します。historyとmay/Unknownはproof-onlyです。Unknownでもblockerを保持し、exact availabilityはwideningしません。body評価/acyclic callは明示transfer premiseで、F1.5 full erasureやsource checkerは主張しません。2本のcontinue edgeの任意finite列にlegal concrete traceが存在し、Hが包含します。break summaryはstatic edge indexに対してfiniteで、runtime PackageIdの有限性は要求しません。returnはnormal resultに含めず、zero breakならzero normal resultです。pin/manifest/bootstrap/logic whitelist/既存CIは不変、exact-head PR-event CI証拠はIssue #19のTrack: F handoffへ記録します。

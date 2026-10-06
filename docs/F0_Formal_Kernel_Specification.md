@@ -6,7 +6,7 @@
 **Non-goal:** この文書自体を新しい言語仕様にしない。Draft 17.4 と矛盾する場合は Draft 17.4 が優先する。
 
 
-**Current authority note:** This is the historical F0 extraction from Draft 17.4, not the current normative specification. Canonical authority is the Draft selected by `wakairo/NewLang_Compiler` main `docs/reference/CURRENT_SPEC.md`. F1.5 inspects canonical Draft 17.9 at Compiler main `acac894fc6c50101a3995a8f930a070987529335`; see [F1.5 report](F1_5_OPAQUE_ROOT_RELOCATION_REPORT.ja.md). The F0 extraction remains historical and non-normative. Existing resolved milestone-number correction history is retained.
+**Current authority note:** This is the historical F0 extraction from Draft 17.4, not the current normative specification. Canonical authority is the Draft selected by `wakairo/NewLang_Compiler` main `docs/reference/CURRENT_SPEC.md`. F2 inspects Draft 17.16 at Compiler main `2a3643449ae5d9fa619909c9fa16d21b8d2ac5e6`; see [F2 primary report](F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.ja.md). Historical F0 rules and resolved milestone-number correction history are retained; F2 is an orthogonal bounded loop-header encoding, not a new normative appendix.
 
 ---
 
