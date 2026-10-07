@@ -129,3 +129,5 @@ abstract `canWrite` に caller が何を入れるかは未形式化であるた�
 - Issue は Coordination review 用に open のまま、作成した PR は unmerged のままとする。review-readiness marker は実際の publication/CI evidence と scope limitations を伴って handback する。
 
 No F3.1/global theorem、source syntax、compiler code、field implementation、recursive Node、raw storage/allocator、cJSON、canonical Draft edit。本 adjunct の後続実装には進まない。
+
+Rebased FormalProof authority for the refreshed review head: `b3df0fc3f9a44f7afd41f835dc007dc1cada29ba`.
