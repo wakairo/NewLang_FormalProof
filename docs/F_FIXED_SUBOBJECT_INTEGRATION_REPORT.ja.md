@@ -11,12 +11,16 @@ Track: F
 | --- | --- |
 | Compiler | `355f1d2d1621cb5760b9dae7e9931753eedcc9f6` |
 | CURRENT_SPEC | [Draft 17.19](https://github.com/wakairo/NewLang_Compiler/blob/355f1d2d1621cb5760b9dae7e9931753eedcc9f6/docs/reference/NewLang_v0_spec_Draft17_19.md) |
-| FormalProof base | `200afdada16eb2bf7bf0006aa7d41febc8bedffb` |
+| FormalProof base | `b3df0fc3f9a44f7afd41f835dc007dc1cada29ba` |
 | Branch | `f-fixed-subobject-integration` |
 
 両 main は作業開始時の公開 HTTPS Git 読み取りで上記 SHA と一致した。Draft §3.8、§13.5a/§13.5b、§14.4、§17.4 と既存 F1.1 を照合する。Draft 17.4 は historical snapshot のまま変更しない。未merge の stable-root PR #28 は parent branch / proof input / normative evidence に使用しない。
 
 本 task は source field syntax の裁定を待たず、既存 semantic definitions 上の bounded integration を調べる。F3.1 や新しい broad milestone は開始しない。
+
+### Merge-order synchronization note
+
+Coordination review後、先行するstable-root PR #28がmainへmergeされたため、このbranchはそのreview済みmainへ追随した。fixed-subobject theorem/control本体は変更せず、import / README / proof-audit listを合成した。FormalProof baselineは992 audited declarationsとなり、本adjunctの15件を加えたexact branch auditは1007件である。
 
 ## F-A — representability inventory
 
@@ -117,8 +121,8 @@ abstract `canWrite` に caller が何を入れるかは未形式化であるた�
 
 ## Verification / review handoff
 
-- main baseline: `lake build` **PASS**、proof audit **985 PASS**。
-- branch: `lake build` **PASS**（774 jobs）、`bash scripts/check-proofs.sh` **1000 PASS**（985 existing + 15 new）。
+- main baseline: `lake build` **PASS**、proof audit **992 PASS**。
+- branch: `lake build` **PASS**（774 jobs）、`bash scripts/check-proofs.sh` **1007 PASS**（992 existing + 15 new）。
 - project-owned `sorry` / `axiom` / `admit` はなし。許可依存は従来どおり `propext`、`Classical.choice`、`Quot.sound` のみ。
 - Lean `v4.34.1` / mathlib `d13f23b723b8a846827a245b89c10fc7d3f11612` / bootstrap / manifest / workflow は不変。
 - unchanged workflow `Lean proofs` が branch push / pull_request を検証する。exact final head の GitHub CI と PR status は Issue #29 handback に記録する。local PASS だけを remote CI PASS としない。
