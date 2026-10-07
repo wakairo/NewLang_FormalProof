@@ -122,4 +122,14 @@ development processを最初に読み、Compiler main `2a3643449ae5d9fa619909c9f
 
 ## F3.0-pre rich sum lifetime adapter
 
-Compiler main `eda75ad09a73cacd0a78d1a0496aa0a86bd77a32` / Draft 17.17、FormalProof base `e591e53f295d4ab76d00d3bc1a2cdc443e06b7b4`でIssue #23を実施。baseline930 auditはPASSです。#22のFORMAL-INTERFACE-GAPはone-root/one-region/one-claimのtake/destroy adapterで局所的に解消し、rich surviving dependencyとexact accountingからpost invariantを導きます。coarse take合法・rich take不合法の具体例もmachine-checkしました。新規canonical findingなし。rich initializeとglobal/function/control/F2 adaptersはFORMAL-SCOPEです。既存930宣言を保持して55追加、合計985。pin/logic whitelistは不変。[report](F3_0_PRE_SUM_LIFETIME_ADAPTER_REPORT.ja.md)に全inventoryとhandbackを記録します。F3.0はreview/mergeとCoordination裁定までBLOCKEDを維持します。
+Compiler main `eda75ad09a73cacd0a78d1a0496aa0a86bd77a32` / Draft 17.17、FormalProof base `e591e53f295d4ab76d00d3bc1a2cdc443e06b7b4`でIssue #23を実施。baseline930 auditはPASSです。#22のFORMAL-INTERFACE-GAPはone-root/one-region/one-claimのtake/destroy adapterで局所的に解消し、rich surviving dependencyとexact accountingからpost invariantを導きます。coarse take合法・rich take不合法の具体例もmachine-checkしました。新規canonical findingなし。rich initializeとglobal/function/control/F2 adaptersはFORMAL-SCOPEです。既存930宣言を保持して55追加、合計985。pin/logic whitelistは不変。[report](F3_0_PRE_SUM_LIFETIME_ADAPTER_REPORT.ja.md)に全inventoryとhandbackを記録します。F3.0-preはreview・merge済み/CLOSEDで、Coordinationはmain `70aae8b9d945db7808f666e58fa31aa4dc9ef000`からF3.0 #22を再開しました。
+
+## F3.0 Safe Core integration contract
+
+Track: F。Compiler main `eda75ad09a73cacd0a78d1a0496aa0a86bd77a32` / Draft 17.17、FormalProof base `70aae8b9d945db7808f666e58fa31aa4dc9ef000`を確認し、development processと#22再開裁定に従いました。baseline build/985 auditはPASSです。[日本語contract](F3_0_SAFE_CORE_INTEGRATION_CONTRACT.ja.md)（[英語](F3_0_SAFE_CORE_INTEGRATION_CONTRACT.md)）でpreservation + separately modeled no-fault、adapter/refinement network、sealed profile ownership、declarative checking、actual call/control/bodyとF2接続の境界を定義します。formal Safe Core soundnessとproduction checker/backend correctnessは別claimです。
+
+- **FORMAL-INTERFACE-GAP — 解消済み F3-IF-1:** #23のbounded rich take/destroyを利用し、rich sumsをalready-live/preinitializedとして扱います。coarse legalityからrich legalityへの逆向き推論は禁止のままです。
+- **FORMAL-ENCODING / FORMAL-LEMMA:** profile/capsuleとframeはnon-normative。raw guardからcandidate invariant、actual bodyからcontrol/call/loop evidenceを導く新規adapterは後続proof obligationで、既証明とは主張しません。post WFやSafeBody oracleをcheckingに入れません。
+- **FORMAL-SCOPE:** rich initialize/by-value destination、cross-capsule effects、full persistent ref/P7 join、payload ref issuance、nested compositionはfirst subset外。F1.5はoptional extension。F3.1は一つのfinite Seq/If/direct-call + selected flat/rich lifetime scaffoldをrecommendし、今は実装しません。
+
+新FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTIONなし。targeted research不要。W1–W15、bad architecture controls、exact handoff、claim/trust boundaryはcontractに記録します。Lean/pin/audit/workflow/canonicalは変更せず985件を維持。documentation PRとexact-head CI evidenceはIssue #22のTrack: F handbackに記録し、PR/Issueはopen、未mergeで **F3.0 CONTRACT READY FOR REVIEW** とします。

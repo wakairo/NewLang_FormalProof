@@ -1,6 +1,8 @@
-# NewLang FormalProof — F3.0-pre
+# NewLang FormalProof — F3.0
 
-F3.0-pre implements [Issue #23](https://github.com/wakairo/NewLang_FormalProof/issues/23)'s occurrence-aware rich sum lifetime adapter. Within one root/region/claim, take and destroy derive post invariants from explicit survivor guards, conserve exact slot responsibility, and exhibit legal coarse take with rejected rich take. No post-WellFormed oracle is used; 985 declarations are audited. See the [Japanese report](docs/F3_0_PRE_SUM_LIFETIME_ADAPTER_REPORT.ja.md). F3.0-pre has passed Coordination review and is merged/CLOSED. F3.0 #22 may resume from the reviewed adapter boundary.
+F3.0 defines the bounded Safe Core integration contract under [Issue #22](https://github.com/wakairo/NewLang_FormalProof/issues/22). The [Japanese primary contract](docs/F3_0_SAFE_CORE_INTEGRATION_CONTRACT.ja.md) ([English companion](docs/F3_0_SAFE_CORE_INTEGRATION_CONTRACT.md)) selects the exact subset, preservation plus modeled no-fault, adapter architecture, checking/call/control/F2 boundaries and one bounded F3.1 handoff. It reuses the reviewed F3.0-pre adapter; rich sums are preinitialized and rich initialize remains later scope. This is documentation only, with no global Lean theorem implementation. Stop: **F3.0 CONTRACT READY FOR REVIEW**. All 985 audits and pins remain unchanged.
+
+F3.0-pre implements [Issue #23](https://github.com/wakairo/NewLang_FormalProof/issues/23)'s occurrence-aware rich sum lifetime adapter. Within one root/region/claim, take and destroy derive post invariants from explicit survivor guards, conserve exact slot responsibility, and exhibit legal coarse take with rejected rich take. No post-WellFormed oracle is used; 985 declarations are audited. See the [Japanese report](docs/F3_0_PRE_SUM_LIFETIME_ADAPTER_REPORT.ja.md). F3.0-pre has passed Coordination review and is merged/CLOSED. The resumed F3.0 contract uses that reviewed adapter boundary.
 
 [日本語](README.ja.md)
 
@@ -315,7 +317,7 @@ All **757** previous declaration audits remain in order; **77** additions give *
 | F1.4 | Raw occupancy / Storage / slot — reviewed/merged / CLOSED |
 | F1.5 | Opaque lifetime-root relocation — reviewed/merged / CLOSED |
 | F2 | Bounded cyclic loop-header formal kernel — reviewed/merged / CLOSED |
-| F3.0 | Safe Core integration contract — RESUMED, Issue #22 |
+| F3.0 | Safe Core integration contract — CONTRACT READY FOR REVIEW, Issue #22 |
 | F3.0-pre | Rich sum lifetime adapter — reviewed/merged / CLOSED |
 
 F0 closure is limited to the reviewed flat kernel. F1.0 and F1.1 are CLOSED/MERGED. F1.2 implements an opaque root-level conditional-occurrence slice with erasure to F1.1. F1.3 refines backing identity, root placement and minimum access boundaries. F1.4 adds explicit raw/slot/root accounting. F1.5 adds bounded opaque root relocation under Issue #16. Nested/fixed-aggregate sum embedding, lexical ref future-use and functions remain deferred. F1.4 and F1.5 are reviewed/merged and CLOSED; subsequent work requires a separate Coordination handoff. Whole-language memory/type safety and compiler correctness are not claimed.
