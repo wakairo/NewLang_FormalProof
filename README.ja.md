@@ -2,6 +2,8 @@
 
 Issue #27のstable-root integration adjunctは、既存F0 theoremを結び、initialize → replace → acquisition → take/destroyの同一pathをmachine-checkします。[日本語report](docs/F_STABLE_ROOT_INTEGRATION_REPORT.ja.md)を参照してください。replaceでplace/incarnation/governing relationは維持され、post access/stabilityが成立する時は同じptrを再取得できます。legal lifetime end後は同じptrを拒否します。新しいmodel layerやF3.1は追加せず、旧985件を保持して7件追加、現在のauditは**992 declarations**です。
 
+Issue [#29](https://github.com/wakairo/NewLang_FormalProof/issues/29) は、review済みmain上でfixed-subobjectのbounded integration evidenceを追加します。parent/field incarnation保存、ancestor fact invalidation、known-disjoint sibling value保存、surviving dependency rejectionをmachine-checkし、[Track F report](docs/F_FIXED_SUBOBJECT_INTEGRATION_REPORT.ja.md)に記録します。merge済みstable-root adjunctの992件に15件を追加し、audit総数は **1007 declarations** です。field-ptr / structural EndRoot / Unknown-effect adapterは明示的な未証明hookとして残し、F3.1は開始しません。
+
 F3.0は[Issue #22](https://github.com/wakairo/NewLang_FormalProof/issues/22)のbounded Safe Core integration contractです。[日本語contract](docs/F3_0_SAFE_CORE_INTEGRATION_CONTRACT.ja.md)でexact subset、preservation + no modeled fault、adapter/refinement architecture、checking/function/control/F2境界、bounded F3.1 handoffを裁定します。F3.0-preのreview済みadapterを再利用し、rich sumはpreinitialized、rich initializeはlater scopeとします。今回はdocumentationのみでglobal Lean theoremを実装せず、**F3.0 CONTRACT READY FOR REVIEW**で停止します。985 auditとpinは不変です。
 
 F3.0-preは[Issue #23](https://github.com/wakairo/NewLang_FormalProof/issues/23)のoccurrence-aware rich sum lifetime adapterです。one-root/one-region/one-claimのboundで、take/destroyのsurvivor差、終了fact conflict、exact slot責任保存、coarse legalityからrich legalityを推論できないcounterexampleを証明します。post WellFormed oracleを使わず、985宣言をauditします。[日本語report](docs/F3_0_PRE_SUM_LIFETIME_ADAPTER_REPORT.ja.md)を参照してください。F3.0-preはCoordination reviewを通過してmerge・CLOSED済みです。再開したF3.0 contractはこのreview済みadapter境界を利用します。
@@ -22,7 +24,7 @@ F2はcanonical Draft 17.16の**bounded cyclic loop-header formal kernel**を実�
 
 ## 仕様の優先順位
 
-1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.19）。
+1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.20）。
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
 4. Lean model: proofのためのencoding。

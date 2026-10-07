@@ -1,4 +1,5 @@
 import NewLang.F1.Swap
+import NewLang.F1.FixedChange
 
 namespace NewLang.F1.Counterexample.Transition
 open F0
@@ -1309,6 +1310,106 @@ theorem omitting_discardability_can_silently_lose_nondiscardable_value :
     change f ∈ (if _ then ∅ else ∅) at dep
     split at dep <;> exact False.elim (Finset.notMem_empty f dep)
   · intro pkg loose; change pkg ∈ (∅ : Finset PackageId) at loose; simp at loose
+
+/-- Issue #29: one nested leaf Change combines stable fixed identities, ancestor
+invalidation and sibling framing in the same checked transition. -/
+theorem field_change_preserves_parent_identity_and_refreshes_ancestor :
+    StructuralReplaceStep True True (before x emptyDeps (fun _=>∅) true) (target x) input output
+      (newValue x emptyDeps (fun _=>∅) true) supply (independentPost x) ∧
+    (((independentPost x).base.root loc).node p0).incarnation = ⟨0⟩ ∧
+    (((independentPost x).base.root loc).node x).incarnation = ⟨3⟩ ∧
+    atom p0 ∉ StructuralLiveFacts (independentPost x).base ∧
+    atom x ∉ StructuralLiveFacts (independentPost x).base ∧
+    (independentPost x).content loc p0 = p0.index := by
+  have raw := leaf_replace_is_legal.2.1
+  have liveRoot : LiveNode (before x emptyDeps (fun _=>∅) true).base loc p0 :=
+    ⟨by simp [before,seed],by simp [before,seed,layout,places]⟩
+  have ancestor : Ancestor layout p0 x :=
+    ⟨by simp [layout,places],by simp [layout,places],[0,0],by simp,by simp [layout,path,p0,a,b,x]⟩
+  refine ⟨leaf_replace_is_legal, replace_preserves_all_incarnations raw _ _,
+    replace_preserves_all_incarnations raw _ _, ?_, ?_, ?_⟩
+  · exact (FixedChange.field_replace_refreshes_ancestor_and_ends_old_fact
+      leaf_replace_is_legal.1 raw liveRoot ancestor).2.2.2.1
+  · exact replace_old_affected_facts_not_live leaf_replace_is_legal.1 raw raw.target_live
+      (target_is_affected raw.target_live)
+  · have outside : ¬ (loc = loc ∧ p0 ∈ subtreePlaces ((before x emptyDeps (fun _=>∅) true).base.root loc) x) := by
+      change ¬ (loc = loc ∧ p0 ∈ subtreePlaces ((seed emptyDeps true).base.root loc) x)
+      rw [subtree_leaf _ _ x (Or.inl rfl)]; simp [p0,x]
+    exact (replace_preserves_local_fragments_outside_target raw outside).2
+
+theorem sibling_value_and_dependency_survive_field_change :
+    StructuralReplaceStep True True siblingBefore (target a) input output siblingValue supply siblingPost ∧
+    siblingPost.content loc b = siblingBefore.content loc b ∧
+    atom b ∈ StructuralLiveFacts siblingPost.base := by
+  have frame := FixedChange.field_replace_frames_known_disjoint_value sibling_raw
+    ⟨by simp [siblingBefore,before,seed,target],by simp [siblingBefore,before,seed,target,layout,places]⟩ a_b_disjoint
+  exact ⟨disjoint_dependency_replace_is_legal, frame.2.1, frame.2.2.2⟩
+
+/-- Value(parent) can be owned by a surviving disjoint sibling; owner disjointness
+does not make the dependency's ancestor source disjoint from the changed field. -/
+theorem surviving_parent_value_dependency_blocks_field_change :
+    CurrentWellFormed (before x (oneDependency c p0) (fun _=>∅) true) ∧
+    ∀ post, ¬ StructuralReplaceStep True True (before x (oneDependency c p0) (fun _=>∅) true)
+      (target x) input output (newValue x (oneDependency c p0) (fun _=>∅) true) supply post := by
+  have wf := one_dependency_wf x c p0 (by simp [places]) true
+  refine ⟨wf, ?_⟩
+  intro post
+  apply FixedChange.field_replace_rejects_surviving_overlapping_dependency wf (p:=p0) (q:=c) (m:=loc)
+    ⟨by simp [before,seed,target],by simp [before,seed,target,layout,places]⟩ ?_
+    ⟨by simp [before,seed],by simp [before,seed,layout,places]⟩ ?_ ?_
+  · change StructuralOverlap layout x p0
+    exact Or.inr (Or.inr ⟨by simp [layout,places],by simp [layout,places],
+      [0,0],by simp,by simp [layout,path,p0,a,b,x]⟩)
+  · have outside : c ∉ subtreePlaces ((seed (oneDependency c p0) true).base.root loc) x := by
+      rw [subtree_leaf _ _ x (Or.inl rfl)]; simp [c,x]
+    simpa only [target,before,true_and] using outside
+  · simp [LocalDeps,before,seed,node,oneDependency,atom,target]
+
+private def coarseDeps (p : PlaceId) : Finset Fact := if p = c then {atom b,atom p0} else ∅
+
+/-- A finite conservative larger dependency set still contains the parent blocker. -/
+theorem larger_finite_dependency_set_keeps_parent_blocker :
+    CurrentWellFormed (before x coarseDeps (fun _=>∅) true) ∧
+    ∀ post, ¬ StructuralReplaceStep True True (before x coarseDeps (fun _=>∅) true)
+      (target x) input output (newValue x coarseDeps (fun _=>∅) true) supply post := by
+  classical
+  have wf : CurrentWellFormed (before x coarseDeps (fun _=>∅) true) := by
+    apply before_wf
+    · intro q _ f dep
+      by_cases owner : q = c
+      · have cases : f = atom b ∨ f = atom p0 := by simpa [coarseDeps,owner] using dep
+        rcases cases with rfl|rfl <;> exact atom_live _ _ (by simp [places])
+      · simp [coarseDeps,owner] at dep
+    · simp
+  refine ⟨wf, ?_⟩
+  intro post
+  apply FixedChange.field_replace_dependency_superset_keeps_blocker wf (p:=p0) (q:=c) (m:=loc)
+    ⟨by simp [before,seed,target],by simp [before,seed,target,layout,places]⟩ ?_
+    ⟨by simp [before,seed],by simp [before,seed,layout,places]⟩ ?_ {atom b,atom p0} ?_ ?_
+  · change StructuralOverlap layout x p0
+    exact Or.inr (Or.inr ⟨by simp [layout,places],by simp [layout,places],
+      [0,0],by simp,by simp [layout,path,p0,a,b,x]⟩)
+  · have outside : c ∉ subtreePlaces ((seed coarseDeps true).base.root loc) x := by
+      rw [subtree_leaf _ _ x (Or.inl rfl)]; simp [c,x]
+    simpa only [target,before,true_and] using outside
+  · change {atom b,atom p0} ⊆ coarseDeps c
+    simp [coarseDeps]
+  · simp [before,seed,node,atom,target]
+
+theorem field_change_keeps_enclosing_root_ptr_acquirable :
+    AcquireRef True True (eraseToF0 (independentPost x).base) ⟨loc,⟨0⟩⟩ ⟨0⟩ :=
+  FixedChange.field_replace_allows_enclosing_root_ptr_acquisition leaf_replace_is_legal trivial trivial
+
+/-- The exact field incarnation is live in F1 but inaccessible through F0's root-only
+token. It cannot be relabeled as the root incarnation to fake a field acquisition. -/
+theorem live_field_identity_cannot_be_acquired_through_root_only_erasure :
+    StructuralLiveIncarnation (before x emptyDeps (fun _=>∅) true).base ⟨3⟩ ∧
+    ¬ AcquireRef True True (eraseToF0 (before x emptyDeps (fun _=>∅) true).base) ⟨loc,⟨3⟩⟩ ⟨0⟩ := by
+  have live : LiveNode (before x emptyDeps (fun _=>∅) true).base loc x :=
+    ⟨by simp [before,seed],by simp [before,seed,layout,places]⟩
+  exact ⟨live_structural_node_has_incarnation live,
+    FixedChange.erased_field_incarnation_cannot_acquire_as_root (baseline_empty x true) live
+      (by simp [before,seed,layout,x,p0]) True True ⟨0⟩⟩
 
 end
 end NewLang.F1.Counterexample.Transition

@@ -16,6 +16,7 @@ import NewLang.F1.Erasure
 import NewLang.F1.Counterexample.Structural
 
 import NewLang.F1.Replace
+import NewLang.F1.FixedChange
 import NewLang.F1.Store
 import NewLang.F1.Swap
 import NewLang.F1.Counterexample.Transition
