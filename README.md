@@ -1,4 +1,6 @@
-# NewLang FormalProof — F2
+# NewLang FormalProof — F3.0-pre
+
+F3.0-pre implements [Issue #23](https://github.com/wakairo/NewLang_FormalProof/issues/23)'s occurrence-aware rich sum lifetime adapter. Within one root/region/claim, take and destroy derive post invariants from explicit survivor guards, conserve exact slot responsibility, and exhibit legal coarse take with rejected rich take. No post-WellFormed oracle is used; 985 declarations are audited. See the [Japanese report](docs/F3_0_PRE_SUM_LIFETIME_ADAPTER_REPORT.ja.md). F3.0 #22 remains BLOCKED pending Coordination review.
 
 [日本語](README.ja.md)
 
@@ -17,7 +19,7 @@ F2 implements the **bounded cyclic loop-header formal kernel** against canonical
 
 ## Specification boundary
 
-1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.16).
+1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.17).
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
 4. The Lean model is an encoding for theorem proving.
@@ -312,7 +314,9 @@ All **757** previous declaration audits remain in order; **77** additions give *
 | F1.3 | BackingRegion / placement / access — reviewed/merged / CLOSED |
 | F1.4 | Raw occupancy / Storage / slot — reviewed/merged / CLOSED |
 | F1.5 | Opaque lifetime-root relocation — reviewed/merged / CLOSED |
-| F2 | Bounded cyclic loop-header formal kernel — READY FOR REVIEW, open/unmerged PR |
+| F2 | Bounded cyclic loop-header formal kernel — reviewed/merged / CLOSED |
+| F3.0 | Safe Core integration contract — BLOCKED, Issue #22 |
+| F3.0-pre | Rich sum lifetime adapter — READY FOR REVIEW, Issue #23 |
 
 F0 closure is limited to the reviewed flat kernel. F1.0 and F1.1 are CLOSED/MERGED. F1.2 implements an opaque root-level conditional-occurrence slice with erasure to F1.1. F1.3 refines backing identity, root placement and minimum access boundaries. F1.4 adds explicit raw/slot/root accounting. F1.5 adds bounded opaque root relocation under Issue #16. Nested/fixed-aggregate sum embedding, lexical ref future-use and functions remain deferred. F1.4 and F1.5 are reviewed/merged and CLOSED; subsequent work requires a separate Coordination handoff. Whole-language memory/type safety and compiler correctness are not claimed.
 

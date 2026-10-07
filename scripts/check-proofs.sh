@@ -943,6 +943,61 @@ declarations=(
   NewLang.F2.Continue.transformed_transfer_exactly_once
   NewLang.F2.Continue.histories_monotone
   NewLang.F2.Continue.mutated_current_fact_is_not_live
+  NewLang.F3.Memory.SumLifetime.coarse_live
+  NewLang.F3.Memory.SumLifetime.coarse_survives
+  NewLang.F3.Memory.SumLifetime.coarse_live_facts
+  NewLang.F3.Memory.SumLifetime.coarse_wellFormed
+  NewLang.F3.Memory.SumLifetime.remaining_was_surviving
+  NewLang.F3.Memory.SumLifetime.live_not_ended_remains_live
+  NewLang.F3.Memory.SumLifetime.end_semantic_invariant
+  NewLang.F3.Memory.SumLifetime.end_semantic_wellFormed
+  NewLang.F3.Memory.SumLifetime.end_all_facts_dead
+  NewLang.F3.Memory.SumLifetime.end_placement_empty
+  NewLang.F3.Memory.SumLifetime.end_accounting
+  NewLang.F3.Memory.SumLifetime.end_candidate_wellFormed
+  NewLang.F3.Memory.SumLifetime.take_preserves_wellFormed
+  NewLang.F3.Memory.SumLifetime.destroy_preserves_wellFormed
+  NewLang.F3.Memory.SumLifetime.end_preserves_value_and_history
+  NewLang.F3.Memory.SumLifetime.take_returns_unique_loose
+  NewLang.F3.Memory.SumLifetime.destroy_old_package_not_surviving
+  NewLang.F3.Memory.SumLifetime.end_responsibility
+  NewLang.F3.Memory.SumLifetime.end_footprint_conserved
+  NewLang.F3.Memory.SumLifetime.take_rejects_ended_dependency
+  NewLang.F3.Memory.SumLifetime.destroy_rejects_external_ended_dependency
+  NewLang.F3.Memory.SumLifetime.end_rejects_stale_root_token
+  NewLang.F3.Memory.SumLifetime.take_requires_read_and_ending
+  NewLang.F3.Memory.SumLifetime.destroy_requires_discard_and_ending
+  NewLang.F3.Memory.SumLifetime.raw_take_returns_exact_slot
+  NewLang.F3.Memory.SumLifetime.raw_destroy_returns_exact_slot
+  NewLang.F3.Memory.SumLifetime.end_frames_other_locations
+  NewLang.F3.Memory.SumLifetime.coarse_take_candidate
+  NewLang.F3.Memory.SumLifetime.coarse_destroy_candidate
+  NewLang.F3.Memory.SumLifetime.coarse_state_wellFormed
+  NewLang.F3.Memory.SumLifetime.raw_take_projects
+  NewLang.F3.Memory.SumLifetime.raw_destroy_projects
+  NewLang.F3.Memory.SumLifetime.rich_take_projects_to_legal_coarse
+  NewLang.F3.Memory.SumLifetime.rich_destroy_projects_to_legal_coarse
+  NewLang.F3.Memory.SumLifetime.rich_take_reviewed_erasure_wellFormed
+  NewLang.F3.Memory.SumLifetime.rich_destroy_reviewed_erasure_wellFormed
+  NewLang.F3.Memory.SumLifetime.Counterexample.independent_rich_take_is_legal
+  NewLang.F3.Memory.SumLifetime.Counterexample.take_positive_endpoint_and_exact_responsibility
+  NewLang.F3.Memory.SumLifetime.Counterexample.occurrence_payload_root_facts_end
+  NewLang.F3.Memory.SumLifetime.Counterexample.dependency_data_and_retired_history_preserved
+  NewLang.F3.Memory.SumLifetime.Counterexample.external_and_fixed_domain_dependency_remain_valid
+  NewLang.F3.Memory.SumLifetime.Counterexample.returned_occurrence_dependency_rejects_take
+  NewLang.F3.Memory.SumLifetime.Counterexample.returned_payload_dependency_rejects_take
+  NewLang.F3.Memory.SumLifetime.Counterexample.returned_root_fact_dependency_rejects_take
+  NewLang.F3.Memory.SumLifetime.Counterexample.destroy_can_consume_old_only_occurrence_dependency
+  NewLang.F3.Memory.SumLifetime.Counterexample.old_occurrence_dependency_rejects_take_but_allows_destroy
+  NewLang.F3.Memory.SumLifetime.Counterexample.external_occurrence_dependency_rejects_take_and_destroy
+  NewLang.F3.Memory.SumLifetime.Counterexample.coarse_legal_take_does_not_imply_rich_legal_take
+  NewLang.F3.Memory.SumLifetime.Counterexample.raw_candidate_has_structure_and_accounting_but_bad_dependencies
+  NewLang.F3.Memory.SumLifetime.Counterexample.stale_root_token_rejected_after_both_endings
+  NewLang.F3.Memory.SumLifetime.Counterexample.take_rejects_missing_read_or_ending
+  NewLang.F3.Memory.SumLifetime.Counterexample.destroy_rejects_missing_discard_or_ending
+  NewLang.F3.Memory.SumLifetime.Counterexample.wrong_region_extent_conversion_rejected
+  NewLang.F3.Memory.SumLifetime.Counterexample.missing_responsibility_rejected
+  NewLang.F3.Memory.SumLifetime.Counterexample.duplicated_responsibility_rejected
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"

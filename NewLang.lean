@@ -33,3 +33,5 @@ import NewLang.F1.Occupancy.Counterexample.Lifetime
 import NewLang.F1.Relocation.Counterexample.Atomicity
 
 import NewLang.F2.Counterexample.Exits
+
+import NewLang.F3.Memory.Counterexample.SumLifetime
