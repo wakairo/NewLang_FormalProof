@@ -1,4 +1,4 @@
-import NewLang.F0.Reference
+import NewLang.F0.StableRoot
 
 /-! Concrete acquisition controls and private omitted-guard countermodels. -/
 namespace NewLang.F0.Counterexample.Reference
@@ -213,6 +213,84 @@ theorem replace_changes_current_fact_but_same_ptr_acquires_ref :
     (root pkgB 1 2).incarnation = oldPtr.incarnation ∧ AcquireRef True True replaced oldPtr domain :=
   ⟨acquireFirst, replaceFirst, replaceFirst.2.1.target_after,
    by decide, rfl, ptr_remains_live_across_current_value_replace replaceFirst rfl rfl rfl True.intro True.intro⟩
+
+/-! Issue #27 composes an actual initialize/replace/end path using this existing
+fixture. The post-replace token is the original issued token, not a new token. -/
+private def takenAfterReplace : State := takeCandidate replaced location (root pkgB 1 2)
+private def destroyedAfterReplace : State := destroyCandidate replaced location (root pkgB 1 2)
+
+private theorem takenAfterReplace_eq : takenAfterReplace =
+    fixture none {pkgB, pkgA} {⟨1⟩} {⟨2⟩, ⟨1⟩} := by
+  simp [takenAfterReplace, takeCandidate, replaced_eq, fixture, root, initializeRoot]
+  funext l; by_cases same : l = location <;> simp [same]
+
+private theorem destroyedAfterReplace_eq : destroyedAfterReplace =
+    fixture none {pkgA} {⟨1⟩} {⟨2⟩, ⟨1⟩} := by
+  simp [destroyedAfterReplace, destroyCandidate, replaced_eq, fixture, root, initializeRoot,
+    pkgA, pkgB]
+  funext l; by_cases same : l = location <;> simp [same]
+
+private theorem takeAfterReplace :
+    TakeStep True replaced location (root pkgB 1 2) domain takenAfterReplace := by
+  refine ⟨replaceFirst.2.2, ⟨replaceFirst.2.1.target_after, rfl, True.intro, rfl⟩, ?_⟩
+  rw [takenAfterReplace_eq]; exact vacant_wellFormed _ _ _
+
+private theorem destroyAfterReplace :
+    DestroyStep True replaced location (root pkgB 1 2) domain destroyedAfterReplace := by
+  refine ⟨replaceFirst.2.2, ⟨replaceFirst.2.1.target_after, rfl, True.intro,
+    ⟨package, rfl, rfl⟩, rfl⟩, ?_⟩
+  rw [destroyedAfterReplace_eq]; exact vacant_wellFormed _ _ _
+
+private theorem acquireReplaced : AcquireRef True True replaced oldPtr domain :=
+  StableRoot.replace_preserves_preexisting_ptr_acquisition
+    acquireFirst replaceFirst rfl True.intro True.intro
+
+theorem stable_root_replace_then_take_contrast :
+    InitializeStep sites True True start location pkgA domain ⟨1⟩ ⟨1⟩ first ∧
+    AcquireRef True True first oldPtr domain ∧
+    ReplaceStep True True first location (root pkgA 1 1) pkgB ⟨2⟩ replaced ∧
+    replaced.occupancy oldPtr.location = .live (root pkgB 1 2) ∧
+    (root pkgB 1 2).place = (root pkgA 1 1).place ∧
+    (root pkgB 1 2).incarnation = oldPtr.incarnation ∧
+    (root pkgB 1 2).currentFact ≠ (root pkgA 1 1).currentFact ∧
+    Governs replaced oldPtr.incarnation domain ∧ AcquireRef True True replaced oldPtr domain ∧
+    TakeStep True replaced location (root pkgB 1 2) domain takenAfterReplace ∧
+    ¬ LiveIncarnation takenAfterReplace oldPtr.incarnation ∧
+    ¬ AcquireRef True True takenAfterReplace oldPtr domain :=
+  ⟨initializeFirst, acquireFirst, replaceFirst, replaceFirst.2.1.target_after, rfl, rfl,
+    by decide, acquire_ref_implies_governing_relation acquireReplaced, acquireReplaced,
+    takeAfterReplace, take_ends_incarnation takeAfterReplace.1 takeAfterReplace.2.1,
+    StableRoot.replace_then_take_rejects_preexisting_ptr acquireFirst replaceFirst rfl takeAfterReplace⟩
+
+theorem stable_root_replace_then_destroy_contrast :
+    InitializeStep sites True True start location pkgA domain ⟨1⟩ ⟨1⟩ first ∧
+    AcquireRef True True first oldPtr domain ∧
+    ReplaceStep True True first location (root pkgA 1 1) pkgB ⟨2⟩ replaced ∧
+    Governs replaced oldPtr.incarnation domain ∧ AcquireRef True True replaced oldPtr domain ∧
+    DestroyStep True replaced location (root pkgB 1 2) domain destroyedAfterReplace ∧
+    ¬ LiveIncarnation destroyedAfterReplace oldPtr.incarnation ∧
+    ¬ AcquireRef True True destroyedAfterReplace oldPtr domain :=
+  ⟨initializeFirst, acquireFirst, replaceFirst,
+    acquire_ref_implies_governing_relation acquireReplaced, acquireReplaced,
+    destroyAfterReplace, destroy_ends_incarnation destroyAfterReplace.1 destroyAfterReplace.2.1,
+    StableRoot.replace_then_destroy_rejects_preexisting_ptr acquireFirst replaceFirst rfl destroyAfterReplace⟩
+
+/-- Preserving the incarnation does not waive independent acquisition obligations
+or revive the old current-value fact. Both domains in this fixture are live. -/
+theorem stable_root_replace_still_requires_acquisition_guards :
+    AcquireRef True True replaced oldPtr domain ∧ CurrentPtr replaced oldPtr ∧
+    Fact.valueFact (root pkgA 1 1).place (root pkgA 1 1).currentFact ∉ LiveFacts replaced ∧
+    (root pkgA 1 1).currentFact ∈ replaced.usedValueFacts ∧
+    wrongDomain ∈ replaced.liveDomains ∧
+    ¬ AcquireRef False True replaced oldPtr domain ∧
+    ¬ AcquireRef True False replaced oldPtr domain ∧
+    ¬ AcquireRef True True replaced oldPtr wrongDomain :=
+  ⟨acquireReplaced, acquire_ref_targets_exact_location_incarnation acquireReplaced,
+    rawReplace_old_current_fact_not_live replaceFirst.1 replaceFirst.2.1,
+    replace_old_fact_remains_used replaceFirst, by simp [replaced_eq, fixture],
+    acquire_ref_rejects_missing_stability_evidence not_false,
+    acquire_ref_rejects_missing_access_or_provenance_premise not_false,
+    acquire_ref_rejects_wrong_domain replaceFirst.2.1.target_after (by decide)⟩
 
 /-- Exactly RawInitialize's obligations except incarnation freshness. -/
 private def InitializeIgnoringIncarnationFreshness (ci tc : Prop) (s : State)
