@@ -1,4 +1,4 @@
-# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 / F2 formalization notes
+# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 / F2 / F3.0-pre formalization notes
 
 現在のnormative source of truthは`NewLang_Compiler/main`の`docs/reference/CURRENT_SPEC.md`が指すDraftです（F1.1 review時点ではDraft 17.6）。このrepositoryのDraft 17.4はhistorical local snapshotとして保持し、変更していません。non-normative bridgeの編集修正は以下へ記録します。
 
@@ -119,3 +119,7 @@ development processを最初に読み、Compiler main `2a3643449ae5d9fa619909c9f
 - **FORMAL-SCOPE:** one bounded loopのみ。nested loopはnested instanceを使う方向ですがcomposition未証明、recursive SCCは除外します。exact grammar、production、M/P/R、memory/relocation変更、LLVM、FFI、modules、concurrency、後続へ進みません。
 
 **新規FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION: なし。** 正本と既存public statementは変更せず、834 auditを順序どおり保持して96追加、合計930です。logic whitelist/pin/manifest/bootstrap/workflowは不変。[日本語report](F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.ja.md)（[英語](F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.md)）へ全定理/control/clause inventoryとIssue #19 exact-head PR CI evidence pointerを記録します。F2はCoordination reviewを通過してmerge・close済みです。exact loop source grammar、production implementation、後続作業は別のCoordination handoffを待ちます。
+
+## F3.0-pre rich sum lifetime adapter
+
+Compiler main `eda75ad09a73cacd0a78d1a0496aa0a86bd77a32` / Draft 17.17、FormalProof base `e591e53f295d4ab76d00d3bc1a2cdc443e06b7b4`でIssue #23を実施。baseline930 auditはPASSです。#22のFORMAL-INTERFACE-GAPはone-root/one-region/one-claimのtake/destroy adapterで局所的に解消し、rich surviving dependencyとexact accountingからpost invariantを導きます。coarse take合法・rich take不合法の具体例もmachine-checkしました。新規canonical findingなし。rich initializeとglobal/function/control/F2 adaptersはFORMAL-SCOPEです。既存930宣言を保持して55追加、合計985。pin/logic whitelistは不変。[report](F3_0_PRE_SUM_LIFETIME_ADAPTER_REPORT.ja.md)に全inventoryとhandbackを記録します。F3.0はreview/mergeとCoordination裁定までBLOCKEDを維持します。

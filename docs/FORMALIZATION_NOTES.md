@@ -1,4 +1,4 @@
-# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 / F2 formalization notes
+# F0.0 / F0.1 / F0.2 / F0.3 / F0.4 / F0.5 / F0.6 / F1.0 / F1.1 / F1.2 / F1.3 / F1.4 / F1.5 / F2 / F3.0-pre formalization notes
 
 [日本語](FORMALIZATION_NOTES.ja.md)
 
@@ -121,3 +121,7 @@ Canonical Compiler main `2a3643449ae5d9fa619909c9fa16d21b8d2ac5e6` / CURRENT_SPE
 - **FORMAL-SCOPE:** one bounded loop; nested loops would use nested instances but composition is not proved; recursive SCC is excluded. No exact grammar, production, M/P/R, memory/relocation changes, LLVM, FFI, modules, concurrency or later milestone.
 
 **New FORMAL-HOLE / FORMAL-AMBIGUITY / FORMAL-EXTRACTION: none found.** Canonical rules and prior public statements are unchanged. Preserve 834 audits in order and add 96 (930 total), with the same logic whitelist/pins/manifest/bootstrap/workflow. See the [primary report](F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.ja.md) ([English](F2_BOUNDED_CYCLIC_LOOP_HEADER_REPORT.md)) for exact theorem/control/clause inventory and Issue #19 exact-head PR CI evidence pointer. F2 passed Coordination review and is merged/closed. Exact loop source grammar, production implementation, and later work require a separate Coordination handoff.
+
+## F3.0-pre rich sum lifetime adapter
+
+Issue #23 uses Compiler main `eda75ad09a73cacd0a78d1a0496aa0a86bd77a32` / Draft 17.17 and FormalProof base `e591e53f295d4ab76d00d3bc1a2cdc443e06b7b4`. Baseline 930 audits pass. The #22 FORMAL-INTERFACE-GAP is addressed in a bounded one-root/region/claim take/destroy adapter: explicit survivor guards and accounting derive post invariants; a concrete coarse-legal/rich-illegal take is checked. No new canonical finding. Rich initialize and global/function/control/F2 adapters remain FORMAL-SCOPE. Retain 930 audits and add 55 (985 total), with unchanged pins/logic whitelist. See the [report](F3_0_PRE_SUM_LIFETIME_ADAPTER_REPORT.ja.md) for the full inventory and handback. F3.0 remains BLOCKED until review/merge and Coordination adjudication.

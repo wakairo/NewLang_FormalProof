@@ -1,4 +1,6 @@
-# NewLang FormalProof — F2
+# NewLang FormalProof — F3.0-pre
+
+F3.0-preは[Issue #23](https://github.com/wakairo/NewLang_FormalProof/issues/23)のoccurrence-aware rich sum lifetime adapterです。one-root/one-region/one-claimのboundで、take/destroyのsurvivor差、終了fact conflict、exact slot責任保存、coarse legalityからrich legalityを推論できないcounterexampleを証明します。post WellFormed oracleを使わず、985宣言をauditします。[日本語report](docs/F3_0_PRE_SUM_LIFETIME_ADAPTER_REPORT.ja.md)を参照してください。F3.0 #22はCoordination reviewまでBLOCKEDのままです。
 
 F0.0–F0.6はreview・merge済みでflat kernelは**CLOSED**です。F1.0はreview・merge済みでCLOSEDです。F1.1もreview PASS後にmainへmergeされCLOSEDです。F1.1ではfixed-shape structural replace/store/swapを形式化し、overlapするcurrent factをfresh化し、disjoint fact・全fixed incarnation・layout・governing relationを保存します。structured carried valueでchild-local dependency ownershipを保持します。
 
@@ -16,7 +18,7 @@ F2はcanonical Draft 17.16の**bounded cyclic loop-header formal kernel**を実�
 
 ## 仕様の優先順位
 
-1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.16）。
+1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.17）。
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
 4. Lean model: proofのためのencoding。
@@ -299,7 +301,9 @@ splitはsourceを消費して同じregionのnonempty/disjoint/exactな二片を�
 | F1.3 | BackingRegion / placement / access — review・merge済み / CLOSED |
 | F1.4 | Raw occupancy / Storage / slot — review・merge済み / CLOSED |
 | F1.5 | Opaque lifetime-root relocation — review・merge済み / CLOSED |
-| F2 | Bounded cyclic loop-header formal kernel — READY FOR REVIEW、open/unmerged PR |
+| F2 | Bounded cyclic loop-header formal kernel — review・merge済み / CLOSED |
+| F3.0 | Safe Core integration contract — BLOCKED, Issue #22 |
+| F3.0-pre | Rich sum lifetime adapter — READY FOR REVIEW, Issue #23 |
 
 F0 closureはreview済みflat kernelに限定します。F1.0とF1.1はCLOSED/MERGEDです。F1.2はopaque root-level sum sliceとF1.1へのerasureを実装します。F1.3はBackingRegion、root placement、最小access境界をrefineします。F1.4はraw/slot/rootの明示accountingを追加します。F1.5はIssue #16のbounded opaque root relocationを追加します。nested/fixed-aggregate sum embedding、lexical ref future-use、functionは後続です。F1.4とF1.5はreview・merge済みでCLOSEDです。後続作業は別のCoordination handoffを待ちます。言語全体のmemory/type safetyやcompiler correctnessは主張しません。
 
