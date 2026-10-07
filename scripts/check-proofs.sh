@@ -998,6 +998,13 @@ declarations=(
   NewLang.F3.Memory.SumLifetime.Counterexample.wrong_region_extent_conversion_rejected
   NewLang.F3.Memory.SumLifetime.Counterexample.missing_responsibility_rejected
   NewLang.F3.Memory.SumLifetime.Counterexample.duplicated_responsibility_rejected
+  NewLang.F0.StableRoot.replace_preserves_preexisting_ptr_target
+  NewLang.F0.StableRoot.replace_preserves_preexisting_ptr_acquisition
+  NewLang.F0.StableRoot.replace_then_take_rejects_preexisting_ptr
+  NewLang.F0.StableRoot.replace_then_destroy_rejects_preexisting_ptr
+  NewLang.F0.Counterexample.Reference.stable_root_replace_then_take_contrast
+  NewLang.F0.Counterexample.Reference.stable_root_replace_then_destroy_contrast
+  NewLang.F0.Counterexample.Reference.stable_root_replace_still_requires_acquisition_guards
   NewLang.F1.FixedChange.field_replace_preserves_target_and_root_identity
   NewLang.F1.FixedChange.field_replace_preserves_target_incarnation_liveness
   NewLang.F1.FixedChange.field_replace_frames_known_disjoint_value
