@@ -998,6 +998,21 @@ declarations=(
   NewLang.F3.Memory.SumLifetime.Counterexample.wrong_region_extent_conversion_rejected
   NewLang.F3.Memory.SumLifetime.Counterexample.missing_responsibility_rejected
   NewLang.F3.Memory.SumLifetime.Counterexample.duplicated_responsibility_rejected
+  NewLang.F1.FixedChange.field_replace_preserves_target_and_root_identity
+  NewLang.F1.FixedChange.field_replace_preserves_target_incarnation_liveness
+  NewLang.F1.FixedChange.field_replace_frames_known_disjoint_value
+  NewLang.F1.FixedChange.field_replace_refreshes_ancestor_and_ends_old_fact
+  NewLang.F1.FixedChange.field_replace_rejects_returned_target_dependency
+  NewLang.F1.FixedChange.field_replace_rejects_surviving_overlapping_dependency
+  NewLang.F1.FixedChange.field_replace_dependency_superset_keeps_blocker
+  NewLang.F1.FixedChange.field_replace_allows_enclosing_root_ptr_acquisition
+  NewLang.F1.FixedChange.erased_field_incarnation_cannot_acquire_as_root
+  NewLang.F1.Counterexample.Transition.field_change_preserves_parent_identity_and_refreshes_ancestor
+  NewLang.F1.Counterexample.Transition.sibling_value_and_dependency_survive_field_change
+  NewLang.F1.Counterexample.Transition.surviving_parent_value_dependency_blocks_field_change
+  NewLang.F1.Counterexample.Transition.larger_finite_dependency_set_keeps_parent_blocker
+  NewLang.F1.Counterexample.Transition.field_change_keeps_enclosing_root_ptr_acquirable
+  NewLang.F1.Counterexample.Transition.live_field_identity_cannot_be_acquired_through_root_only_erasure
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"
