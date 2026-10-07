@@ -1,6 +1,8 @@
 # NewLang FormalProof — F3.0
 
-Issue [#29](https://github.com/wakairo/NewLang_FormalProof/issues/29) adds bounded fixed-subobject integration evidence on the reviewed main: stable parent/field incarnations, ancestor fact invalidation, disjoint sibling value preservation, and surviving-dependency rejection. The [Track F report](docs/F_FIXED_SUBOBJECT_INTEGRATION_REPORT.ja.md) records the 15 additional audited declarations (1000 total) and missing field-ptr / structural EndRoot / Unknown-effect adapters. This adjunct does not start F3.1 or import unmerged stable-root PR #28.
+The Issue #27 stable-root integration adjunct composes existing F0 proofs along one initialize → replace → acquisition → take/destroy path. See the [Japanese report](docs/F_STABLE_ROOT_INTEGRATION_REPORT.ja.md). Replace retains place/incarnation/governing relation, allowing reacquisition with the same ptr when post-state access/stability premises hold; legal lifetime end rejects that token. No new model layer or F3.1 is added. Retain the 985 baseline declarations and add seven audits: **992 declarations** now.
+
+Issue [#29](https://github.com/wakairo/NewLang_FormalProof/issues/29) adds bounded fixed-subobject integration evidence on the reviewed main: stable parent/field incarnations, ancestor fact invalidation, disjoint sibling value preservation, and surviving-dependency rejection. The [Track F report](docs/F_FIXED_SUBOBJECT_INTEGRATION_REPORT.ja.md) records 15 additional audited declarations on top of the merged stable-root adjunct (**1007 declarations total**) and missing field-ptr / structural EndRoot / Unknown-effect adapters. This adjunct does not start F3.1.
 
 F3.0 defines the bounded Safe Core integration contract under [Issue #22](https://github.com/wakairo/NewLang_FormalProof/issues/22). The [Japanese primary contract](docs/F3_0_SAFE_CORE_INTEGRATION_CONTRACT.ja.md) ([English companion](docs/F3_0_SAFE_CORE_INTEGRATION_CONTRACT.md)) selects the exact subset, preservation plus modeled no-fault, adapter architecture, checking/call/control/F2 boundaries and one bounded F3.1 handoff. It reuses the reviewed F3.0-pre adapter; rich sums are preinitialized and rich initialize remains later scope. This is documentation only, with no global Lean theorem implementation. Stop: **F3.0 CONTRACT READY FOR REVIEW**. All 985 audits and pins remain unchanged.
 
@@ -23,7 +25,7 @@ F2 implements the **bounded cyclic loop-header formal kernel** against canonical
 
 ## Specification boundary
 
-1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.19).
+1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.20).
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
 4. The Lean model is an encoding for theorem proving.
