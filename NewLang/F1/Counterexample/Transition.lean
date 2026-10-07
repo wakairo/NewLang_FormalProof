@@ -1,5 +1,6 @@
 import NewLang.F1.Swap
 import NewLang.F1.FixedChange
+import NewLang.F1.FixedLifetime
 
 namespace NewLang.F1.Counterexample.Transition
 open F0
@@ -1410,6 +1411,331 @@ theorem live_field_identity_cannot_be_acquired_through_root_only_erasure :
   exact ⟨live_structural_node_has_incarnation live,
     FixedChange.erased_field_incarnation_cannot_acquire_as_root (baseline_empty x true) live
       (by simp [before,seed,layout,x,p0]) True True ⟨0⟩⟩
+
+section FieldLifecycle
+open Reference FixedLifetime
+
+private def fieldPtr : FieldPtrToken := fieldTokenAt (seed emptyDeps true) (target x)
+private theorem field_current : CurrentFieldPtr (seed emptyDeps true) fieldPtr :=
+  token_at_live_field_is_current ⟨by simp [seed,target],by simp [seed,target,layout,places]⟩
+    (by simp [seed,target,layout,x,p0])
+
+theorem live_nested_field_can_acquire : FieldAcquireRef True True (seed emptyDeps true) fieldPtr ⟨0⟩ :=
+  current_token_can_acquire (seed_empty_wf true) field_current rfl trivial trivial
+
+theorem field_token_rejects_wrong_path :
+    ¬ FieldAcquireRef True True (seed emptyDeps true) {fieldPtr with path := [9]} ⟨0⟩ :=
+  acquire_rejects_wrong_path (by simp [fieldPtr,fieldTokenAt,seed,target,layout,path,p0,a,b,x])
+
+theorem field_token_rejects_wrong_incarnation :
+    ¬ FieldAcquireRef True True (seed emptyDeps true) {fieldPtr with incarnation := ⟨99⟩} ⟨0⟩ :=
+  acquire_rejects_wrong_incarnation (by simp [fieldPtr,fieldTokenAt,seed,target,node,x])
+
+theorem field_token_rejects_wrong_parent_place :
+    ¬ FieldAcquireRef True True (seed emptyDeps true) {fieldPtr with rootPlace := a} ⟨0⟩ :=
+  acquire_rejects_wrong_root_place (by simp [seed,layout,p0,a])
+
+theorem field_token_rejects_wrong_parent_incarnation :
+    ¬ FieldAcquireRef True True (seed emptyDeps true) {fieldPtr with rootIncarnation := ⟨99⟩} ⟨0⟩ :=
+  acquire_rejects_wrong_root_incarnation (by simp [fieldPtr,fieldTokenAt,seed,layout,node,p0])
+
+theorem field_token_rejects_wrong_site :
+    ¬ FieldAcquireRef True True (seed emptyDeps true) {fieldPtr with location := ⟨99⟩} ⟨0⟩ :=
+  acquire_rejects_wrong_site (l:=loc) (seed_empty_wf true)
+    ⟨by simp [seed],by simp [fieldPtr,fieldTokenAt,target,seed,layout,places]⟩ (by simp [loc])
+
+theorem field_token_rejects_retargeting_to_sibling :
+    ¬ FieldAcquireRef True True (seed emptyDeps true)
+      {fieldPtr with place := y, path := [0,1]} ⟨0⟩ :=
+  acquire_rejects_retargeted_field (p:=x) (seed_empty_wf true)
+    ⟨by simp [fieldPtr,fieldTokenAt,target,seed],by simp [seed,layout,places]⟩ rfl (by simp [y,x])
+
+theorem field_token_rejects_wrong_domain :
+    ¬ FieldAcquireRef True True (seed emptyDeps true) fieldPtr ⟨99⟩ :=
+  acquire_rejects_wrong_domain (by simp [seed])
+
+theorem current_field_token_does_not_supply_stability_or_access :
+    CurrentFieldPtr (seed emptyDeps true) fieldPtr ∧
+    ¬ FieldAcquireRef False True (seed emptyDeps true) fieldPtr ⟨0⟩ ∧
+    ¬ FieldAcquireRef True False (seed emptyDeps true) fieldPtr ⟨0⟩ :=
+  ⟨field_current, acquire_rejects_missing_stability not_false, acquire_rejects_missing_access not_false⟩
+
+private def BrokenCurrentToken (s : CurrentState) (ptr : FieldPtrToken) : Prop :=
+  (s.base.root ptr.location).layout.root = ptr.rootPlace ∧
+  ((s.base.root ptr.location).node ptr.rootPlace).incarnation = ptr.rootIncarnation ∧
+  (s.base.root ptr.location).layout.path ptr.place = ptr.path ∧
+  ((s.base.root ptr.location).node ptr.place).incarnation = ptr.incarnation
+
+theorem omitting_liveness_accepts_inactive_root_table_data :
+    BrokenCurrentToken (seed emptyDeps true) {fieldPtr with location := ⟨99⟩} ∧
+    ¬ FieldAcquireRef True True (seed emptyDeps true) {fieldPtr with location := ⟨99⟩} ⟨0⟩ :=
+  ⟨⟨rfl,rfl,rfl,rfl⟩,field_token_rejects_wrong_site⟩
+
+private theorem field_current_before : CurrentFieldPtr (before x emptyDeps (fun _=>∅) true) fieldPtr :=
+  token_at_live_field_is_current ⟨by simp [before,seed,target],by simp [before,seed,target,layout,places]⟩
+    (by simp [before,seed,target,layout,x,p0])
+
+theorem field_change_kills_value_fact_but_preserves_acquisition :
+    CurrentFieldPtr (independentPost x) fieldPtr ∧
+    atom x ∉ StructuralLiveFacts (independentPost x).base ∧
+    FieldAcquireRef True True (independentPost x) fieldPtr ⟨0⟩ :=
+  ⟨field_replace_preserves_current_token leaf_replace_is_legal.2.1 field_current_before,
+    replace_old_affected_facts_not_live leaf_replace_is_legal.1 leaf_replace_is_legal.2.1
+      leaf_replace_is_legal.2.1.target_live (target_is_affected leaf_replace_is_legal.2.1.target_live),
+    field_replace_reacquires_with_post_evidence leaf_replace_is_legal field_current_before rfl trivial trivial⟩
+
+theorem field_change_still_requires_new_acquisition_evidence :
+    ¬ FieldAcquireRef False True (independentPost x) fieldPtr ⟨0⟩ ∧
+    ¬ FieldAcquireRef True False (independentPost x) fieldPtr ⟨0⟩ :=
+  ⟨acquire_rejects_missing_stability not_false,acquire_rejects_missing_access not_false⟩
+
+theorem sibling_change_does_not_retarget_field_token :
+    fieldTokenAt (independentPost y) (target x) = fieldPtr :=
+  by
+    have eq := field_replace_preserves_token_at (q:=target x) (independent_replace y (by simp [places])).2.1
+    exact eq
+
+theorem acquired_field_ref_cannot_launder_old_value_dependency (post : CurrentState) :
+    FieldAcquireRef True True (before x (oneDependency x x) (fun _=>∅) true) fieldPtr ⟨0⟩ ∧
+    ¬ StructuralReplaceStep True True (before x (oneDependency x x) (fun _=>∅) true)
+      (target x) input output (newValue x (oneDependency x x) (fun _=>∅) true) supply post := by
+  have wf := one_dependency_wf x x x (by simp [places]) true
+  have current : CurrentFieldPtr (before x (oneDependency x x) (fun _=>∅) true) fieldPtr :=
+    token_at_live_field_is_current ⟨by simp [before,seed,target],by simp [before,seed,target,layout,places]⟩
+      (by simp [before,seed,target,layout,x,p0])
+  have acq := current_token_can_acquire wf current rfl (stable:=True) (access:=True) trivial trivial
+  refine ⟨acq, acquisition_does_not_bypass_current_dependency acq ?_⟩
+  simp [fieldPtr,fieldTokenAt,target,before,seed,LocalDeps,node,oneDependency,atom]
+
+private theorem raw_seed_end (deps : PlaceId → Finset Fact) (returned : Bool) :
+    RawEndRoot True True (seed deps true) loc ⟨0⟩ returned (endCandidate (seed deps true) loc returned) :=
+  ⟨⟨by simp [seed],rfl,trivial⟩,fun _=>trivial,fun _=>rfl,rfl⟩
+
+private theorem empty_seed_safe_end (allow : Bool) (returned : Bool) :
+    EndDependenciesSafe (seed emptyDeps allow) loc returned := by
+  refine ⟨?_,by simp [seed],?_⟩
+  · intro m p live other
+    exact False.elim (other (Finset.mem_singleton.mp live.1))
+  · intro yes f dep
+    have empty := empty_extract (seed emptyDeps allow) (seed_empty_wf allow) p0
+      (by simp [seed]) (by intro _; rfl)
+    change f ∈ (extractValue (seed emptyDeps allow) (target p0)).dependencies at dep
+    rw [empty] at dep
+    exact False.elim (Finset.notMem_empty f dep)
+
+theorem independent_parent_take_and_destroy_are_legal :
+    EndStep True True (seed emptyDeps true) loc ⟨0⟩ true (endCandidate (seed emptyDeps true) loc true) ∧
+    EndStep True True (seed emptyDeps true) loc ⟨0⟩ false (endCandidate (seed emptyDeps true) loc false) :=
+  ⟨⟨seed_empty_wf true,raw_seed_end emptyDeps true,empty_seed_safe_end true true⟩,
+    ⟨seed_empty_wf true,raw_seed_end emptyDeps false,empty_seed_safe_end true false⟩⟩
+
+theorem parent_end_stales_field_token_without_changing_stored_fact :
+    (∀ returned, ¬ FieldAcquireRef True True (endCandidate (seed emptyDeps true) loc returned) fieldPtr ⟨0⟩) ∧
+    (∀ returned, (((endCandidate (seed emptyDeps true) loc returned).base.root loc).node x).currentFact = ⟨3⟩) ∧
+    (∀ returned, ¬ StructuralLiveIncarnation (endCandidate (seed emptyDeps true) loc returned).base ⟨3⟩) :=
+  ⟨fun returned=>end_rejects_old_field_acquisition (raw_seed_end emptyDeps returned) rfl,
+    fun _=>rfl,fun returned=>end_ends_every_fixed_incarnation (seed_empty_wf true)
+      (raw_seed_end emptyDeps returned) (p:=x) (by simp [seed,layout,places])⟩
+
+theorem field_access_does_not_grant_parent_ending_authority :
+    FieldAcquireRef True True (seed emptyDeps true) fieldPtr ⟨0⟩ ∧
+    ∀ returned post, ¬ RawEndRoot False True (seed emptyDeps true) loc ⟨0⟩ returned post :=
+  ⟨live_nested_field_can_acquire,fun _ _=>acquisition_does_not_mint_ending_authority live_nested_field_can_acquire⟩
+
+private theorem root_extract_contains_old_child_dependency :
+    atom x ∈ (extractValue (seed (oneDependency x x) true) (rootTarget (seed (oneDependency x x) true) loc)).dependencies := by
+  have wf : CurrentWellFormed (seed (oneDependency x x) true) := by
+    apply seed_wf
+    intro p _ f dep
+    have eq : f = atom x := by unfold oneDependency at dep; split at dep <;> simp_all
+    subst f; exact atom_live _ _ (by simp [places])
+  rw [extract_value_dependencies wf (by simp [seed,rootTarget])]
+  change atom x ∈ SubtreeDeps ((seed (oneDependency x x) true).base.root loc) p0
+  apply ancestor_subtree_deps_subset (q:=x) (root_contains_every_place tree (by simp [layout,places]))
+    (local_deps_subset_subtree_deps (p:=x) (by simp [seed,layout,places]) ?_)
+  simp [LocalDeps,seed,node,oneDependency]
+
+theorem old_child_dependency_rejects_take_but_allows_destroy :
+    CurrentWellFormed (seed (oneDependency x x) true) ∧
+    (∀ post, ¬ EndStep True True (seed (oneDependency x x) true) loc ⟨0⟩ true post) ∧
+    EndStep True False (seed (oneDependency x x) true) loc ⟨0⟩ false
+      (endCandidate (seed (oneDependency x x) true) loc false) := by
+  have wf : CurrentWellFormed (seed (oneDependency x x) true) := by
+    apply seed_wf
+    intro p _ f dep
+    have eq : f = atom x := by unfold oneDependency at dep; split at dep <;> simp_all
+    subst f; exact atom_live _ _ (by simp [places])
+  refine ⟨wf,fun post=>take_rejects_returned_ended_fact_dependency
+    (p:=x) (by simp [seed,layout,places]) root_extract_contains_old_child_dependency, wf, ?_, ?_⟩
+  · exact ⟨⟨by simp [seed],rfl,trivial⟩,by simp,fun _=>rfl,rfl⟩
+  · refine ⟨?_,by simp [seed],by simp⟩
+    intro m p live other
+    exact False.elim (other (Finset.mem_singleton.mp live.1))
+
+theorem unchecked_take_preserves_dead_dependency_in_returned_value :
+    RawEndRoot True True (seed (oneDependency x x) true) loc ⟨0⟩ true
+      (endCandidate (seed (oneDependency x x) true) loc true) ∧
+    ¬ CurrentWellFormed (endCandidate (seed (oneDependency x x) true) loc true) := by
+  have raw := raw_seed_end (oneDependency x x) true
+  refine ⟨raw,?_⟩
+  intro postWF
+  rcases take_returns_exact_value raw with ⟨loose,_,value⟩
+  have live := postWF.structural.looseDependenciesValid _ loose _ value _ root_extract_contains_old_child_dependency
+  exact end_ends_every_fixed_current_fact old_child_dependency_rejects_take_but_allows_destroy.1 raw
+    (p:=x) (by simp [seed,layout,places]) live
+
+theorem external_loose_dependency_rejects_both_parent_end_modes :
+    CurrentWellFormed (before x emptyDeps (fun _=>{atom x}) true) ∧
+    ∀ returned post, ¬ EndStep True True (before x emptyDeps (fun _=>{atom x}) true) loc ⟨0⟩ returned post := by
+  classical
+  refine ⟨incoming_dependency_wf,?_⟩
+  intro returned post
+  apply end_rejects_loose_ended_fact_dependency (p:=x) (pkg:=input)
+    (v:=(newValue x emptyDeps (fun _=>{atom x}) true).summary)
+    (by simp [before,seed,layout,places]) (by simp [before]) (by simp [before,newValue])
+  change atom x ∈ (newValue x emptyDeps (fun _=>{atom x}) true).dependencies
+  apply Finset.mem_biUnion.mpr
+  refine ⟨[], ?_, by simp [newValue,incomingValue]⟩
+  change [] ∈ (subtreePlaces ((seed emptyDeps true).base.root loc) x).image (relativePosition _ x)
+  exact Finset.mem_image.mpr ⟨x,target_inside x (by simp [places]) emptyDeps true,
+    by simp [relativePosition]⟩
+
+theorem nondiscardable_root_can_be_taken_but_not_destroyed :
+    EndStep True True (seed emptyDeps false) loc ⟨0⟩ true (endCandidate (seed emptyDeps false) loc true) ∧
+    ∀ post, ¬ RawEndRoot True True (seed emptyDeps false) loc ⟨0⟩ false post := by
+  refine ⟨⟨seed_empty_wf false,?_,empty_seed_safe_end false true⟩,?_⟩
+  · exact ⟨⟨by simp [seed],rfl,trivial⟩,fun _=>trivial,by simp,rfl⟩
+  · intro post raw
+    have := destroy_requires_discardability raw
+    cases this
+
+theorem destroy_does_not_inherit_take_read_requirement :
+    EndStep True False (seed emptyDeps true) loc ⟨0⟩ false (endCandidate (seed emptyDeps true) loc false) ∧
+    ∀ post, ¬ RawEndRoot True False (seed emptyDeps true) loc ⟨0⟩ true post := by
+  refine ⟨⟨seed_empty_wf true,?_,empty_seed_safe_end true false⟩,?_⟩
+  · exact ⟨⟨by simp [seed],rfl,trivial⟩,by simp,fun _=>rfl,rfl⟩
+  · intro post raw; exact take_requires_ordinary_read raw
+
+private def restartedTree (returned : Bool) : CurrentState :=
+  let ended := endCandidate (seed emptyDeps true) loc returned
+  { ended with
+    base := { ended.base with
+      liveRoots := {loc}
+      root := fun _ => ⟨layout,fun p=>⟨⟨100+p.index⟩,⟨200+p.index⟩,∅⟩,⟨10⟩,⟨0⟩,true⟩
+      usedIncarnations := ended.base.usedIncarnations ∪ places.image (fun p=>(⟨100+p.index⟩:IncarnationId))
+      usedValueFacts := ended.base.usedValueFacts ∪ places.image (fun p=>(⟨200+p.index⟩:ValueFactId)) }
+    content := fun _ p=>1000+p.index }
+
+private theorem restarted_tree_wellFormed (returned : Bool) : CurrentWellFormed (restartedTree returned) := by
+  classical
+  have endedWF := end_candidate_wellFormed (seed_empty_wf true) (by simp [seed]) (empty_seed_safe_end true returned)
+  have oldEmpty := empty_extract (seed emptyDeps true) (seed_empty_wf true) p0 (by simp [seed]) (by intro _; rfl)
+  refine ⟨?_,endedWF.looseStructured,?_⟩
+  · constructor
+    · intro l _; exact tree
+    · intro l m p lp mp; exact (Finset.mem_singleton.mp lp.1).trans (Finset.mem_singleton.mp mp.1).symm
+    · intro l p m q lp mq same
+      refine ⟨(Finset.mem_singleton.mp lp.1).trans (Finset.mem_singleton.mp mq.1).symm,?_⟩
+      have eq := congrArg IncarnationId.index same
+      have indices : p.index = q.index := by change 100+p.index = 100+q.index at eq; omega
+      exact congrArg PlaceId.mk indices
+    · intro l p m q lp mq same
+      refine ⟨(Finset.mem_singleton.mp lp.1).trans (Finset.mem_singleton.mp mq.1).symm,?_⟩
+      have eq := congrArg ValueFactId.index same
+      have indices : p.index = q.index := by change 200+p.index = 200+q.index at eq; omega
+      exact congrArg PlaceId.mk indices
+    · intro l lp m mp _; exact (Finset.mem_singleton.mp lp).trans (Finset.mem_singleton.mp mp).symm
+    · intro l _; cases returned <;> simp [restartedTree,endCandidate,seed]
+    · exact endedWF.structural.loosePresent
+    · simp [restartedTree,endCandidate,seed]
+    · intro l p _ f dep; exact False.elim (Finset.notMem_empty f dep)
+    · intro pkg loose v data f dep
+      cases returned with
+      | false => simp [restartedTree,endCandidate,seed] at loose
+      | true =>
+        have eq : pkg = (⟨0⟩:PackageId) := by simpa [restartedTree,endCandidate,seed] using loose
+        subst pkg
+        have valueEq : v = (extractValue (seed emptyDeps true) (target p0)).summary := by
+          apply Option.some.inj
+          simpa [restartedTree,endCandidate,seed,rootTarget,layout,target] using data.symm
+        rw [valueEq] at dep
+        change f ∈ (extractValue (seed emptyDeps true) (target p0)).dependencies at dep
+        rw [oldEmpty] at dep; exact False.elim (Finset.notMem_empty f dep)
+    · intro l p live; exact Finset.mem_union_right _ (Finset.mem_image.mpr ⟨p,live.2,rfl⟩)
+    · intro l p live; exact Finset.mem_union_right _ (Finset.mem_image.mpr ⟨p,live.2,rfl⟩)
+    · exact endedWF.structural.domainCarrierCoherent
+  · intro l _; rfl
+
+private theorem restart_certificate (returned : Bool) :
+    FreshTreeRestart (endCandidate (seed emptyDeps true) loc returned) (restartedTree returned) loc := by
+  classical
+  refine ⟨by simp [endCandidate],by simp [restartedTree],Finset.subset_union_left,?_⟩
+  intro p pt used
+  rcases Finset.mem_image.mp used with ⟨q,qt,same⟩
+  have pt := place_cases pt
+  have qt := place_cases qt
+  rcases pt with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
+    rcases qt with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
+    simp_all [restartedTree,p0,a,b,x,y,bx,byp,c]
+
+theorem fresh_same_site_tree_restart_does_not_revive_old_field_token :
+    ∀ returned, CurrentWellFormed (restartedTree returned) ∧
+      FreshTreeRestart (endCandidate (seed emptyDeps true) loc returned) (restartedTree returned) loc ∧
+      ¬ FieldAcquireRef True True (restartedTree returned) fieldPtr ⟨0⟩ ∧
+      FieldAcquireRef True True (restartedTree returned) (fieldTokenAt (restartedTree returned) (target x)) ⟨0⟩ := by
+  intro returned
+  have wf := restarted_tree_wellFormed returned
+  have certificate := restart_certificate returned
+  refine ⟨wf,certificate,end_then_fresh_restart_rejects_old_field_token (seed_empty_wf true)
+    (raw_seed_end emptyDeps returned) field_current rfl certificate,?_⟩
+  apply current_token_can_acquire wf
+    (token_at_live_field_is_current ⟨by simp [restartedTree,target],by simp [restartedTree,target,layout,places]⟩
+      (by simp [restartedTree,target,layout,x,p0])) rfl trivial trivial
+
+theorem historical_child_id_reuse_cannot_satisfy_restart_certificate :
+    ∀ returned, ¬ FreshTreeRestart (endCandidate (seed emptyDeps true) loc returned) (seed emptyDeps true) loc := by
+  intro returned h
+  apply h.2.2.2 x (by simp [seed,layout,places])
+  exact Finset.mem_image.mpr ⟨x,by simp [places],rfl⟩
+
+private theorem changed_parent_end_is_legal (returned : Bool) :
+    EndStep True True (independentPost x) loc ⟨0⟩ returned (endCandidate (independentPost x) loc returned) := by
+  classical
+  have wf := leaf_replace_is_legal.2.2
+  refine ⟨wf,⟨⟨by simp [independentPost,structuralReplaceCandidate,installValue,refreshCurrentFacts,before,seed],rfl,trivial⟩,
+    fun _=>trivial,fun _=>rfl,rfl⟩,?_,?_,?_⟩
+  · intro m p live other
+    exact False.elim (other (Finset.mem_singleton.mp live.1))
+  · intro pkg loose v data f dep
+    have pkgEq : pkg = output := by simpa [independentPost,structuralReplaceCandidate,installValue,before,x,p0] using loose
+    subst pkg
+    have valueEq : v = (extractValue (before x emptyDeps (fun _=>∅) true) (target x)).summary := by
+      apply Option.some.inj
+      simpa [independentPost,structuralReplaceCandidate,ite_eq_right (show x ≠ p0 by simp [x,p0])] using data.symm
+    rw [valueEq] at dep
+    have empty := empty_extract (before x emptyDeps (fun _=>∅) true) leaf_replace_is_legal.1 x
+      (by simp [before,seed]) (by intro _; rfl)
+    change f ∈ (extractValue (before x emptyDeps (fun _=>∅) true) (target x)).dependencies at dep
+    rw [empty] at dep; exact False.elim (Finset.notMem_empty f dep)
+  · intro _ f dep
+    have empty := empty_extract (independentPost x) wf p0
+      (by simp [independentPost,structuralReplaceCandidate,installValue,refreshCurrentFacts,before,seed]) ?_
+    · change f ∈ (extractValue (independentPost x) (target p0)).dependencies at dep
+      rw [empty] at dep; exact False.elim (Finset.notMem_empty f dep)
+    · intro q
+      change (if _ then ∅ else ∅) = ∅
+      split <;> rfl
+
+theorem same_field_token_survives_change_then_stales_after_parent_end :
+    FieldAcquireRef True True (independentPost x) fieldPtr ⟨0⟩ ∧
+    ∀ returned, EndStep True True (independentPost x) loc ⟨0⟩ returned
+      (endCandidate (independentPost x) loc returned) ∧
+      ¬ FieldAcquireRef True True (endCandidate (independentPost x) loc returned) fieldPtr ⟨0⟩ :=
+  ⟨field_change_kills_value_fact_but_preserves_acquisition.2.2,
+    fun returned=>⟨changed_parent_end_is_legal returned,
+      end_rejects_old_field_acquisition (changed_parent_end_is_legal returned).2.1 rfl⟩⟩
+
+end FieldLifecycle
 
 end
 end NewLang.F1.Counterexample.Transition

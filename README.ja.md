@@ -1,5 +1,7 @@
 # NewLang FormalProof — F3.0
 
+Issue [#31](https://github.com/wakairo/NewLang_FormalProof/issues/31) は bounded field-token / fixed-tree EndRoot adapter を追加します。live parent/child identity と明示access/stabilityを要求するfield取得は、field Change後も同じtokenを使えますが、親take/destroy後は全fixed incarnationが終了します。同じsiteへのfresh tree再開始でもold child tokenは復活しません。post invariantはexact survivor guardから導出し、takeはdependency dataを変更せず返し、destroyはold-only依存を消費します。[Track F report](docs/F_FIELD_PTR_LIFECYCLE_ADAPTER_REPORT.ja.md)にencoding比較、追加72件（audit総数 **1079**）、erasure/restartの境界を記録します。F3.1やcompiler実装は追加しません。
+
 Issue #27のstable-root integration adjunctは、既存F0 theoremを結び、initialize → replace → acquisition → take/destroyの同一pathをmachine-checkします。[日本語report](docs/F_STABLE_ROOT_INTEGRATION_REPORT.ja.md)を参照してください。replaceでplace/incarnation/governing relationは維持され、post access/stabilityが成立する時は同じptrを再取得できます。legal lifetime end後は同じptrを拒否します。新しいmodel layerやF3.1は追加せず、旧985件を保持して7件追加、現在のauditは**992 declarations**です。
 
 Issue [#29](https://github.com/wakairo/NewLang_FormalProof/issues/29) は、review済みmain上でfixed-subobjectのbounded integration evidenceを追加します。parent/field incarnation保存、ancestor fact invalidation、known-disjoint sibling value保存、surviving dependency rejectionをmachine-checkし、[Track F report](docs/F_FIXED_SUBOBJECT_INTEGRATION_REPORT.ja.md)に記録します。merge済みstable-root adjunctの992件に15件を追加し、audit総数は **1007 declarations** です。field-ptr / structural EndRoot / Unknown-effect adapterは明示的な未証明hookとして残し、F3.1は開始しません。
