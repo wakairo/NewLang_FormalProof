@@ -38,3 +38,6 @@ import NewLang.F1.Relocation.Counterexample.Atomicity
 import NewLang.F2.Counterexample.Exits
 
 import NewLang.F3.Memory.Counterexample.SumLifetime
+
+import NewLang.Declaration.Proofs
+import NewLang.Declaration.Counterexample.Completion

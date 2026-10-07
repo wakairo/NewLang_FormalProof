@@ -1,5 +1,7 @@
 # NewLang FormalProof — F3.0
 
+Issue [#33](https://github.com/wakairo/NewLang_FormalProof/issues/33) adds the bounded Draft 17.21 recursive nominal header/completion adjunct. A stable incomplete identity may form a direct ptr target; ptr stops value containment, and ordinary Option composes properties. Exact completion commits the two selected fields once; Copy/Discardable(H) use a finite depth-2 derivation. Private staging failure preserves the public snapshot, and bounded header collection is permutation invariant while retaining duplicate counts. See the [Track F report](docs/F_RECURSIVE_NOMINAL_COMPLETION_ADJUNCT_REPORT.ja.md). The 1079 baseline audits are retained with 70 additions (**1149 total**). No recursive object/production implementation or F3.1 is added.
+
 Issue [#31](https://github.com/wakairo/NewLang_FormalProof/issues/31) adds a bounded field-token / fixed-tree EndRoot adapter. Exact field acquisition requires live parent/child identities and explicit access/stability; the same token survives field Change, but parent take/destroy ends every fixed incarnation. Fresh same-site restart does not revive the old child token. Post invariants are derived from exact survivor guards; take returns dependency data unchanged, while destroy consumes old-only dependencies. See the [Track F report](docs/F_FIELD_PTR_LIFECYCLE_ADAPTER_REPORT.ja.md) for the two encoding alternatives, 72 new audited declarations (**1079 total**), erasure and restart boundaries. No F3.1 or compiler implementation is added.
 
 The Issue #27 stable-root integration adjunct composes existing F0 proofs along one initialize → replace → acquisition → take/destroy path. See the [Japanese report](docs/F_STABLE_ROOT_INTEGRATION_REPORT.ja.md). Replace retains place/incarnation/governing relation, allowing reacquisition with the same ptr when post-state access/stability premises hold; legal lifetime end rejects that token. No new model layer or F3.1 is added. Retain the 985 baseline declarations and add seven audits: **992 declarations** now.
@@ -27,7 +29,7 @@ F2 implements the **bounded cyclic loop-header formal kernel** against canonical
 
 ## Specification boundary
 
-1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.20).
+1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.21).
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
 4. The Lean model is an encoding for theorem proving.
