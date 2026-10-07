@@ -1,5 +1,7 @@
 # NewLang FormalProof — F3.0
 
+Issue [#33](https://github.com/wakairo/NewLang_FormalProof/issues/33) はDraft 17.21のbounded recursive nominal header/completion adjunctです。stable incomplete identityをdirect ptr targetに使い、ptrでvalue containmentを止め、ordinary Optionでpropertyをcomposeします。二つのselected fieldsをexactly once commitし、HのCopy/Discardableをdepth 2のfinite proofで導出します。private staging失敗ではpublic snapshotを保存し、bounded header collectionはduplicate countを保持してpermutation invariantです。[Track F report](docs/F_RECURSIVE_NOMINAL_COMPLETION_ADJUNCT_REPORT.ja.md)を参照してください。既存1079 auditを保持し70追加、合計 **1149** 件です。recursive object/production実装やF3.1は追加しません。
+
 Issue [#31](https://github.com/wakairo/NewLang_FormalProof/issues/31) は bounded field-token / fixed-tree EndRoot adapter を追加します。live parent/child identity と明示access/stabilityを要求するfield取得は、field Change後も同じtokenを使えますが、親take/destroy後は全fixed incarnationが終了します。同じsiteへのfresh tree再開始でもold child tokenは復活しません。post invariantはexact survivor guardから導出し、takeはdependency dataを変更せず返し、destroyはold-only依存を消費します。[Track F report](docs/F_FIELD_PTR_LIFECYCLE_ADAPTER_REPORT.ja.md)にencoding比較、追加72件（audit総数 **1079**）、erasure/restartの境界を記録します。F3.1やcompiler実装は追加しません。
 
 Issue #27のstable-root integration adjunctは、既存F0 theoremを結び、initialize → replace → acquisition → take/destroyの同一pathをmachine-checkします。[日本語report](docs/F_STABLE_ROOT_INTEGRATION_REPORT.ja.md)を参照してください。replaceでplace/incarnation/governing relationは維持され、post access/stabilityが成立する時は同じptrを再取得できます。legal lifetime end後は同じptrを拒否します。新しいmodel layerやF3.1は追加せず、旧985件を保持して7件追加、現在のauditは**992 declarations**です。
@@ -26,7 +28,7 @@ F2はcanonical Draft 17.16の**bounded cyclic loop-header formal kernel**を実�
 
 ## 仕様の優先順位
 
-1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.20）。
+1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.21）。
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
 4. Lean model: proofのためのencoding。
