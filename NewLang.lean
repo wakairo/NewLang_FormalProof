@@ -44,3 +44,6 @@ import NewLang.Declaration.Counterexample.Completion
 
 import NewLang.Adjunct.KnownCallProofs
 import NewLang.Adjunct.Counterexample.KnownCall
+
+import NewLang.Adjunct.LiveTailProofs
+import NewLang.Adjunct.Counterexample.LiveTail
