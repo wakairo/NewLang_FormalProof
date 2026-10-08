@@ -41,3 +41,6 @@ import NewLang.F3.Memory.Counterexample.SumLifetime
 
 import NewLang.Declaration.Proofs
 import NewLang.Declaration.Counterexample.Completion
+
+import NewLang.Adjunct.KnownCallProofs
+import NewLang.Adjunct.Counterexample.KnownCall

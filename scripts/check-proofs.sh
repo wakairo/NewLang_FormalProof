@@ -1162,6 +1162,70 @@ declarations=(
   NewLang.Declaration.Counterexample.bounded_header_collection_does_not_depend_on_body_position
   NewLang.Declaration.Counterexample.bounded_completion_result_does_not_depend_on_body_position
   NewLang.Declaration.Counterexample.collecting_a_set_alone_would_hide_duplicate_declarations
+  NewLang.Adjunct.KnownCall.copy_ptr_grants_no_authority
+  NewLang.Adjunct.KnownCall.transfer_preserves_memory
+  NewLang.Adjunct.KnownCall.transfer_preserves_exact_responsibility
+  NewLang.Adjunct.KnownCall.transfer_records_fresh_parameters
+  NewLang.Adjunct.KnownCall.transfer_consumes_donor
+  NewLang.Adjunct.KnownCall.transfer_preserves_wellFormed
+  NewLang.Adjunct.KnownCall.receiver_effect
+  NewLang.Adjunct.KnownCall.strict_recovery_order
+  NewLang.Adjunct.KnownCall.recovery_is_original_full_range
+  NewLang.Adjunct.KnownCall.receiver_dependencies_valid
+  NewLang.Adjunct.KnownCall.receiver_preserves_wellFormed
+  NewLang.Adjunct.KnownCall.transferred_entry
+  NewLang.Adjunct.KnownCall.known_call_preserves_wellFormed
+  NewLang.Adjunct.KnownCall.call_ends_only_original_tail
+  NewLang.Adjunct.KnownCall.known_call_cannot_double_release
+  NewLang.Adjunct.KnownCall.known_call_preserves_head_authorities
+  NewLang.Adjunct.KnownCall.matched_receiver_can_deallocate
+  NewLang.Adjunct.KnownCall.release_rejects_nonfull_or_other_region
+  NewLang.Adjunct.KnownCall.typed_root_cannot_release
+  NewLang.Adjunct.KnownCall.entry_rejects_wrong_ptr
+  NewLang.Adjunct.KnownCall.entry_rejects_wrong_allocation_region
+  NewLang.Adjunct.KnownCall.entry_rejects_wrong_domain
+  NewLang.Adjunct.KnownCall.entry_rejects_absent_donor
+  NewLang.Adjunct.KnownCall.entry_rejects_scope_conflict
+  NewLang.Adjunct.KnownCall.transfer_preserves_governing_and_locator
+  NewLang.Adjunct.KnownCall.matched_receiver_primitive_applicability
+  NewLang.Adjunct.KnownCall.matched_transfer_keeps_original_root
+  NewLang.Adjunct.KnownCall.ended_tail_fact_and_domain_not_live
+  NewLang.Adjunct.KnownCall.ended_tail_ptr_cannot_reacquire
+  NewLang.Adjunct.KnownCall.rejected_entry_has_no_call
+  NewLang.Adjunct.KnownCall.surviving_ended_dependency_has_no_call
+  NewLang.Adjunct.KnownCall.parameter_bindings_are_consumed_at_return
+  NewLang.Adjunct.KnownCall.call_conserves_exact_region_responsibility
+  NewLang.Adjunct.KnownCall.call_preserves_dependency_data
+  NewLang.Adjunct.KnownCall.Counterexample.matched_entry_is_provable
+  NewLang.Adjunct.KnownCall.Counterexample.independent_two_root_call_exists
+  NewLang.Adjunct.KnownCall.Counterexample.original_head_live_tail_released_once
+  NewLang.Adjunct.KnownCall.Counterexample.head_ptr_tail_owners_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.tail_ptr_head_allocation_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.tail_ptr_head_domain_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.stale_tail_ptr_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.unchecked_handoff_before_entry_breaks_rollback
+  NewLang.Adjunct.KnownCall.Counterexample.same_region_wrong_carrier_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.typed_occupancy_cannot_be_deallocated
+  NewLang.Adjunct.KnownCall.Counterexample.recovered_tail_storage_cannot_release_head_allocation
+  NewLang.Adjunct.KnownCall.Counterexample.double_release_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.historical_parameter_binding_reuse_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.ending_scope_conflict_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.old_only_dependency_consumed_by_receiver
+  NewLang.Adjunct.KnownCall.Counterexample.surviving_head_dependency_rejects_receiver
+  NewLang.Adjunct.KnownCall.Counterexample.external_current_dependency_rejects_receiver
+  NewLang.Adjunct.KnownCall.Counterexample.external_domain_dependency_rejects_receiver
+  NewLang.Adjunct.KnownCall.Counterexample.unchecked_receiver_breaks_dependency_preservation
+  NewLang.Adjunct.KnownCall.Counterexample.mismatched_entry_cannot_grant_even_if_handoff_wellFormed
+  NewLang.Adjunct.KnownCall.Counterexample.head_dependency_prestate_is_wellFormed
+  NewLang.Adjunct.KnownCall.Counterexample.head_dependency_has_no_call
+  NewLang.Adjunct.KnownCall.Counterexample.external_dependency_prestate_is_wellFormed
+  NewLang.Adjunct.KnownCall.Counterexample.external_dependency_has_no_call
+  NewLang.Adjunct.KnownCall.Counterexample.absent_provenance_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.absent_backing_access_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.nondiscardable_tail_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.duplicate_parameter_carrier_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.nonfull_raw_fragment_rejected
+  NewLang.Adjunct.KnownCall.Counterexample.no_second_end_or_finalize
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"
