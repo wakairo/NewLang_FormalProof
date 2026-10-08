@@ -447,4 +447,3 @@ theorem terminal_receiver_is_not_live_return (s : State) (b : Bundle) :
 
 end
 end NewLang.Adjunct.LiveTail
-

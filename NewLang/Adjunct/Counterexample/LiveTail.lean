@@ -183,7 +183,7 @@ theorem terminal_cannot_resurrect_or_double_free :
     ¬ KnownCall.CurrentLocator finished.roots finished.memory ⟨⟨2⟩,⟨2⟩⟩ ∧
     ∀ a raw, ¬ KnownCall.CanDeallocate finished.roots finished.memory a raw :=
   subsequent_terminal_no_resurrection_or_double_release independently_applicable_subsequent_receiver
- 
+
 /-- Same static parameter types, different original identities. -/
 theorem wrong_domain_rejected :
     ¬ ActualCallApplicable geometry before headRef {args with tail := {args.tail with domain := ⟨1⟩}} plan :=
