@@ -1,5 +1,7 @@
 # NewLang FormalProof — F3.0
 
+Issue [#37](https://github.com/wakairo/NewLang_FormalProof/issues/37) adds a bounded Draft 17.28 **still-live tail return** adjunct: conditional producer evidence and separately proven actual entry, head link detach, original tail O/R/D preservation, one nonCopy/nonDiscardable LiveTail, scope exit/whole destructure, and an independently checked later terminal receiver. The [Track F report](docs/F_LIVE_TAIL_RETURN_CONSERVATION_REPORT.ja.md) records positive/mismatch/dependency controls and omitted source/production adapters. This differs from #35's terminal post-state. All 1213 baseline audits remain; 93 are added (**1306 total**). No F3.1 or other Track work is introduced.
+
 Issue [#35](https://github.com/wakairo/NewLang_FormalProof/issues/35) adds a bounded known-call owner conservation adjunct for two independent full-range roots: proven relational entry, affine tail Allocation/Domain handoff, preserved backing/root identities, and strict EndRoot→slot→Storage→finalization→release. It derives post invariants from preconditions and survivor guards, with mismatch, stale-pointer, scope, dependency and double-release controls. The [Track F report](docs/F_KNOWN_CALL_OWNER_CONSERVATION_REPORT.ja.md) states the unproved adapters to actual H/production semantics. All 1149 existing audits remain; 64 are added (**1213 total**). Canonical authority is Draft 17.27; no F3.1 or other Track work is introduced.
 
 Issue [#33](https://github.com/wakairo/NewLang_FormalProof/issues/33) adds the bounded Draft 17.21 recursive nominal header/completion adjunct. A stable incomplete identity may form a direct ptr target; ptr stops value containment, and ordinary Option composes properties. Exact completion commits the two selected fields once; Copy/Discardable(H) use a finite depth-2 derivation. Private staging failure preserves the public snapshot, and bounded header collection is permutation invariant while retaining duplicate counts. See the [Track F report](docs/F_RECURSIVE_NOMINAL_COMPLETION_ADJUNCT_REPORT.ja.md). The 1079 baseline audits are retained with 70 additions (**1149 total**). No recursive object/production implementation or F3.1 is added.
@@ -31,7 +33,7 @@ F2 implements the **bounded cyclic loop-header formal kernel** against canonical
 
 ## Specification boundary
 
-1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.27).
+1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.28).
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
 4. The Lean model is an encoding for theorem proving.

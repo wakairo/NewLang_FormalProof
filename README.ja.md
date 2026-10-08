@@ -1,5 +1,7 @@
 # NewLang FormalProof — F3.0
 
+Issue [#37](https://github.com/wakairo/NewLang_FormalProof/issues/37) は Draft 17.28 の bounded **still-live tail return** adjunct です。conditional producer contract と actual-call の証拠を分離し、head link detach、元の tail O/R/D 保存、一つの nonCopy/nonDiscardable LiveTail、scope exit / whole destructure、独立した後段 terminal receiver を検証します。[Track F report](docs/F_LIVE_TAIL_RETURN_CONSERVATION_REPORT.ja.md) に positive / mismatch / dependency controls と source/production adapter の未証明境界を記録します。#35 の terminal post-state とは区別します。旧1213 auditを保持し93追加、総数 **1306**。F3.1や他Trackには進みません。
+
 Issue [#35](https://github.com/wakairo/NewLang_FormalProof/issues/35) の bounded known-call owner conservation adjunct は、二つの independent full-range roots と proven entry relation に限定し、tail Allocation/Domain の affine handoff、同じ backing/root identity の保存、strict EndRoot→slot→Storage→finalize→release を検証します。post invariant は preconditions / survivor guard から導出します。same-typed mismatch、stale ptr、scope、dependency、二重解放の controls と、actual H/production へ接続する未証明 adapter を [Track F report](docs/F_KNOWN_CALL_OWNER_CONSERVATION_REPORT.ja.md) に記録します。既存1149件を保持し64追加、audit総数は **1213**。canonical は Draft 17.27。F3.1や他Trackには進みません。
 
 Issue [#33](https://github.com/wakairo/NewLang_FormalProof/issues/33) はDraft 17.21のbounded recursive nominal header/completion adjunctです。stable incomplete identityをdirect ptr targetに使い、ptrでvalue containmentを止め、ordinary Optionでpropertyをcomposeします。二つのselected fieldsをexactly once commitし、HのCopy/Discardableをdepth 2のfinite proofで導出します。private staging失敗ではpublic snapshotを保存し、bounded header collectionはduplicate countを保持してpermutation invariantです。[Track F report](docs/F_RECURSIVE_NOMINAL_COMPLETION_ADJUNCT_REPORT.ja.md)を参照してください。既存1079 auditを保持し70追加、合計 **1149** 件です。recursive object/production実装やF3.1は追加しません。
@@ -30,7 +32,7 @@ F2はcanonical Draft 17.16の**bounded cyclic loop-header formal kernel**を実�
 
 ## 仕様の優先順位
 
-1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.27）。
+1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.28）。
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
 4. Lean model: proofのためのencoding。
