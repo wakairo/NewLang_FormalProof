@@ -1,5 +1,7 @@
 # NewLang FormalProof — F3.0
 
+Issue [#41](https://github.com/wakairo/NewLang_FormalProof/issues/41) はDraft 17.30の有限 **five-original-root / three-fixed-field** adjunctです。field別Change/Resetと兄弟fieldの保存、六つのchecked更新から得る七pre-detach関係、0〜5成功の六allocation outcomeにおける元のA/D/full claimの明示的cleanupを検証します。stale occurrence、wrong D/mode/projection、owner重複・喪失、二重解放の拒否例と未証明のsource/platform adapterを [Track F report](docs/F_FIVE_ROOT_THREE_FIELD_FINITE_MODEL_REPORT.ja.md) に記録します。既存1399 auditを保持し113追加、総数 **1512**。pinとCIは不変です。production compilerやcJSON North Starの成功とは独立した有限Lean証拠です。
+
 Issue [#39](https://github.com/wakairo/NewLang_FormalProof/issues/39) は Draft 17.29 §18.1c の有限 **durable LiveTail custody** evidence です。独立した recipient applicability、caller-local な nonDiscardable Option の保持、source-proven exact-None の2か所の consuming match、heap identity と occurrence を分離した後段取り出し、独立した terminal release を検証します。[Track F report](docs/F_DURABLE_CUSTODY_CONSERVATION_REPORT.ja.md) に positive / refusal / failure worlds、拒否例、未証明の source/runtime 境界を記録します。既存1306 auditを保持して93追加、総数 **1399**。既存モデル・pinは変更せず、production compilerとは独立した証拠です。
 
 Issue [#37](https://github.com/wakairo/NewLang_FormalProof/issues/37) は Draft 17.28 の bounded **still-live tail return** adjunct です。conditional producer contract と actual-call の証拠を分離し、head link detach、元の tail O/R/D 保存、一つの nonCopy/nonDiscardable LiveTail、scope exit / whole destructure、独立した後段 terminal receiver を検証します。[Track F report](docs/F_LIVE_TAIL_RETURN_CONSERVATION_REPORT.ja.md) に positive / mismatch / dependency controls と source/production adapter の未証明境界を記録します。#35 の terminal post-state とは区別します。旧1213 auditを保持し93追加、総数 **1306**。F3.1や他Trackには進みません。
@@ -34,7 +36,7 @@ F2はcanonical Draft 17.16の**bounded cyclic loop-header formal kernel**を実�
 
 ## 仕様の優先順位
 
-1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.29）。
+1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.30）。
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
 4. Lean model: proofのためのencoding。
