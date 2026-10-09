@@ -1,5 +1,7 @@
 # NewLang FormalProof — F3.0
 
+Issue [#41](https://github.com/wakairo/NewLang_FormalProof/issues/41) adds the bounded Draft 17.30 **five-original-root / three-fixed-field** adjunct. It derives field-specific Change/Reset preservation, seven pre-detach relations from six checked writes, and explicit original A/D/full-claim cleanup on six allocation outcomes (0–5 frees). Independent sibling observers remain valid; stale occurrence, wrong D/mode/projection, duplicate/lost owner and double release controls reject. See the [Track F report](docs/F_FIVE_ROOT_THREE_FIELD_FINITE_MODEL_REPORT.ja.md) for exact scope and unproved source/platform adapters. All 1399 audits remain; 113 are added (**1512 total**), with unchanged pins and CI. This is finite Lean evidence, independent of production compiler or cJSON North Star success.
+
 Issue [#39](https://github.com/wakairo/NewLang_FormalProof/issues/39) adds finite **durable LiveTail custody** evidence for Draft 17.29 §18.1c: independently checked recipient applicability, caller-local nonDiscardable Option custody, two source-proven exact-None consuming sites, delayed extraction without occurrence/heap-identity conflation, and separately checked terminal release. The [Track F report](docs/F_DURABLE_CUSTODY_CONSERVATION_REPORT.ja.md) records positive/refusal/failure worlds, rejection controls and unproved source/runtime boundaries. All 1306 baseline audits remain; 93 are added (**1399 total**). Existing models and pins are unchanged; this is independent of production compiler work.
 
 Issue [#37](https://github.com/wakairo/NewLang_FormalProof/issues/37) adds a bounded Draft 17.28 **still-live tail return** adjunct: conditional producer evidence and separately proven actual entry, head link detach, original tail O/R/D preservation, one nonCopy/nonDiscardable LiveTail, scope exit/whole destructure, and an independently checked later terminal receiver. The [Track F report](docs/F_LIVE_TAIL_RETURN_CONSERVATION_REPORT.ja.md) records positive/mismatch/dependency controls and omitted source/production adapters. This differs from #35's terminal post-state. All 1213 baseline audits remain; 93 are added (**1306 total**). No F3.1 or other Track work is introduced.
@@ -35,7 +37,7 @@ F2 implements the **bounded cyclic loop-header formal kernel** against canonical
 
 ## Specification boundary
 
-1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.29).
+1. **Canonical language specification**: the Draft selected by `docs/reference/CURRENT_SPEC.md` on `wakairo/NewLang_Compiler` `main` (currently Draft 17.30).
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md) is a historical local snapshot used to reproduce the rules inspected by F0/F1.0/F1.1; it is not the current canonical specification.
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md) is a non-normative bridge.
 4. The Lean model is an encoding for theorem proving.

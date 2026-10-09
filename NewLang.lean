@@ -50,3 +50,6 @@ import NewLang.Adjunct.Counterexample.LiveTail
 
 import NewLang.Adjunct.CustodyProofs
 import NewLang.Adjunct.Counterexample.Custody
+
+import NewLang.Adjunct.FiveRootProofs
+import NewLang.Adjunct.Counterexample.FiveRoot
