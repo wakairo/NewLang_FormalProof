@@ -1525,6 +1525,62 @@ declarations=(
   NewLang.Adjunct.FiveRoot.Counterexample.live_root_and_empty_slot_never_coexist_at_a
   NewLang.Adjunct.FiveRoot.Counterexample.duplicate_domain_rejected
   NewLang.Adjunct.FiveRoot.Counterexample.mismatched_domain_cannot_finalize
+  NewLang.Adjunct.BComposition.conditional_recipient_transport
+  NewLang.Adjunct.BComposition.original_five_frame_under_change
+  NewLang.Adjunct.BComposition.matched_B_frames_field_change
+  NewLang.Adjunct.BComposition.rich_live_has_one_custodian
+  NewLang.Adjunct.BComposition.rich_freed_has_no_custodian
+  NewLang.Adjunct.BComposition.deleting_live_B_owners_breaks_five_invariant
+  NewLang.Adjunct.BComposition.field_changes_do_not_revoke_old_end_permission
+  NewLang.Adjunct.BComposition.legacy_entry_requires_live_head
+  NewLang.Adjunct.BComposition.legacy_call_rejects_released_head
+  NewLang.Adjunct.BComposition.rich_terminal_rejects_released_head
+  NewLang.Adjunct.BComposition.approved_head_cannot_be_rebased
+  NewLang.Adjunct.BComposition.accepted_recipient_preserves_caller_owned_destination
+  NewLang.Adjunct.BComposition.receiver_owned_sink_has_no_existing_applicability
+  NewLang.Adjunct.BComposition.Counterexample.unlinkA_checked
+  NewLang.Adjunct.BComposition.Counterexample.unlinkA_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.unlinkC_checked
+  NewLang.Adjunct.BComposition.Counterexample.unlinkC_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.clearPrev_checked
+  NewLang.Adjunct.BComposition.Counterexample.clearPrev_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.detached_checked
+  NewLang.Adjunct.BComposition.Counterexample.detached_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.linkDst_checked
+  NewLang.Adjunct.BComposition.Counterexample.linkDst_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.adoptedGraph_checked
+  NewLang.Adjunct.BComposition.Counterexample.adoptedGraph_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.four_detach_relations
+  NewLang.Adjunct.BComposition.Counterexample.two_adoption_relations
+  NewLang.Adjunct.BComposition.Counterexample.all_link_updates_preserve_five_originals
+  NewLang.Adjunct.BComposition.Counterexample.graph_adoption_does_not_move_B_responsibility
+  NewLang.Adjunct.BComposition.Counterexample.naive_cut_preserves_original_live_B
+  NewLang.Adjunct.BComposition.Counterexample.naive_donor_cut_is_not_an_adapter
+  NewLang.Adjunct.BComposition.Counterexample.copy_link_cannot_repair_B_owner
+  NewLang.Adjunct.BComposition.Counterexample.simultaneous_donor_recipient_impossible
+  NewLang.Adjunct.BComposition.Counterexample.donor1_step
+  NewLang.Adjunct.BComposition.Counterexample.donor1_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.donor2_step
+  NewLang.Adjunct.BComposition.Counterexample.donor2_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.donorDone_step
+  NewLang.Adjunct.BComposition.Counterexample.donorDone_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.donor_cleanup_keeps_original_B_dst_live
+  NewLang.Adjunct.BComposition.Counterexample.skipped_B_release_leaves_nonCopy_residue
+  NewLang.Adjunct.BComposition.Counterexample.B_cannot_be_ended_under_scoped_loan
+  NewLang.Adjunct.BComposition.Counterexample.crossed_B_domain_rejected
+  NewLang.Adjunct.BComposition.Counterexample.old_A_next_occurrence_cannot_follow_new_link
+  NewLang.Adjunct.BComposition.Counterexample.wrongPolicy_checked
+  NewLang.Adjunct.BComposition.Counterexample.wrong_graph_policy_is_still_memory_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.projection_has_exact_actual_cells
+  NewLang.Adjunct.BComposition.Counterexample.projected_context_valid
+  NewLang.Adjunct.BComposition.Counterexample.projected_memory_wellFormed
+  NewLang.Adjunct.BComposition.Counterexample.exact_B_identity_and_carriers_survive
+  NewLang.Adjunct.BComposition.Counterexample.delayed_B_call_has_concrete_head_blocker
+  NewLang.Adjunct.BComposition.Counterexample.independent_B_primitive_cleanup_still_available
+  NewLang.Adjunct.BComposition.Counterexample.pre_transfer_failure_worlds_remain_guarded
+  NewLang.Adjunct.BComposition.Counterexample.refusal_is_a_rich_heap_frame
+  NewLang.Adjunct.BComposition.Counterexample.projected_entry_if_head_live
+  NewLang.Adjunct.BComposition.Counterexample.old_recipient_has_caller_owned_sink
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"
