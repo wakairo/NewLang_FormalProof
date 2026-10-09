@@ -1,5 +1,7 @@
 # NewLang FormalProof — F3.0
 
+Issue [#39](https://github.com/wakairo/NewLang_FormalProof/issues/39) は Draft 17.29 §18.1c の有限 **durable LiveTail custody** evidence です。独立した recipient applicability、caller-local な nonDiscardable Option の保持、source-proven exact-None の2か所の consuming match、heap identity と occurrence を分離した後段取り出し、独立した terminal release を検証します。[Track F report](docs/F_DURABLE_CUSTODY_CONSERVATION_REPORT.ja.md) に positive / refusal / failure worlds、拒否例、未証明の source/runtime 境界を記録します。既存1306 auditを保持して93追加、総数 **1399**。既存モデル・pinは変更せず、production compilerとは独立した証拠です。
+
 Issue [#37](https://github.com/wakairo/NewLang_FormalProof/issues/37) は Draft 17.28 の bounded **still-live tail return** adjunct です。conditional producer contract と actual-call の証拠を分離し、head link detach、元の tail O/R/D 保存、一つの nonCopy/nonDiscardable LiveTail、scope exit / whole destructure、独立した後段 terminal receiver を検証します。[Track F report](docs/F_LIVE_TAIL_RETURN_CONSERVATION_REPORT.ja.md) に positive / mismatch / dependency controls と source/production adapter の未証明境界を記録します。#35 の terminal post-state とは区別します。旧1213 auditを保持し93追加、総数 **1306**。F3.1や他Trackには進みません。
 
 Issue [#35](https://github.com/wakairo/NewLang_FormalProof/issues/35) の bounded known-call owner conservation adjunct は、二つの independent full-range roots と proven entry relation に限定し、tail Allocation/Domain の affine handoff、同じ backing/root identity の保存、strict EndRoot→slot→Storage→finalize→release を検証します。post invariant は preconditions / survivor guard から導出します。same-typed mismatch、stale ptr、scope、dependency、二重解放の controls と、actual H/production へ接続する未証明 adapter を [Track F report](docs/F_KNOWN_CALL_OWNER_CONSERVATION_REPORT.ja.md) に記録します。既存1149件を保持し64追加、audit総数は **1213**。canonical は Draft 17.27。F3.1や他Trackには進みません。
@@ -32,7 +34,7 @@ F2はcanonical Draft 17.16の**bounded cyclic loop-header formal kernel**を実�
 
 ## 仕様の優先順位
 
-1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.28）。
+1. **Canonical language specification**: `wakairo/NewLang_Compiler` の `main` にある `docs/reference/CURRENT_SPEC.md` が指すDraft（現在は Draft 17.29）。
 2. [NewLang v0 Draft 17.4](docs/NewLang_v0_spec_Draft17_4.md): F0/F1.0/F1.1が検査した規則を再現するためのhistorical local snapshot。現在の正本ではない。
 3. [F0 Formal Kernel Specification Draft 0](docs/F0_Formal_Kernel_Specification.md): non-normative bridge。milestone番号の修正とimplementation traceability noteを記録し、FORMAL-EXTRACTIONの解決履歴として記録しています。
 4. Lean model: proofのためのencoding。
@@ -254,7 +256,7 @@ replaceは完全なold structured valueをresultへ返し、storeはold valueを
 
 same-place swapはexact no-opでfresh supply引数がありません。distinct swapはdisjointなlive targetとrelative shape一致を要求し、pre-state全fragmentをatomicに交換します。両overlap集合のunionをfresh化し、common ancestorへは一度だけ割り当てます。dependencyはexact old factのままでretargetしません。Copy・Discardable・lifetime-ending authorityを追加しません。
 
-既存332 auditをすべて保持し、F1.1で135件（production/helper 92、具体fixture/破壊試験43）を追加して467件、F1.2で100件、F1.3で72件、F1.4で118件を追加して合計757件を検査します。`sorry`/`axiom`/`admit`はproject-owned Lean sourceにありません。許可logicはpropext・Classical.choice・Quot.soundのみです。F1.0中心erasure theoremを保持し、installed/loose obligationがactual erased packageへ残ることも証明します。F1 StepとF0 Stepの一対一対応は主張しません。全定理・representation・leaf/nested/root witness・dependency/freshness/更新漏れの破壊試験は[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)へ記録します。
+現在のauditは1399件です。F1系の内訳として、既存332 auditをすべて保持し、F1.1で135件（production/helper 92、具体fixture/破壊試験43）を追加して467件、F1.2で100件、F1.3で72件、F1.4で118件を追加して合計757件を検査します。`sorry`/`axiom`/`admit`はproject-owned Lean sourceにありません。許可logicはpropext・Classical.choice・Quot.soundのみです。F1.0中心erasure theoremを保持し、installed/loose obligationがactual erased packageへ残ることも証明します。F1 StepとF0 Stepの一対一対応は主張しません。全定理・representation・leaf/nested/root witness・dependency/freshness/更新漏れの破壊試験は[F1.1 report](docs/F1_1_FIXED_SUBOBJECT_TRANSITIONS_REPORT.md)へ記録します。
 
 ## F1.2 conditional occurrence semantics
 
