@@ -53,3 +53,6 @@ import NewLang.Adjunct.Counterexample.Custody
 
 import NewLang.Adjunct.FiveRootProofs
 import NewLang.Adjunct.Counterexample.FiveRoot
+
+import NewLang.Adjunct.BComposition
+import NewLang.Adjunct.Counterexample.BComposition
