@@ -1782,6 +1782,17 @@ declarations=(
   NewLang.Adjunct.LiveRootHandoff.ReceiverView.second_old_call_is_not_finish_two
   NewLang.Adjunct.LiveRootHandoff.Counterexample.unrelatedCallerPacket
   NewLang.Adjunct.LiveRootHandoff.Counterexample.H0_conserves_inventory_but_fails_receiver_ownership
+  NewLang.Adjunct.SourceRichBoundary.initialize_derives_root_domain_region
+  NewLang.Adjunct.SourceRichBoundary.destroy_recovers_exact_initialized_root
+  NewLang.Adjunct.SourceRichBoundary.destroy_erase_preserves_exact_claim
+  NewLang.Adjunct.SourceRichBoundary.full_recovery_excludes_other_claims
+  NewLang.Adjunct.SourceRichBoundary.wrong_governing_domain_rejected
+  NewLang.Adjunct.SourceRichBoundary.known_call_rejects_wrong_allocation_region
+  NewLang.Adjunct.SourceRichBoundary.current_wellFormed_does_not_interpret_installed_content
+  NewLang.Adjunct.SourceRichBoundary.accounting_rejects_duplicate_root_claim
+  NewLang.Adjunct.SourceRichBoundary.initialization_does_not_issue_a_domain_from_empty
+  NewLang.Adjunct.SourceRichBoundary.rich_whole_take_preserves_value_and_domain_carriers
+  NewLang.Adjunct.SourceRichBoundary.accepted_typed_cycle_does_not_imply_full_raw
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"
