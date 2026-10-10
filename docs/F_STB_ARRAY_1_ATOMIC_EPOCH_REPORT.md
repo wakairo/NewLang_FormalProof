@@ -172,7 +172,7 @@ Incorrect order/checksum policy is separate from lifetime safety.
 
 ## Separately counted implementation / integration obligations (six)
 
-No custom proof assumption is added to Lean. Nevertheless these six external
+No custom semantic axiom is added to Lean. Nevertheless these six external
 obligations remain before the experiment could justify an allocator mechanism:
 
 1. Actual failure must leave original backing, authority, bytes, metadata and
@@ -221,7 +221,7 @@ separate-recipient implementation STOP/REASSESS. Neither metric is modified.
 
 Baseline: build +1568 audits PASS. Candidate: build +1652 audits (1568 retained,
 84 added), standard Lean logic whitelist unchanged, no proof placeholders or
-custom semantic assumptions. Lean4.34.1/mathlib
+custom semantic axioms. Lean4.34.1/mathlib
 `d13f23b723b8a846827a245b89c10fc7d3f11612`; pins, accepted theorem meanings,
 README and CI unchanged. Exact candidate head / OPEN-unmerged PR / Actions
 results are recorded in the Issue #45 handoff. Git is the change-history source.
