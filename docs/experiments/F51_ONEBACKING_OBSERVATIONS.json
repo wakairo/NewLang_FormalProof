@@ -1,0 +1,29 @@
+{
+  "compiler_head": "4bc6b690e87b4646596dfd460bea26e9a5d8dac5",
+  "experimental_flags": [
+    "NEWLANG_EXPERIMENTAL_ORIGINAL_GRANT",
+    "NEWLANG_EXPERIMENTAL_NESTED_CALLER",
+    "NEWLANG_EXPERIMENTAL_TRANSITIVE_TERMINAL"
+  ],
+  "fixture": "tests/fixtures/allocated_node_semantic.nl",
+  "fixture_sha256": "8c040d74c16fd3a72c98124dbff1f087e475eba0cb8e60cb6da1c6244f979fd2",
+  "p278_registered_source": "tests/fixtures/experimental_transitive_returned_whole.nl",
+  "p278_source_sha256": "c092287c1f4e701ed50016168a3e7980900369b4728b2b3de10b904dfe33bd7c",
+  "probe_sha256": "9349bc664dede3799c7c80a3849b9230e5b9aceeb7ce4f8a2823b8fb40eb07b0",
+  "checks": {
+    "source_single_original_lifecycle": true,
+    "immediate_production_issuer": true,
+    "actual_P278_Node_registered_56_byte_grant": true,
+    "none_no_backing_grant": true,
+    "same_region_full_raw": true,
+    "actual_nested_carriers": true,
+    "duplicate_allocation_poison_rejected": true,
+    "lost_allocation_poison_rejected": true,
+    "last_byte_gap_poison_rejected": true,
+    "wrong_aggregate_carrier_poison_rejected": true,
+    "wrong_allocation_use_rejected": true,
+    "partial_raw_release_rejected": true,
+    "reused_address_distinct_region": true
+  },
+  "scope": "C checker observations only; no native allocator or Lean source refinement"
+}
