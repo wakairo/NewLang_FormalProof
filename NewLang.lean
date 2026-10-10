@@ -68,3 +68,5 @@ import NewLang.Adjunct.SourceRichBoundary
 import NewLang.Adjunct.OneBackingIssuerBoundary
 
 import NewLang.Adjunct.Counterexample.OneBackingIssuer
+
+import NewLang.Adjunct.Counterexample.OneBackingSlot
