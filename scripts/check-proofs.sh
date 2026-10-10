@@ -1793,6 +1793,18 @@ declarations=(
   NewLang.Adjunct.SourceRichBoundary.initialization_does_not_issue_a_domain_from_empty
   NewLang.Adjunct.SourceRichBoundary.rich_whole_take_preserves_value_and_domain_carriers
   NewLang.Adjunct.SourceRichBoundary.accepted_typed_cycle_does_not_imply_full_raw
+  NewLang.Adjunct.OneBackingIssuerBoundary.storage_requires_existing_backing
+  NewLang.Adjunct.OneBackingIssuerBoundary.into_slot_requires_existing_backing
+  NewLang.Adjunct.OneBackingIssuerBoundary.initialize_requires_existing_backing
+  NewLang.Adjunct.OneBackingIssuerBoundary.initialize_is_not_fresh_region_issuance
+  NewLang.Adjunct.OneBackingIssuerBoundary.conversions_do_not_introduce_region_scope
+  NewLang.Adjunct.OneBackingIssuerBoundary.lastByteLedger
+  NewLang.Adjunct.OneBackingIssuerBoundary.last_byte_split_raw
+  NewLang.Adjunct.OneBackingIssuerBoundary.last_byte_accounting
+  NewLang.Adjunct.OneBackingIssuerBoundary.last_byte_split_is_rich_wellFormed
+  NewLang.Adjunct.OneBackingIssuerBoundary.complete_accounting_does_not_make_each_storage_full
+  NewLang.Adjunct.OneBackingIssuerBoundary.lostLastByte
+  NewLang.Adjunct.OneBackingIssuerBoundary.losing_last_byte_breaks_accounting
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"
