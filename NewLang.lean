@@ -72,3 +72,5 @@ import NewLang.Adjunct.Counterexample.OneBackingIssuer
 import NewLang.Adjunct.Counterexample.OneBackingSlot
 
 import NewLang.Adjunct.Counterexample.FreshDomain
+
+import NewLang.Adjunct.DomainValueReadLoan
