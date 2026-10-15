@@ -2210,6 +2210,92 @@ declarations=(
   NewLang.Adjunct.DomainValueReadLoan.witness_result_survivor_and_once_checks
   NewLang.Adjunct.DomainValueReadLoan.witness_selected_core_bridge_still_missing
   NewLang.Adjunct.DomainValueReadLoan.witness_after_close_original_responsibility_available
+  # Issue #62: finite named-call / two-normal-branch join adjunct.
+  NewLang.Adjunct.NamedCallJoin.Locator
+  NewLang.Adjunct.NamedCallJoin.Copy
+  NewLang.Adjunct.NamedCallJoin.FunctionName
+  NewLang.Adjunct.NamedCallJoin.Phase
+  NewLang.Adjunct.NamedCallJoin.Arguments
+  NewLang.Adjunct.NamedCallJoin.Formals
+  NewLang.Adjunct.NamedCallJoin.Mapped
+  NewLang.Adjunct.NamedCallJoin.Call
+  NewLang.Adjunct.NamedCallJoin.Input
+  NewLang.Adjunct.NamedCallJoin.Entry
+  NewLang.Adjunct.NamedCallJoin.arguments
+  NewLang.Adjunct.NamedCallJoin.bind
+  NewLang.Adjunct.NamedCallJoin.entry_checks_distinct_original_identities
+  NewLang.Adjunct.NamedCallJoin.checked_call_constructed
+  NewLang.Adjunct.NamedCallJoin.Output
+  NewLang.Adjunct.NamedCallJoin.noWrite
+  NewLang.Adjunct.NamedCallJoin.called
+  NewLang.Adjunct.NamedCallJoin.Run
+  NewLang.Adjunct.NamedCallJoin.Joined
+  NewLang.Adjunct.NamedCallJoin.before_call_after_call_join
+  NewLang.Adjunct.NamedCallJoin.joined_preserves_two_originals_and_copy_dependencies
+  NewLang.Adjunct.NamedCallJoin.joined_saved_copy_remains_exact
+  NewLang.Adjunct.NamedCallJoin.joined_keeps_original_write_ref
+  NewLang.Adjunct.NamedCallJoin.call_resets_old_occurrence
+  NewLang.Adjunct.NamedCallJoin.closed
+  NewLang.Adjunct.NamedCallJoin.Finish
+  NewLang.Adjunct.NamedCallJoin.finish_preserves_and_ends_refs
+  NewLang.Adjunct.NamedCallJoin.finish_cannot_repeat
+  NewLang.Adjunct.NamedCallJoin.wrong_actual_formal_root_rejected
+  NewLang.Adjunct.NamedCallJoin.wrong_actual_formal_ref_rejected
+  NewLang.Adjunct.NamedCallJoin.erased_formal_dependency_rejected
+  NewLang.Adjunct.NamedCallJoin.wrong_field_rejected
+  NewLang.Adjunct.NamedCallJoin.stale_target_incarnation_rejected
+  NewLang.Adjunct.NamedCallJoin.surviving_dependency_conflict_rejected
+  NewLang.Adjunct.NamedCallJoin.invented_root_rejected
+  NewLang.Adjunct.NamedCallJoin.overwritten_old_copy_rejected
+  NewLang.Adjunct.NamedCallJoin.escaped_survivor_ref_rejected
+  NewLang.Adjunct.NamedCallJoin.escaped_return_ref_rejected
+  NewLang.Adjunct.NamedCallJoin.read_mode_cannot_call_write
+  NewLang.Adjunct.NamedCallJoin.Witness.opened
+  NewLang.Adjunct.NamedCallJoin.Witness.ref_valid
+  NewLang.Adjunct.NamedCallJoin.Witness.seed_replace
+  NewLang.Adjunct.NamedCallJoin.Witness.seed
+  NewLang.Adjunct.NamedCallJoin.Witness.seed_wf
+  NewLang.Adjunct.NamedCallJoin.Witness.head_replace
+  NewLang.Adjunct.NamedCallJoin.Witness.headSeed
+  NewLang.Adjunct.NamedCallJoin.Witness.atom
+  NewLang.Adjunct.NamedCallJoin.Witness.observed
+  NewLang.Adjunct.NamedCallJoin.Witness.observed_wf
+  NewLang.Adjunct.NamedCallJoin.Witness.input
+  NewLang.Adjunct.NamedCallJoin.Witness.noneInput
+  NewLang.Adjunct.NamedCallJoin.Witness.someInput
+  NewLang.Adjunct.NamedCallJoin.Witness.none_entry
+  NewLang.Adjunct.NamedCallJoin.Witness.some_entry
+  NewLang.Adjunct.NamedCallJoin.Witness.formals
+  NewLang.Adjunct.NamedCallJoin.Witness.someOutput
+  NewLang.Adjunct.NamedCallJoin.Witness.noneOutput
+  NewLang.Adjunct.NamedCallJoin.Witness.some_call
+  NewLang.Adjunct.NamedCallJoin.Witness.some_normal_path
+  NewLang.Adjunct.NamedCallJoin.Witness.none_normal_path
+  NewLang.Adjunct.NamedCallJoin.Witness.two_normal_paths_join
+  NewLang.Adjunct.NamedCallJoin.Witness.some_scope_finishes
+  NewLang.Adjunct.NamedCallJoin.Witness.none_scope_finishes
+  NewLang.Adjunct.NamedCallJoin.Witness.old_some_occurrence_cannot_return_as_current
+  NewLang.Adjunct.NamedCallJoin.Witness.finite_normal_join
+  NewLang.Adjunct.NamedCallJoin.Witness.both_normal_paths_close_preserving_originals
+  NewLang.Adjunct.NamedCallJoin.Witness.swapped
+  NewLang.Adjunct.NamedCallJoin.Witness.swapped_original_actual_rejected
+  NewLang.Adjunct.NamedCallJoin.Witness.staleArguments
+  NewLang.Adjunct.NamedCallJoin.Witness.stale_actual_rejected
+  NewLang.Adjunct.NamedCallJoin.Witness.wrongFieldArguments
+  NewLang.Adjunct.NamedCallJoin.Witness.wrong_field_actual_rejected
+  NewLang.Adjunct.NamedCallJoin.Witness.lostDependencyFormals
+  NewLang.Adjunct.NamedCallJoin.Witness.dropped_hidden_dependency_rejected
+  NewLang.Adjunct.NamedCallJoin.Witness.conflictMemory
+  NewLang.Adjunct.NamedCallJoin.Witness.conflict_entry_memory_wellFormed
+  NewLang.Adjunct.NamedCallJoin.Witness.surviving_old_occurrence_rejected
+  NewLang.Adjunct.NamedCallJoin.Witness.inventedOutput
+  NewLang.Adjunct.NamedCallJoin.Witness.invented_third_root_rejected
+  NewLang.Adjunct.NamedCallJoin.Witness.overwrittenOutput
+  NewLang.Adjunct.NamedCallJoin.Witness.overwritten_old_some_copy_rejected
+  NewLang.Adjunct.NamedCallJoin.Witness.double_scope_end_rejected
+  NewLang.Adjunct.NamedCallJoin.Witness.escapingOutput
+  NewLang.Adjunct.NamedCallJoin.Witness.surviving_ref_escape_rejected
+
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"
