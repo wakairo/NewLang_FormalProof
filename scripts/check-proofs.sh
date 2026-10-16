@@ -2296,6 +2296,62 @@ declarations=(
   NewLang.Adjunct.NamedCallJoin.Witness.escapingOutput
   NewLang.Adjunct.NamedCallJoin.Witness.surviving_ref_escape_rejected
 
+  NewLang.Adjunct.Array4Boundary.location
+  NewLang.Adjunct.Array4Boundary.rootPlace
+  NewLang.Adjunct.Array4Boundary.domain
+  NewLang.Adjunct.Array4Boundary.child
+  NewLang.Adjunct.Array4Boundary.places
+  NewLang.Adjunct.Array4Boundary.path
+  NewLang.Adjunct.Array4Boundary.layout
+  NewLang.Adjunct.Array4Boundary.tree
+  NewLang.Adjunct.Array4Boundary.object
+  NewLang.Adjunct.Array4Boundary.state
+  NewLang.Adjunct.Array4Boundary.state_wf
+  NewLang.Adjunct.Array4Boundary.child_tracked
+  NewLang.Adjunct.Array4Boundary.child_not_root
+  NewLang.Adjunct.Array4Boundary.token
+  NewLang.Adjunct.Array4Boundary.current
+  NewLang.Adjunct.Array4Boundary.point_acquisition
+  NewLang.Adjunct.Array4Boundary.parent_end_invalidates_all
+  NewLang.Adjunct.Array4Boundary.region
+  NewLang.Adjunct.Array4Boundary.ro
+  NewLang.Adjunct.Array4Boundary.rw
+  NewLang.Adjunct.Array4Boundary.world
+  NewLang.Adjunct.Array4Boundary.parentEvidence
+  NewLang.Adjunct.Array4Boundary.unrelatedEvidence
+  NewLang.Adjunct.Array4Boundary.world_bound_is_not_parent_bound
+  NewLang.Adjunct.Array4Boundary.parentExtent
+  NewLang.Adjunct.Array4Boundary.fourthExtent
+  NewLang.Adjunct.Array4Boundary.escapedExtent
+  NewLang.Adjunct.Array4Boundary.guessed_extent_can_escape_by_one_stride
+  NewLang.Adjunct.Array4Boundary.parentPlacement
+  NewLang.Adjunct.Array4Boundary.physical
+  NewLang.Adjunct.Array4Boundary.physical_wf
+  NewLang.Adjunct.Array4Boundary.child_distinct
+  NewLang.Adjunct.Array4Boundary.child_parent
+  NewLang.Adjunct.Array4Boundary.duplicateLayout
+  NewLang.Adjunct.Array4Boundary.duplicate_projection_rejected
+  NewLang.Adjunct.Array4Boundary.misparented_token_rejected
+  NewLang.Adjunct.Array4Boundary.child_is_not_erased_root
+  NewLang.Adjunct.Array4Boundary.ended
+  NewLang.Adjunct.Array4Boundary.concrete_end_step
+  NewLang.Adjunct.Array4Boundary.ended_wf
+  NewLang.Adjunct.Array4Boundary.concrete_end_invalidates_all
+  NewLang.Adjunct.Array4Boundary.one_live_root
+  NewLang.Adjunct.Array4Boundary.one_live_domain
+  NewLang.Adjunct.Array4Boundary.exact_places
+  NewLang.Adjunct.Array4Boundary.child_role
+  NewLang.Adjunct.Array4Boundary.wrong_domain_rejected
+  NewLang.Adjunct.Array4Boundary.wrong_site_rejected
+  NewLang.Adjunct.Array4Boundary.copy_token_without_access_rejected
+  NewLang.Adjunct.Array4Boundary.copy_token_without_stability_rejected
+  NewLang.Adjunct.Array4Boundary.restarted_rejects_all
+  NewLang.Adjunct.Array4Boundary.untyped_content_still_wf
+  NewLang.Adjunct.Array4Boundary.world_evidence_is_insufficient_for_parent_mode
+  NewLang.Adjunct.Array4Boundary.forgedPhysical
+  NewLang.Adjunct.Array4Boundary.overlapping_extra_root_rejected
+  NewLang.Adjunct.Array4Boundary.root_checks_do_not_constrain_guessed_child_extent
+
 )
 for declaration in "${declarations[@]}"; do
   printf '#print axioms %s\n' "$declaration" >> "$check_file"
