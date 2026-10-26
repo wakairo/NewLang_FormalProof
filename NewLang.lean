@@ -76,3 +76,5 @@ import NewLang.Adjunct.Counterexample.FreshDomain
 import NewLang.Adjunct.DomainValueReadLoan
 
 import NewLang.Adjunct.NamedCallJoin
+
+import NewLang.Adjunct.LexicalPrefix
